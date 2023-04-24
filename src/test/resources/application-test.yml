@@ -13,3 +13,8 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+
+sonar:
+  projectKey: ${SONAR_PROJECT_KEY}
+  organization: ${SONAR_ORGANIZATION_KEY}
+  hostUrl: ${SONAR_HOST_URL}
