@@ -7,9 +7,9 @@ plugins {
 
 sonarqube {
     properties {
-        property "sonar.projectKey", System.getenv("SONAR_PROJECT_KEY")
-        property "sonar.organization", System.getenv("SONAR_ORGANIZATION_KEY")
-        property "sonar.host.url", System.getenv("SONAR_HOST_URL")
+        property "sonar.projectKey", "sgh002400_Traders"
+        property "sonar.organization", "traders"
+        property "sonar.host.url", "https://sonarcloud.io"
     }
 }
 
