@@ -34,5 +34,10 @@ logging:
           descriptor:
             sql: trace
 
+sonar:
+  projectKey: { SONAR_PROJECT_KEY }
+  organization: { SONAR_ORGANIZATION_KEY }
+  hostUrl: { SONAR_HOST_URL }
+
 secret:
   jwt-secret: ${JWT_SECRET_KEY}
