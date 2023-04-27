@@ -2,79 +2,50 @@ package com.traders.traders.common.exception;
 
 import javax.validation.ConstraintViolationException;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
 
-	@ExceptionHandler(BaseException.class)
-	protected ResponseEntity<ExceptionResponse> handleExpectedException(BaseException e) {
-		log.error("Expected exception - code: {}, message: {}", e.getErrorCode(), e.getMessage(), e);
+	@ExceptionHandler(TradersException.class)
+	protected ResponseEntity<ExceptionResponse> handleBaseException(TradersException e) {
+		log.error("TradersException: {}", e.getMessage(), e);
 		ExceptionResponse response = ExceptionResponse.builder()
 			.httpStatus(e.getHttpStatus())
-			.errorCode(e.getErrorCode())
 			.message(e.getMessage())
 			.build();
 
-		return new ResponseEntity<>(response, response.getHttpStatus());
+		return new ResponseEntity<>(response, e.getHttpStatus());
 	}
 
-	@ExceptionHandler(ConstraintViolationException.class)
-	public ResponseEntity<ExceptionResponse> handleConstraintViolationException(ConstraintViolationException e) {
-		log.error("Constraint violation exception", e);
-
+	@ExceptionHandler({ConstraintViolationException.class, MethodArgumentNotValidException.class,
+		HttpMessageNotReadableException.class})
+	protected ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception e) {
+		log.error("BadRequestException: {}", e.getMessage(), e);
 		ExceptionResponse response = ExceptionResponse.builder()
-			.errorCode(e.toString())
 			.httpStatus(HttpStatus.BAD_REQUEST)
 			.message(e.getMessage())
 			.build();
 
-		return new ResponseEntity<>(response, response.getHttpStatus());
+		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(RuntimeException.class)
-	protected ResponseEntity<ExceptionResponse> handleUnexpectedRuntimeException(RuntimeException e) {
-		log.error("Unexpected runtime exception", e);
+	@ExceptionHandler(Exception.class)
+	protected ResponseEntity<ExceptionResponse> handleAllExceptions(Exception e) {
+		log.error("Exception: {}", e.getMessage(), e);
 		ExceptionResponse response = ExceptionResponse.builder()
 			.httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-			.errorCode("UNEXPECTED_RUNTIME_EXCEPTION")
 			.message("Internal Server Error")
 			.build();
 
-		return new ResponseEntity<>(response, response.getHttpStatus());
-	}
-
-	@ExceptionHandler(Throwable.class)
-	protected ResponseEntity<ExceptionResponse> handleAllExceptions(Throwable e) {
-		log.error("Unexpected exception", e);
-		ExceptionResponse response = ExceptionResponse.builder()
-			.httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-			.errorCode("UNEXPECTED_EXCEPTION")
-			.message("Internal Server Error")
-			.build();
-
-		return new ResponseEntity<>(response, response.getHttpStatus());
-	}
-
-	@Override
-	protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
-		HttpStatus status, WebRequest request) {
-		log.error("Internal exception", ex);
-		ExceptionResponse response = ExceptionResponse.builder()
-			.httpStatus(status)
-			.errorCode(ex.getClass().getSimpleName())
-			.message(ex.getMessage())
-			.build();
-
-		return new ResponseEntity<>(response, response.getHttpStatus());
+		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }

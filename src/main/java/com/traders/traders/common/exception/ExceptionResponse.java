@@ -10,13 +10,11 @@ import lombok.Getter;
 public class ExceptionResponse {
 
 	private final HttpStatus httpStatus;
-	private final String errorCode;
 	private final String message;
 
-	public static ExceptionResponse of(HttpStatus httpStatus, String errorCode, String message) {
+	public static ExceptionResponse of(HttpStatus httpStatus, String message) {
 		return ExceptionResponse.builder()
 			.httpStatus(httpStatus)
-			.errorCode(errorCode)
 			.message(message)
 			.build();
 	}
