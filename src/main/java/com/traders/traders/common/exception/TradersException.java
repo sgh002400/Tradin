@@ -3,8 +3,10 @@ package com.traders.traders.common.exception;
 import org.springframework.http.HttpStatus;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class TradersException extends RuntimeException {
 
 	private final HttpStatus httpStatus;
