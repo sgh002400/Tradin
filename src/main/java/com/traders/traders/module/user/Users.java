@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends AuditTime {
+public class Users extends AuditTime {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -32,14 +32,14 @@ public class User extends AuditTime {
 	private SocialInfo socialInfo;
 
 	@Builder
-	private User(String name, String email, SocialInfo socialInfo) {
+	private Users(String name, String email, SocialInfo socialInfo) {
 		this.name = name;
 		this.email = email;
 		this.socialInfo = socialInfo;
 	}
 
-	public static User of(String name, String email, String socialId, SocialType socialType) {
-		return User.builder()
+	public static Users of(String name, String email, String socialId, SocialType socialType) {
+		return Users.builder()
 			.name(name)
 			.email(email)
 			.socialInfo(SocialInfo.of(socialId, socialType))
