@@ -8,6 +8,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Embeddable
@@ -21,4 +22,19 @@ public class Position {
 
 	@Column(nullable = false)
 	private String price;
+
+	@Builder
+	private Position(TradingType tradingType, LocalDateTime time, String price) {
+		this.tradingType = tradingType;
+		this.time = time;
+		this.price = price;
+	}
+
+	public static Position of(TradingType tradingType, LocalDateTime time, String price) {
+		return Position.builder()
+			.tradingType(tradingType)
+			.time(time)
+			.price(price)
+			.build();
+	}
 }
