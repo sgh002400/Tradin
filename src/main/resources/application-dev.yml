@@ -20,12 +20,21 @@ spring:
         show_sql: true
         format_sql: true
 
+  cloud:
+    gateway:
+      default-filters:
+        - name: RequestRateLimiter
+          args: #TODO - 부하테스트 후 적정한 값으로 수정하기
+            redis-rate-limiter.replenishRate: 1 #토큰이 버킷 초당 채워지는 개수 - 각각의 유저 혹은 IP(설정하기 나름)에 적용되는거임
+            redis-rate-limiter.burstCapacity: 2 #버킷의 총 크기 - 이것도 마찬가지, 토큰이 채워질 수 있는 최대 개수
+            key-resolver: "#{@ipKeyResolver}"
+
   redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_HOST}:${KAFKA_PORT}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
