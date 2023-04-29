@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(TradersException.class)
-	protected ResponseEntity<ExceptionResponse> handleBaseException(TradersException e) {
+	protected ResponseEntity<ExceptionResponse> handleTradersException(TradersException e) {
 		log.error("TradersException: {}", e.getMessage(), e);
 		ExceptionResponse response = ExceptionResponse.builder()
 			.httpStatus(e.getHttpStatus())

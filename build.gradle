@@ -39,10 +39,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.h2database:h2:1.4.200'
     implementation 'org.postgresql:postgresql'
-    implementation 'org.apache.kafka:kafka-streams'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.apache.kafka:kafka-clients'
+    implementation 'org.apache.kafka:kafka-streams'
+
+    implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:4.10.0'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     annotationProcessor 'org.projectlombok:lombok'
