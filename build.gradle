@@ -45,8 +45,8 @@ dependencies {
     implementation 'org.apache.kafka:kafka-clients'
     implementation 'org.apache.kafka:kafka-streams'
 
-    implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:4.10.0'
-
+    implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.6.0'
+    
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     annotationProcessor 'org.projectlombok:lombok'

@@ -20,7 +20,6 @@ import com.traders.traders.common.exception.ExceptionResponse;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.ConsumptionProbe;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,14 +57,14 @@ public class RateLimitFilter implements Filter {
 	}
 
 	private static Bucket createNewBucketForIp() {
-		//TODO - 부하테스트 후 적절한 값으로 수정 / 테스트 코드하기
+		//TODO - 부하테스트 후 적절한 값으로 수정 / 테스트 코드 작성하기
 		Bandwidth limit = Bandwidth.simple(3, Duration.ofSeconds(1)); // 1초에 3개
-		return Bucket4j.builder().addLimit(limit).build();
+		return Bucket.builder().addLimit(limit).build();
 	}
 
 	private static Bucket createNewBucketForTotal() {
 		Bandwidth limit = Bandwidth.simple(1000, Duration.ofSeconds(1)); // 1초에 1000개
-		return Bucket4j.builder().addLimit(limit).build();
+		return Bucket.builder().addLimit(limit).build();
 	}
 
 	private String getClientIP(HttpServletRequest request) {
