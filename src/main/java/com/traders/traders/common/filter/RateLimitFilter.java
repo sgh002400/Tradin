@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 public class RateLimitFilter implements Filter {
 
 	private static final ConcurrentHashMap<String, Bucket> bucketsByIp = new ConcurrentHashMap<>();
-	private static final Bucket totalLimitBucket = createNewBucketForTotal();
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws
@@ -46,24 +45,12 @@ public class RateLimitFilter implements Filter {
 			return;
 		}
 
-		ConsumptionProbe probeForTotalBucket = totalLimitBucket.tryConsumeAndReturnRemaining(1);
-		if (!probeForTotalBucket.isConsumed()) {
-			log.warn("총 최대 요청 횟수를 초과하였습니다.");
-			handleException(httpServletResponse, TOTAL_RATE_LIMIT_EXCEEDED_EXCEPTION);
-			return;
-		}
-
 		chain.doFilter(request, response);
 	}
 
 	private static Bucket createNewBucketForIp() {
-		//TODO - 부하테스트 후 적절한 값으로 수정 / 테스트 코드 작성하기
+		//TODO - 테스트 코드 작성하기
 		Bandwidth limit = Bandwidth.simple(3, Duration.ofSeconds(1)); // 1초에 3개
-		return Bucket.builder().addLimit(limit).build();
-	}
-
-	private static Bucket createNewBucketForTotal() {
-		Bandwidth limit = Bandwidth.simple(1000, Duration.ofSeconds(1)); // 1초에 1000개
 		return Bucket.builder().addLimit(limit).build();
 	}
 

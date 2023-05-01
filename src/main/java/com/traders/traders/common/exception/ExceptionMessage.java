@@ -23,7 +23,6 @@ public enum ExceptionMessage {
 
 	//429 Too Many Requests
 	IP_RATE_LIMIT_EXCEEDED_EXCEPTION(TOO_MANY_REQUESTS, "IP당 최대 요청 횟수를 초과하였습니다."),
-	TOTAL_RATE_LIMIT_EXCEEDED_EXCEPTION(TOO_MANY_REQUESTS, "총 최대 요청 횟수를 초과하였습니다."),
 
 	//500 Internal Server Error
 	;
