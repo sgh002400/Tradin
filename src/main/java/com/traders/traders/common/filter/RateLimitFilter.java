@@ -4,6 +4,7 @@ import static com.traders.traders.common.exception.ExceptionMessage.*;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.Filter;
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.traders.traders.common.exception.ExceptionMessage;
 import com.traders.traders.common.exception.ExceptionResponse;
 
 import io.github.bucket4j.Bandwidth;
@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RateLimitFilter implements Filter {
 
-	private static final ConcurrentHashMap<String, Bucket> bucketsByIp = new ConcurrentHashMap<>();
+	private static final Map<String, Bucket> bucketsByIp = new ConcurrentHashMap<>();
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws
@@ -41,7 +41,7 @@ public class RateLimitFilter implements Filter {
 		ConsumptionProbe probeForIpBucket = requestBucket.tryConsumeAndReturnRemaining(1);
 		if (!probeForIpBucket.isConsumed()) {
 			log.warn("IP당 최대 요청 횟수를 초과하였습니다.: {}", clientIp);
-			handleException(httpServletResponse, IP_RATE_LIMIT_EXCEEDED_EXCEPTION);
+			handleException(httpServletResponse);
 			return;
 		}
 
@@ -58,13 +58,13 @@ public class RateLimitFilter implements Filter {
 		return request.getRemoteAddr();
 	}
 
-	private void handleException(HttpServletResponse response, ExceptionMessage exceptionMessage) throws IOException {
-		response.setStatus(exceptionMessage.getHttpStatus().value());
+	private void handleException(HttpServletResponse response) throws IOException {
+		response.setStatus(IP_RATE_LIMIT_EXCEEDED_EXCEPTION.getHttpStatus().value());
 		response.setContentType("application/json; charset=utf-8");
 
 		ExceptionResponse exceptionResponse = ExceptionResponse.builder()
-			.httpStatus(exceptionMessage.getHttpStatus())
-			.message(exceptionMessage.getMessage())
+			.httpStatus(IP_RATE_LIMIT_EXCEEDED_EXCEPTION.getHttpStatus())
+			.message(IP_RATE_LIMIT_EXCEEDED_EXCEPTION.getMessage())
 			.build();
 
 		response.getWriter().write(new ObjectMapper().writeValueAsString(exceptionResponse));
