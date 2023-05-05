@@ -1,4 +1,4 @@
-package com.traders.traders.module.trading.history;
+package com.traders.traders.module.trading.history.domain;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -12,8 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.traders.traders.common.jpa.AuditTime;
-import com.traders.traders.module.trading.strategy.Position;
-import com.traders.traders.module.trading.strategy.Strategy;
+import com.traders.traders.module.trading.strategy.domain.Position;
+import com.traders.traders.module.trading.strategy.domain.Strategy;
 
 import lombok.AccessLevel;
 import lombok.Builder;

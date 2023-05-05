@@ -1,4 +1,4 @@
-package com.traders.traders.module.trading.strategy;
+package com.traders.traders.module.trading.strategy.domain;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
