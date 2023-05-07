@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class StrategyController {
 	private final StrategyService strategyService;
 
-	@KafkaListener(topics = "Trading", groupId = "my-group-id")
+	@KafkaListener(topics = "Trading", groupId = "trading-strategy-executors")
 	public void handleWebHook(@RequestBody WebHookRequestDto request) {
 		CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
 	}

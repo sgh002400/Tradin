@@ -26,14 +26,16 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_HOST}:${KAFKA_PORT}
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
-      group-id: my-group-id
+      group-id: trading-strategy-executors
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       auto-offset-reset: earliest
+      properties:
+        spring:
+          json:
+          trusted:
+            packages: com.traders.traders
 
 logging:
   level:
