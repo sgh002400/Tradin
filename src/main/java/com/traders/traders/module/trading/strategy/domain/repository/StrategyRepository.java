@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.traders.traders.module.trading.strategy.domain.Strategy;
 
 @Repository
-public interface StrategyRepository extends JpaRepository<Strategy, Long> {
+public interface StrategyRepository extends JpaRepository<Strategy, Long>, StrategyQueryRepository {
 	Optional<Strategy> findByName(String name);
 }

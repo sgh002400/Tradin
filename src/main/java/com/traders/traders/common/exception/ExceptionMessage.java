@@ -9,15 +9,16 @@ import lombok.Getter;
 @Getter
 public enum ExceptionMessage {
 	//400 Bad Request
-	NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "존재하지 않는 유저입니다."),
-	NOT_FOUND_STRATEGY_EXCEPTION(NOT_FOUND, "존재하지 않는 전략입니다."),
-	NOT_FOUND_OPEN_POSITION_EXCEPTION(NOT_FOUND, "해당 전략은 오픈된 포지션이 없습니다."),
 
 	//401 Unauthorized
 
 	//403 Forbidden
 
 	//404 Not Found
+	NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "존재하지 않는 유저입니다."),
+	NOT_FOUND_STRATEGY_EXCEPTION(NOT_FOUND, "존재하지 않는 전략입니다."),
+	NOT_FOUND_OPEN_POSITION_EXCEPTION(NOT_FOUND, "해당 전략은 오픈된 포지션이 없습니다."),
+	NOT_FOUND_ANY_STRATEGY_EXCEPTION(NOT_FOUND, "전략이 아무것도 존재하지 않습니다."),
 
 	//405 Method Not Allowed
 

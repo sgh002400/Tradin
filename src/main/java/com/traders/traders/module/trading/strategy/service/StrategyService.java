@@ -2,13 +2,17 @@ package com.traders.traders.module.trading.strategy.service;
 
 import static com.traders.traders.common.exception.ExceptionMessage.*;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.traders.traders.common.exception.TradersException;
 import com.traders.traders.module.trading.history.service.HistoryService;
+import com.traders.traders.module.trading.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
 import com.traders.traders.module.trading.strategy.domain.Strategy;
 import com.traders.traders.module.trading.strategy.domain.repository.StrategyRepository;
+import com.traders.traders.module.trading.strategy.domain.repository.dao.StrategyInfoDao;
 import com.traders.traders.module.trading.strategy.service.dto.WebHookDto;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +34,13 @@ public class StrategyService {
 		autoTrading();
 	}
 
+	public FindStrategiesInfoResponseDto findStrategiesInfo() {
+		List<StrategyInfoDao> strategiesInfo = findStrategyInfoDaos();
+		return new FindStrategiesInfoResponseDto(strategiesInfo);
+	}
+
 	//private 메서드는 비동기 안된다는듯?
+
 	public void autoTrading() {
 		//비동기적으로 자동매매
 	}
@@ -50,5 +60,10 @@ public class StrategyService {
 	private Strategy findByName(String name) {
 		return strategyRepository.findByName(name)
 			.orElseThrow(() -> new TradersException(NOT_FOUND_STRATEGY_EXCEPTION));
+	}
+
+	private List<StrategyInfoDao> findStrategyInfoDaos() {
+		return strategyRepository.findStrategiesInfoDao()
+			.orElseThrow(() -> new TradersException(NOT_FOUND_ANY_STRATEGY_EXCEPTION));
 	}
 }
