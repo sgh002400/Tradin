@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/trading/strategy")
+@RequestMapping("/api/v1/trading/strategies")
 public class StrategyController {
 	private final StrategyService strategyService;
 
@@ -22,4 +22,9 @@ public class StrategyController {
 	public void handleWebHook(@RequestBody WebHookRequestDto request) {
 		CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
 	}
+
+	// @GetMapping()
+	// public FindStrategiesInfosResponseDto findStrategiesInfos() {
+	//
+	// }
 }

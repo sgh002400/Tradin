@@ -22,38 +22,29 @@ public class StrategyService {
 	private final StrategyRepository strategyRepository;
 
 	public void handleWebHook(WebHookDto request) {
-		saveHistory(request);
-		createHistory(request);
-		updateStrategy(request);
-		autoTrading();
-	}
-
-	private void saveHistory(WebHookDto request) {
-		historyService.saveHistory(request);
-	}
-
-	private void createHistory(WebHookDto request) {
-		historyService.createHistory(request);
-	}
-
-	private void updateStrategy(WebHookDto request) {
 		Strategy strategy = findByName(request.getName());
 
-		updateMetaData(strategy, request);
-		updateCurrentPosition(strategy, request);
-	}
-
-	private void updateCurrentPosition(Strategy strategy, WebHookDto request) {
-		strategy.updateCurrentPosition(request.getPosition());
-	}
-
-	private void updateMetaData(Strategy strategy, WebHookDto request) {
-		strategy.updateMetaData(request.getPosition());
+		closeHistory(strategy, request);
+		createHistory(strategy, request);
+		updateStrategy(strategy, request);
+		autoTrading();
 	}
 
 	//private 메서드는 비동기 안된다는듯?
 	public void autoTrading() {
 		//비동기적으로 자동매매
+	}
+
+	private void closeHistory(Strategy strategy, WebHookDto request) {
+		historyService.closeHistory(strategy, request);
+	}
+
+	private void createHistory(Strategy strategy, WebHookDto request) {
+		historyService.createHistory(strategy, request);
+	}
+
+	private void updateStrategy(Strategy strategy, WebHookDto request) {
+		strategy.updateMetaData(request.getPosition());
 	}
 
 	private Strategy findByName(String name) {

@@ -103,6 +103,8 @@ public class Strategy extends AuditTime {
 		updateProfitFactor();
 		updateWinRate();
 		updateNetProfitRate();
+
+		updateCurrentPosition(position);
 	}
 
 	private void addTotalTradeCount() {

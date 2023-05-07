@@ -58,4 +58,8 @@ public class History extends AuditTime {
 			.strategy(strategy)
 			.build();
 	}
+
+	public void closeOpenPosition(Position position) {
+		this.exitPosition = position;
+	}
 }
