@@ -10,6 +10,7 @@ import lombok.Getter;
 public enum ExceptionMessage {
 	//400 Bad Request
 	NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "존재하지 않는 유저입니다."),
+	NOT_FOUND_STRATEGY_EXCEPTION(NOT_FOUND, "존재하지 않는 전략입니다."),
 
 	//401 Unauthorized
 
