@@ -18,7 +18,7 @@ public class StrategyQueryRepositoryImpl implements StrategyQueryRepository {
 
 	@Override
 	public Optional<List<StrategyInfoDao>> findStrategiesInfoDao() {
-		return Optional.ofNullable(jpaQueryFactory
+		List<StrategyInfoDao> strategyInfoDaos = jpaQueryFactory
 			.select(
 				new QStrategyInfoDao(strategy.id, strategy.name, strategy.profitFactor, strategy.netProfitRate,
 					strategy.winningRate, strategy.totalProfitRate, strategy.totalLossRate, strategy.totalTradeCount,
@@ -27,6 +27,8 @@ public class StrategyQueryRepositoryImpl implements StrategyQueryRepository {
 			)
 			.from(strategy)
 			.orderBy(strategy.id.asc())
-			.fetch());
+			.fetch();
+
+		return strategyInfoDaos.isEmpty() ? Optional.empty() : Optional.of(strategyInfoDaos);
 	}
 }
