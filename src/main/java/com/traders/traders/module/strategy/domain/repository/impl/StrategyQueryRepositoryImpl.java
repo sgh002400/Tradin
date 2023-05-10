@@ -1,14 +1,14 @@
 package com.traders.traders.module.strategy.domain.repository.impl;
 
-import static com.traders.traders.module.trading.strategy.domain.QStrategy.*;
+import static com.traders.traders.module.strategy.domain.QStrategy.*;
 
 import java.util.List;
 import java.util.Optional;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.traders.traders.module.strategy.domain.repository.StrategyQueryRepository;
+import com.traders.traders.module.strategy.domain.repository.dao.QStrategyInfoDao;
 import com.traders.traders.module.strategy.domain.repository.dao.StrategyInfoDao;
-import com.traders.traders.module.trading.strategy.domain.repository.dao.QStrategyInfoDao;
 
 import lombok.RequiredArgsConstructor;
 
