@@ -29,11 +29,20 @@ spring:
 
 logging:
   level:
+    com.traders.traders: DEBUG
     org:
       hibernate:
         type:
           descriptor:
             sql: trace
+
+feign:
+  okhttp:
+    enabled: true
+  client:
+    config:
+      default:
+        loggerLevel: FULL
 
 secret:
   jwt-secret: ${JWT_SECRET_KEY}
