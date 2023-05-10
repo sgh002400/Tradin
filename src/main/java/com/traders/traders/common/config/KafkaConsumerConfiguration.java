@@ -30,7 +30,7 @@ public class KafkaConsumerConfiguration {
 		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
 		props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 		props.put(JsonDeserializer.TYPE_MAPPINGS,
-			"webHookRequestDto:com.traders.traders.module.trading.strategy.controller.dto.request.WebHookRequestDto");
+			"webHookRequestDto:com.traders.traders.module.strategy.controller.dto.request.WebHookRequestDto");
 		props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 		props.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class);
 		props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);

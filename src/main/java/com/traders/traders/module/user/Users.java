@@ -28,6 +28,8 @@ public class Users extends AuditTime {
 	@Column(unique = true)
 	private String email;
 
+	//레버리지, 수량 등 추가하기
+
 	@Embedded
 	private SocialInfo socialInfo;
 
