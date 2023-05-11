@@ -25,25 +25,36 @@ public class Users extends AuditTime {
 	@Column(nullable = false)
 	private String name;
 
-	@Column(unique = true)
+	@Column(nullable = false, unique = true)
 	private String email;
 
-	//레버리지, 수량 등 추가하기
+	@Column(nullable = false)
+	private String password;
+
+	@Column(nullable = false)
+	private int leverage;
+
+	@Column(nullable = false)
+	private long quantity;
 
 	@Embedded
 	private SocialInfo socialInfo;
 
 	@Builder
-	private Users(String name, String email, SocialInfo socialInfo) {
+	private Users(String name, String email, String password, SocialInfo socialInfo) {
 		this.name = name;
 		this.email = email;
+		this.password = password;
+		this.leverage = 1;
+		this.quantity = 0;
 		this.socialInfo = socialInfo;
 	}
 
-	public static Users of(String name, String email, String socialId, SocialType socialType) {
+	public static Users of(String name, String email, String password, String socialId, SocialType socialType) {
 		return Users.builder()
 			.name(name)
 			.email(email)
+			.password(password)
 			.socialInfo(SocialInfo.of(socialId, socialType))
 			.build();
 	}
