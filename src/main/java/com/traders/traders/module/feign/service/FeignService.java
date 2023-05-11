@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.traders.traders.common.generator.SignatureGenerator;
 import com.traders.traders.module.feign.client.BinanceClient;
 import com.traders.traders.module.feign.client.dto.CurrentPositionInfoDto;
-import com.traders.traders.module.feign.client.dto.NewOrderDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,13 +26,20 @@ public class FeignService {
 		return feignClient.getCurrentPositionInfo(TICKER, timestamp, apiKey, signature).get(0);
 	}
 
-	//TODO - void return 타입으로 변경하기
-	public NewOrderDto createOrder(String apiKey, String secretKey, String side, String quantity) {
+	// public void closePosition(String apiKey, String secretKey) {
+	//closePosition = true 넣어서 요청 보내기
+	// 	Long timestamp = Instant.now().toEpochMilli();
+	// 	String queryString = "symbol=" + TICKER + "&timestamp=" + timestamp;
+	// 	String signature = SignatureGenerator.generateSignature(queryString, secretKey);
+	//
+	// 	feignClient.closePosition(TICKER, timestamp, apiKey, signature);
+	// }
+
+	public void createOrder(String apiKey, String secretKey, String side, String quantity) {
 		Long timestamp = Instant.now().toEpochMilli();
 		String queryString = "symbol=" + TICKER + "&side=BUY&type=MARKET&quantity=1" + "&timestamp=" + timestamp;
-
 		String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
-		return feignClient.createOrder(TICKER, "BUY", "MARKET", "1", timestamp, apiKey, signature);
+		feignClient.createOrder(TICKER, "BUY", "MARKET", "1", timestamp, apiKey, signature);
 	}
 }
