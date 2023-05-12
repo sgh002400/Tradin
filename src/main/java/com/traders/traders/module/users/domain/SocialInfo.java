@@ -1,4 +1,4 @@
-package com.traders.traders.module.user;
+package com.traders.traders.module.users.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
