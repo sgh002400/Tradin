@@ -60,7 +60,6 @@ public class UsersService implements UserDetailsService {
 	}
 
 	private Users saveAndGetUser(String email, String encryptedPassword) {
-		//TODO - 이메일 동일할 때 어떤 예외 발생하는지 테스트
 		Users users = createUser(email, encryptedPassword);
 		return usersRepository.save(users);
 	}
