@@ -10,7 +10,7 @@ public class SignInDto {
 	private String email;
 	private String password;
 
-	public static SignInDto of(final String accessToken, final String refreshToken) {
-		return new SignInDto(accessToken, refreshToken);
+	public static SignInDto of(String email, String password) {
+		return new SignInDto(email, password);
 	}
 }

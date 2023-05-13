@@ -18,6 +18,7 @@ public enum ExceptionMessage {
 	INVALID_JWT_TOKEN_EXCEPTION(UNAUTHORIZED, "유효하지 않은 JWT 토큰입니다."),
 	NOT_FOUND_JWT_USERID_EXCEPTION(UNAUTHORIZED, "JWT 토큰에 유저 아이디가 존재하지 않습니다."),
 	WRONG_PASSWORD_EXCEPTION(UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
+	EMAIL_ALREADY_EXISTS_EXCEPTION(UNAUTHORIZED, "이미 존재하는 이메일입니다."),
 
 	//403 Forbidden
 

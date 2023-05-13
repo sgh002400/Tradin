@@ -5,10 +5,8 @@ import javax.validation.constraints.NotBlank;
 import com.traders.traders.module.users.service.dto.SignUpDto;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
-@NoArgsConstructor
 public class SignUpRequestDto {
 	@NotBlank(message = "Email must not be blank")
 	private String email;

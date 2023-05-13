@@ -64,13 +64,8 @@ public class Users extends AuditTime implements UserDetails {
 	}
 
 	@Override
-	public String getPassword() {
-		return null;
-	}
-
-	@Override
 	public String getUsername() {
-		return id.toString();
+		return this.name;
 	}
 
 	@Override

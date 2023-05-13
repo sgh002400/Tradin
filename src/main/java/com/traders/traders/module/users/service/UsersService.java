@@ -4,6 +4,7 @@ import static com.traders.traders.common.exception.ExceptionMessage.*;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.traders.traders.common.exception.TradersException;
 import com.traders.traders.common.jwt.JwtProvider;
@@ -18,6 +19,7 @@ import com.traders.traders.module.users.service.dto.SignUpDto;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UsersService implements UserDetailsService {
 	private final UsersRepository usersRepository;
@@ -26,6 +28,8 @@ public class UsersService implements UserDetailsService {
 	private final JwtRemover jwtRemover;
 
 	public TokenResponseDto signUp(SignUpDto request) {
+		checkIfEmailExists(request.getEmail());
+
 		String encryptedPassword = getEncryptedPassword(request.getPassword());
 		Users user = saveAndGetUser(request.getEmail(), encryptedPassword);
 
@@ -33,10 +37,16 @@ public class UsersService implements UserDetailsService {
 	}
 
 	public TokenResponseDto signIn(SignInDto request) {
-		Users user = findByEmail(request);
+		Users user = findByEmail(request.getEmail());
 		checkPasswordCorrespond(request.getPassword(), user.getPassword());
 
 		return createJwtToken(user.getId());
+	}
+
+	private void checkIfEmailExists(String email) {
+		if (usersRepository.findByEmail(email).isPresent()) {
+			throw new TradersException(EMAIL_ALREADY_EXISTS_EXCEPTION);
+		}
 	}
 
 	private void checkPasswordCorrespond(String password, String encryptedPassword) {
@@ -70,8 +80,8 @@ public class UsersService implements UserDetailsService {
 		return jwtProvider.createJwtToken(id);
 	}
 
-	private Users findByEmail(SignInDto request) {
-		return usersRepository.findByEmail(request.getEmail())
+	private Users findByEmail(String email) {
+		return usersRepository.findByEmail(email)
 			.orElseThrow(() -> new TradersException(NOT_FOUND_USER_EXCEPTION));
 	}
 
