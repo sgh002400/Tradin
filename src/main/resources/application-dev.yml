@@ -46,3 +46,4 @@ feign:
 
 secret:
   jwt-secret: ${JWT_SECRET_KEY}
+  aes-secret: ${AES_SECRET_KEY}

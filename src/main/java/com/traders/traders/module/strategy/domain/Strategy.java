@@ -107,6 +107,14 @@ public class Strategy extends AuditTime {
 		updateCurrentPosition(position);
 	}
 
+	public boolean isLongPosition() {
+		return this.currentPosition.getTradingType() == LONG;
+	}
+
+	public boolean isShortPosition() {
+		return this.currentPosition.getTradingType() == SHORT;
+	}
+
 	private void addTotalTradeCount() {
 		this.totalTradeCount++;
 	}

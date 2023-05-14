@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.traders.traders.module.users.domain.Users;
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users, Long> {
+public interface UsersRepository extends JpaRepository<Users, Long>, UsersQueryRepository {
 	Optional<Users> findByEmail(String email);
 }

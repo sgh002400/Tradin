@@ -17,7 +17,7 @@ public class TradersApplication {
 		SpringApplication.run(TradersApplication.class, args);
 	}
 
-	@GetMapping("/")
+	@GetMapping("/health-check")
 	public String healthCheck() {
 		return "Health Check Success";
 	}

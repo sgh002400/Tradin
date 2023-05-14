@@ -22,11 +22,21 @@ public interface BinanceClient {
 		@RequestParam("signature") String signature);
 
 	@PostMapping("/fapi/v1/order")
+	NewOrderDto closePosition(
+		@RequestParam("symbol") String symbol,
+		@RequestParam("side") String side,
+		@RequestParam("type") String type,
+		@RequestParam("closePosition") boolean closePosition,
+		@RequestParam("timestamp") Long timestamp,
+		@RequestHeader("X-MBX-APIKEY") String apiKey,
+		@RequestParam("signature") String signature);
+
+	@PostMapping("/fapi/v1/order")
 	NewOrderDto createOrder(
 		@RequestParam("symbol") String symbol,
 		@RequestParam("side") String side,
 		@RequestParam("type") String type,
-		@RequestParam("quantity") String quantity,
+		@RequestParam("quantity") long quantity,
 		@RequestParam("timestamp") Long timestamp,
 		@RequestHeader("X-MBX-APIKEY") String apiKey,
 		@RequestParam("signature") String signature);

@@ -4,6 +4,7 @@ import static com.traders.traders.common.exception.ExceptionMessage.*;
 
 import java.util.List;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,8 @@ import com.traders.traders.module.strategy.domain.Strategy;
 import com.traders.traders.module.strategy.domain.repository.StrategyRepository;
 import com.traders.traders.module.strategy.domain.repository.dao.StrategyInfoDao;
 import com.traders.traders.module.strategy.service.dto.WebHookDto;
+import com.traders.traders.module.users.domain.repository.dao.AutoTradingSubscriberDao;
+import com.traders.traders.module.users.service.UsersService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,29 +30,44 @@ public class StrategyService {
 
 	private final HistoryService historyService;
 	private final FeignService feignService;
+	private final UsersService userService;
 	private final StrategyRepository strategyRepository;
 
 	public void handleWebHook(WebHookDto request) {
-		autoTrading();
+		Strategy strategy = findByName(request.getName()); //TODO - 예외가 안터짐
 
-		Strategy strategy = findByName(request.getName());
+		autoTrading(strategy);
 		closeHistory(strategy, request);
 		createHistory(strategy, request);
 		updateStrategy(strategy, request);
 	}
 
-	public void autoTrading() {
-		//유저 정보 조회
-		//User user = userService.findSubscribedAutoTradingUsers();
-		String apiKey = "tmp";
-		String secretKey = "tmp";
+	//TODO - 메시지는 생성됐는데 서버가 죽어서 처리를 못했을 때 테스트
+	@Async //TODO - ("asyncTaskExecutor") 붙여야 적용되는지 확인
+	public void autoTrading(Strategy strategy) {
+		List<AutoTradingSubscriberDao> autoTradingSubscribers = userService.findAutoTradingSubscriber(
+			strategy.getName());
 
-		//현재 포지션이 Long이면 Short, Short이면 Long으로 포지션 종료
-		//feignService.closePosition(apiKey, secretKey);
+		for (AutoTradingSubscriberDao autoTradingSubscriber : autoTradingSubscribers) {
+			String apiKey = autoTradingSubscriber.getBinanceApiKey();
+			String secretKey = autoTradingSubscriber.getBinanceSecretKey();
+			//TODO - 전략은 롱, 유저는 숏일 때 테스트
+			if (isCurrentLongPosition(strategy)) {
+				feignService.closePosition(apiKey, secretKey, "SELL");
+				feignService.createOrder(apiKey, secretKey, "BUY", autoTradingSubscriber.getQuantity());
+			} else if (isCurrentShortPosition(strategy)) {
+				feignService.closePosition(apiKey, secretKey, "BUY");
+				feignService.createOrder(apiKey, secretKey, "SELL", autoTradingSubscriber.getQuantity());
+			}
+		}
+	}
 
-		//현재 포지션이 없으면 웹 훅의 포지션에 따라 포지션 진입
-		feignService.createOrder(apiKey, secretKey, "BUY", "1");
+	private static boolean isCurrentLongPosition(Strategy strategy) {
+		return strategy.isLongPosition();
+	}
 
+	private static boolean isCurrentShortPosition(Strategy strategy) {
+		return strategy.isShortPosition();
 	}
 
 	public FindStrategiesInfoResponseDto findStrategiesInfo() {

@@ -2,6 +2,8 @@ package com.traders.traders.module.users.service;
 
 import static com.traders.traders.common.exception.ExceptionMessage.*;
 
+import java.util.List;
+
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,7 @@ import com.traders.traders.common.utils.PasswordEncoder;
 import com.traders.traders.module.users.controller.dto.response.TokenResponseDto;
 import com.traders.traders.module.users.domain.Users;
 import com.traders.traders.module.users.domain.repository.UsersRepository;
+import com.traders.traders.module.users.domain.repository.dao.AutoTradingSubscriberDao;
 import com.traders.traders.module.users.service.dto.SignInDto;
 import com.traders.traders.module.users.service.dto.SignUpDto;
 
@@ -55,6 +58,10 @@ public class UsersService implements UserDetailsService {
 		}
 	}
 
+	public List<AutoTradingSubscriberDao> findAutoTradingSubscriber(String strategyName) {
+		return usersRepository.findByAutoTradingSubscriber(strategyName);
+	}
+
 	private boolean isPasswordCorrespond(String password, String encryptedPassword) {
 		return passwordEncoder.matches(password, encryptedPassword);
 	}
@@ -67,7 +74,7 @@ public class UsersService implements UserDetailsService {
 	private static Users createUser(String email, String encryptedPassword) {
 		return Users.builder()
 			.email(email)
-			.password(encryptedPassword)
+			.encryptedPassword(encryptedPassword)
 			.build();
 	}
 

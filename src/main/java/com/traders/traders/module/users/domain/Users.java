@@ -42,19 +42,31 @@ public class Users extends AuditTime implements UserDetails {
 	@Column(nullable = false)
 	private long quantity;
 
+	@Column
+	private String binanceApiKey;
+
+	@Column
+	private String binanceSecretKey;
+
+	@Column
+	private String subscribedStrategyName;
+
 	@Builder
-	private Users(String email, String password) {
+	private Users(String email, String encryptedPassword) {
 		this.name = "트레이더";
 		this.email = email;
-		this.password = password;
+		this.password = encryptedPassword;
 		this.leverage = 1;
 		this.quantity = 0;
+		this.binanceApiKey = null;
+		this.binanceSecretKey = null;
+		this.subscribedStrategyName = null;
 	}
 
-	public static Users of(String email, String password) {
+	public static Users of(String email, String encryptedPassword) {
 		return Users.builder()
 			.email(email)
-			.password(password)
+			.encryptedPassword(encryptedPassword)
 			.build();
 	}
 
