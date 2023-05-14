@@ -33,15 +33,4 @@ public interface BinanceClient {
 		@RequestParam("timestamp") Long timestamp,
 		@RequestParam("type") String type
 	);
-
-	@PostMapping("/fapi/v1/order")
-	NewOrderDto createOrder(
-		@RequestHeader("X-MBX-APIKEY") String apiKey,
-		@RequestParam("side") String side,
-		@RequestParam("signature") String signature,
-		@RequestParam("symbol") String symbol,
-		@RequestParam("type") String type,
-		@RequestParam("quantity") long quantity,
-		@RequestParam("timestamp") Long timestamp
-	);
 }
