@@ -71,6 +71,7 @@ public class StrategyService {
 	}
 
 	public void subscribeStrategy(Users user, SubscribeStrategyDto request) {
+		System.out.println("userId = " + user.getId());
 		Strategy strategy = findStrategyById(request.getId());
 		String encryptedApiKey = aesUtils.encrypt(request.getBinanceApiKey());
 		String encryptedSecretKey = aesUtils.encrypt(request.getBinanceSecretKey());

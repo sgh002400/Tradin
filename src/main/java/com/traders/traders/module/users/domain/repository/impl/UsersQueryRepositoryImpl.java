@@ -1,5 +1,6 @@
 package com.traders.traders.module.users.domain.repository.impl;
 
+import static com.traders.traders.module.strategy.domain.QStrategy.*;
 import static com.traders.traders.module.users.domain.QUsers.*;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class UsersQueryRepositoryImpl implements UsersQueryRepository {
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<AutoTradingSubscriberDao> findByAutoTradingSubscriber(String strategyName) {
+	public List<AutoTradingSubscriberDao> findByAutoTradingSubscriber(String name) {
 		return jpaQueryFactory.select(new QAutoTradingSubscriberDao(
 				users.leverage,
 				users.quantity,
@@ -24,7 +25,8 @@ public class UsersQueryRepositoryImpl implements UsersQueryRepository {
 				users.binanceSecretKey
 			))
 			.from(users)
-			.where(users.subscribedStrategyName.eq(strategyName))
+			.join(users.strategy, strategy)
+			.where(users.name.eq(name))
 			.fetch();
 	}
 }

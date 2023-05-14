@@ -58,8 +58,8 @@ public class UsersService implements UserDetailsService {
 		}
 	}
 
-	public List<AutoTradingSubscriberDao> findAutoTradingSubscriber(String strategyName) {
-		return usersRepository.findByAutoTradingSubscriber(strategyName);
+	public List<AutoTradingSubscriberDao> findAutoTradingSubscriber(String name) {
+		return usersRepository.findByAutoTradingSubscriber(name);
 	}
 
 	private boolean isPasswordCorrespond(String password, String encryptedPassword) {
