@@ -32,12 +32,7 @@ public class StrategyController {
 
 	@KafkaListener(topics = "Trading", groupId = "trading-strategy-executors")
 	public void handleWebHook(@RequestBody WebHookRequestDto request) {
-		//TODO - 예외 처리 변경하기 (로그 남기게, 재시도)
-		CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()))
-			.exceptionally(ex -> {
-				log.error("Error occurred while handling webhook: ", ex);
-				return null;
-			});
+		CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
 	}
 
 	@GetMapping()

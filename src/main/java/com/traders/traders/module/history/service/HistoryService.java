@@ -21,6 +21,7 @@ public class HistoryService {
 
 	public void closeHistory(Strategy strategy, WebHookDto request) {
 		History history = findLastHistoryByStrategyId(strategy.getId());
+		//TODO - 해당 거래 수익률 계산
 		history.closeOpenPosition(request.getPosition());
 	}
 

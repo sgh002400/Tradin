@@ -40,21 +40,24 @@ public class History extends AuditTime {
 	@AttributeOverride(name = "price", column = @Column(name = "exit_price"))
 	private Position exitPosition;
 
+	@Column(nullable = false)
+	private double profit;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "strategy_id", nullable = false)
 	private Strategy strategy;
 
 	@Builder
-	private History(Position entryPosition, Position exitPosition, Strategy strategy) {
+	private History(Position entryPosition, Strategy strategy) {
 		this.entryPosition = entryPosition;
-		this.exitPosition = exitPosition;
+		this.exitPosition = null;
+		this.profit = 0;
 		this.strategy = strategy;
 	}
 
-	public static History of(Position entryPosition, Position exitPosition, Strategy strategy) {
+	public static History of(Position entryPosition, Strategy strategy) {
 		return History.builder()
 			.entryPosition(entryPosition)
-			.exitPosition(exitPosition)
 			.strategy(strategy)
 			.build();
 	}

@@ -37,17 +37,17 @@ public class StrategyService {
 	private final StrategyRepository strategyRepository;
 	private final AESUtils aesUtils;
 
+	@Async
 	public void handleWebHook(WebHookDto request) {
-		Strategy strategy = findByName(request.getName()); //TODO - 예외가 안터짐
+		Strategy strategy = findByName(request.getName());
 
 		autoTrading(strategy);
-		// closeHistory(strategy, request);
-		// createHistory(strategy, request);
-		// updateStrategy(strategy, request);
+		closeHistory(strategy, request);
+		createHistory(strategy, request);
+		updateStrategy(strategy, request);
 	}
 
-	//TODO - 메시지는 생성됐는데 서버가 죽어서 처리를 못했을 때 테스트
-	@Async //TODO - ("asyncTaskExecutor") 붙여야 적용되는지 확인
+	@Async
 	public void autoTrading(Strategy strategy) {
 		List<AutoTradingSubscriberDao> autoTradingSubscribers = userService.findAutoTradingSubscriberByStrategyName(
 			strategy.getName());
