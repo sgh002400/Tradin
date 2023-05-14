@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/trading/strategies")
+@RequestMapping("/api/v1/strategies")
 public class StrategyController {
 	private final StrategyService strategyService;
 
@@ -37,9 +37,9 @@ public class StrategyController {
 		return strategyService.findStrategiesInfo();
 	}
 
-	@PostMapping("/strategies/{id}/subscriptions")
+	@PostMapping("/{id}/subscriptions")
 	public void subScribe(@AuthenticationPrincipal Users user, @Valid @RequestBody SubscribeStrategyRequestDto request,
 		@PathVariable Long id) {
 		strategyService.subscribeStrategy(user, request.toServiceDto(id));
-	}
+	}z
 }

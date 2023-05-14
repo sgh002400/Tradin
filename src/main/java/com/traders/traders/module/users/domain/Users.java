@@ -80,6 +80,10 @@ public class Users extends AuditTime implements UserDetails {
 		this.binanceSecretKey = encryptedSecretKey;
 	}
 
+	public void updateLeverage(int leverage) {
+		this.leverage = leverage;
+	}
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return Collections.emptyList();

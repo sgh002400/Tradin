@@ -34,7 +34,7 @@ public class UsersService implements UserDetailsService {
 		checkIfEmailExists(request.getEmail());
 
 		String encryptedPassword = getEncryptedPassword(request.getPassword());
-		Users user = saveAndGetUser(request.getEmail(), encryptedPassword);
+		Users user = saveUser(request.getEmail(), encryptedPassword);
 
 		return createJwtToken(user.getId());
 	}
@@ -44,6 +44,11 @@ public class UsersService implements UserDetailsService {
 		checkPasswordCorrespond(request.getPassword(), user.getPassword());
 
 		return createJwtToken(user.getId());
+	}
+
+	public Users findById(Long id) {
+		return usersRepository.findById(id)
+			.orElseThrow(() -> new TradersException(NOT_FOUND_USER_EXCEPTION));
 	}
 
 	private void checkIfEmailExists(String email) {
@@ -58,7 +63,7 @@ public class UsersService implements UserDetailsService {
 		}
 	}
 
-	public List<AutoTradingSubscriberDao> findAutoTradingSubscriber(String name) {
+	public List<AutoTradingSubscriberDao> findAutoTradingSubscriberByStrategyName(String name) {
 		return usersRepository.findByAutoTradingSubscriber(name);
 	}
 
@@ -66,7 +71,7 @@ public class UsersService implements UserDetailsService {
 		return passwordEncoder.matches(password, encryptedPassword);
 	}
 
-	private Users saveAndGetUser(String email, String encryptedPassword) {
+	private Users saveUser(String email, String encryptedPassword) {
 		Users users = createUser(email, encryptedPassword);
 		return usersRepository.save(users);
 	}

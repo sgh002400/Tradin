@@ -48,7 +48,7 @@ public class StrategyService {
 	//TODO - 메시지는 생성됐는데 서버가 죽어서 처리를 못했을 때 테스트
 	@Async //TODO - ("asyncTaskExecutor") 붙여야 적용되는지 확인
 	public void autoTrading(Strategy strategy) {
-		List<AutoTradingSubscriberDao> autoTradingSubscribers = userService.findAutoTradingSubscriber(
+		List<AutoTradingSubscriberDao> autoTradingSubscribers = userService.findAutoTradingSubscriberByStrategyName(
 			strategy.getName());
 
 		for (AutoTradingSubscriberDao autoTradingSubscriber : autoTradingSubscribers) {
@@ -71,12 +71,20 @@ public class StrategyService {
 	}
 
 	public void subscribeStrategy(Users user, SubscribeStrategyDto request) {
-		System.out.println("userId = " + user.getId());
+		Users savedUser = findUserById(user.getId());
 		Strategy strategy = findStrategyById(request.getId());
-		String encryptedApiKey = aesUtils.encrypt(request.getBinanceApiKey());
-		String encryptedSecretKey = aesUtils.encrypt(request.getBinanceSecretKey());
+		String encryptedApiKey = getEncryptedApiKey(request.getBinanceApiKey());
+		String encryptedSecretKey = getEncryptedApiKey(request.getBinanceSecretKey());
 
-		user.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey);
+		savedUser.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey);
+	}
+
+	private String getEncryptedApiKey(String key) {
+		return aesUtils.encrypt(key);
+	}
+
+	private Users findUserById(Long id) {
+		return userService.findById(id);
 	}
 
 	private Strategy findStrategyById(Long id) {
