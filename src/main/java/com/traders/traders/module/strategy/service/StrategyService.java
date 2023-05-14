@@ -41,9 +41,9 @@ public class StrategyService {
 		Strategy strategy = findByName(request.getName()); //TODO - 예외가 안터짐
 
 		autoTrading(strategy);
-		closeHistory(strategy, request);
-		createHistory(strategy, request);
-		updateStrategy(strategy, request);
+		// closeHistory(strategy, request);
+		// createHistory(strategy, request);
+		// updateStrategy(strategy, request);
 	}
 
 	//TODO - 메시지는 생성됐는데 서버가 죽어서 처리를 못했을 때 테스트
@@ -53,10 +53,10 @@ public class StrategyService {
 			strategy.getName());
 
 		for (AutoTradingSubscriberDao autoTradingSubscriber : autoTradingSubscribers) {
-			String apiKey = autoTradingSubscriber.getBinanceApiKey();
-			String secretKey = autoTradingSubscriber.getBinanceSecretKey();
-			//TODO - 전략은 롱, 유저는 숏일 때 테스트
-			closeCurrentPositionAndOpenNewPosition(strategy, autoTradingSubscriber, apiKey, secretKey);
+			String apiKey = getDecryptedKey(autoTradingSubscriber.getBinanceApiKey());
+			String secretKey = getDecryptedKey(autoTradingSubscriber.getBinanceSecretKey());
+
+			switchPosition(strategy, apiKey, secretKey, autoTradingSubscriber.getQuantity());
 		}
 	}
 
@@ -68,8 +68,8 @@ public class StrategyService {
 	public void subscribeStrategy(Users user, SubscribeStrategyDto request) {
 		Users savedUser = findUserById(user.getId());
 		Strategy strategy = findStrategyById(request.getId());
-		String encryptedApiKey = getEncryptedApiKey(request.getBinanceApiKey());
-		String encryptedSecretKey = getEncryptedApiKey(request.getBinanceSecretKey());
+		String encryptedApiKey = getEncryptedKey(request.getBinanceApiKey());
+		String encryptedSecretKey = getEncryptedKey(request.getBinanceSecretKey());
 
 		savedUser.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey);
 	}
@@ -82,19 +82,20 @@ public class StrategyService {
 		strategyRepository.save(strategy);
 	}
 
-	private void closeCurrentPositionAndOpenNewPosition(Strategy strategy,
-		AutoTradingSubscriberDao autoTradingSubscriber, String apiKey, String secretKey) {
+	private void switchPosition(Strategy strategy, String apiKey, String secretKey, double orderQuantity) {
 		if (isCurrentLongPosition(strategy)) {
-			feignService.closePosition(apiKey, secretKey, "SELL");
-			feignService.createOrder(apiKey, secretKey, "BUY", autoTradingSubscriber.getQuantity());
+			feignService.switchPosition(apiKey, secretKey, "SELL", orderQuantity);
 		} else if (isCurrentShortPosition(strategy)) {
-			feignService.closePosition(apiKey, secretKey, "BUY");
-			feignService.createOrder(apiKey, secretKey, "SELL", autoTradingSubscriber.getQuantity());
+			feignService.switchPosition(apiKey, secretKey, "BUY", orderQuantity);
 		}
 	}
 
-	private String getEncryptedApiKey(String key) {
+	private String getEncryptedKey(String key) {
 		return aesUtils.encrypt(key);
+	}
+
+	private String getDecryptedKey(String encryptedKey) {
+		return aesUtils.decrypt(encryptedKey);
 	}
 
 	private Users findUserById(Long id) {

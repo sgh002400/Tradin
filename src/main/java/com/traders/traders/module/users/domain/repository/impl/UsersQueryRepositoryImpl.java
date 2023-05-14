@@ -26,7 +26,7 @@ public class UsersQueryRepositoryImpl implements UsersQueryRepository {
 			))
 			.from(users)
 			.join(users.strategy, strategy)
-			.where(users.name.eq(name))
+			.where(users.strategy.name.eq(name))
 			.fetch();
 	}
 }

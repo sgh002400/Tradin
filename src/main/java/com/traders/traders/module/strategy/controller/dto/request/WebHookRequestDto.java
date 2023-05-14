@@ -16,7 +16,7 @@ public class WebHookRequestDto {
 	@NotBlank
 	private String name;
 
-	@NotBlank //TODO - test
+	@NotBlank //TODO - 안넣고 test 해보기
 	private Position position;
 
 	public WebHookDto toServiceDto() {

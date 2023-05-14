@@ -16,6 +16,7 @@ public interface BinanceClient {
 
 	@GetMapping("/fapi/v2/positionRisk")
 	List<CurrentPositionInfoDto> getCurrentPositionInfo(
+		@RequestParam("recvWindow") Long recvWindow,
 		@RequestParam("symbol") String symbol,
 		@RequestParam("timestamp") Long timestamp,
 		@RequestHeader("X-MBX-APIKEY") String apiKey,
@@ -23,21 +24,24 @@ public interface BinanceClient {
 
 	@PostMapping("/fapi/v1/order")
 	NewOrderDto closePosition(
-		@RequestParam("symbol") String symbol,
-		@RequestParam("side") String side,
-		@RequestParam("type") String type,
-		@RequestParam("closePosition") boolean closePosition,
-		@RequestParam("timestamp") Long timestamp,
 		@RequestHeader("X-MBX-APIKEY") String apiKey,
-		@RequestParam("signature") String signature);
+		@RequestParam("quantity") double quantity,
+		@RequestParam("recvWindow") Long recvWindow,
+		@RequestParam("side") String side,
+		@RequestParam("signature") String signature,
+		@RequestParam("symbol") String symbol,
+		@RequestParam("timestamp") Long timestamp,
+		@RequestParam("type") String type
+	);
 
 	@PostMapping("/fapi/v1/order")
 	NewOrderDto createOrder(
-		@RequestParam("symbol") String symbol,
+		@RequestHeader("X-MBX-APIKEY") String apiKey,
 		@RequestParam("side") String side,
+		@RequestParam("signature") String signature,
+		@RequestParam("symbol") String symbol,
 		@RequestParam("type") String type,
 		@RequestParam("quantity") long quantity,
-		@RequestParam("timestamp") Long timestamp,
-		@RequestHeader("X-MBX-APIKEY") String apiKey,
-		@RequestParam("signature") String signature);
+		@RequestParam("timestamp") Long timestamp
+	);
 }

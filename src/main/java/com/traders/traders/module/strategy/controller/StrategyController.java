@@ -21,16 +21,23 @@ import com.traders.traders.module.users.controller.dto.request.SubscribeStrategy
 import com.traders.traders.module.users.domain.Users;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/strategies")
+@Slf4j
 public class StrategyController {
 	private final StrategyService strategyService;
 
 	@KafkaListener(topics = "Trading", groupId = "trading-strategy-executors")
 	public void handleWebHook(@RequestBody WebHookRequestDto request) {
-		CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
+		//TODO - 예외 처리 변경하기 (로그 남기게, 재시도)
+		CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()))
+			.exceptionally(ex -> {
+				log.error("Error occurred while handling webhook: ", ex);
+				return null;
+			});
 	}
 
 	@GetMapping()

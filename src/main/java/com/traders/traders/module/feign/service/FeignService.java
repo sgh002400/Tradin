@@ -1,6 +1,7 @@
 package com.traders.traders.module.feign.service;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,27 +19,39 @@ public class FeignService {
 	private static final String TICKER = "BTCUSDT";
 	private final BinanceClient feignClient;
 
-	public CurrentPositionInfoDto getCurrentPositionInfo(String apiKey, String secretKey) {
+	//queryString은 이름 기준으로 오름차순으로 정렬해야 됨. 요청을 보낼 때 파라미터 순서는 queryString과 동일해야 됨
+	public void switchPosition(String apiKey, String secretKey, String side, double orderQuantity) {
 		Long timestamp = Instant.now().toEpochMilli();
-		String queryString = "symbol=" + TICKER + "&timestamp=" + timestamp;
+		double quantity = Math.abs(getBtcusdtPositionQuantity(apiKey, secretKey)) + orderQuantity;
+
+		String queryString =
+			"quantity=" + quantity + "&recvWindow=1000" + "&side=" + side + "&symbol=" + TICKER + "&timestamp="
+				+ timestamp
+				+ "&type=MARKET";
+
 		String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
-		return feignClient.getCurrentPositionInfo(TICKER, timestamp, apiKey, signature).get(0);
+		feignClient.closePosition(apiKey, quantity, 1000L, side, signature, TICKER, timestamp, "MARKET");
 	}
 
-	public void closePosition(String apiKey, String secretKey, String side) {
+	public Double getBtcusdtPositionQuantity(String apiKey, String secretKey) {
 		Long timestamp = Instant.now().toEpochMilli();
-		String queryString = "symbol=" + TICKER + "&timestamp=" + timestamp;
+		String queryString = "recvWindow=1000" + "&symbol=" + TICKER + "&timestamp=" + timestamp;
 		String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
-		feignClient.closePosition(TICKER, side, "MARKET", true, timestamp, apiKey, signature);
+		List<CurrentPositionInfoDto> currentPositionInfoDtos = feignClient.getCurrentPositionInfo(1000L, TICKER,
+			timestamp,
+			apiKey, signature);
+
+		return extractBtcusdtPositionQuantity(currentPositionInfoDtos);
 	}
 
-	public void createOrder(String apiKey, String secretKey, String side, long quantity) {
-		Long timestamp = Instant.now().toEpochMilli();
-		String queryString = "symbol=" + TICKER + "&side=BUY&type=MARKET&quantity=1" + "&timestamp=" + timestamp;
-		String signature = SignatureGenerator.generateSignature(queryString, secretKey);
-
-		feignClient.createOrder(TICKER, side, "MARKET", quantity, timestamp, apiKey, signature);
+	private Double extractBtcusdtPositionQuantity(List<CurrentPositionInfoDto> currentPositionInfoDtos) {
+		for (CurrentPositionInfoDto dto : currentPositionInfoDtos) {
+			if (dto.getSymbol().equals(TICKER)) {
+				return Double.parseDouble(dto.getPositionAmt());
+			}
+		}
+		return null;
 	}
 }

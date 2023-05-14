@@ -43,7 +43,7 @@ public class Users extends AuditTime implements UserDetails {
 	private int leverage;
 
 	@Column(nullable = false)
-	private long quantity;
+	private double quantity;
 
 	@Column
 	private String binanceApiKey;
