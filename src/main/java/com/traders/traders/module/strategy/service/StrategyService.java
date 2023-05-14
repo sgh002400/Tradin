@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.traders.traders.common.exception.TradersException;
+import com.traders.traders.common.utils.AESUtils;
 import com.traders.traders.module.feign.service.FeignService;
 import com.traders.traders.module.history.service.HistoryService;
 import com.traders.traders.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
@@ -16,8 +17,10 @@ import com.traders.traders.module.strategy.domain.Strategy;
 import com.traders.traders.module.strategy.domain.repository.StrategyRepository;
 import com.traders.traders.module.strategy.domain.repository.dao.StrategyInfoDao;
 import com.traders.traders.module.strategy.service.dto.WebHookDto;
+import com.traders.traders.module.users.domain.Users;
 import com.traders.traders.module.users.domain.repository.dao.AutoTradingSubscriberDao;
 import com.traders.traders.module.users.service.UsersService;
+import com.traders.traders.module.users.service.dto.SubscribeStrategyDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +30,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class StrategyService {
-
 	private final HistoryService historyService;
 	private final FeignService feignService;
 	private final UsersService userService;
 	private final StrategyRepository strategyRepository;
+	private final AESUtils aesUtils;
 
 	public void handleWebHook(WebHookDto request) {
 		Strategy strategy = findByName(request.getName()); //TODO - 예외가 안터짐
@@ -62,17 +65,30 @@ public class StrategyService {
 		}
 	}
 
+	public FindStrategiesInfoResponseDto findStrategiesInfo() {
+		List<StrategyInfoDao> strategiesInfo = findStrategyInfoDaos();
+		return new FindStrategiesInfoResponseDto(strategiesInfo);
+	}
+
+	public void subscribeStrategy(Users user, SubscribeStrategyDto request) {
+		Strategy strategy = findStrategyById(request.getId());
+		String encryptedApiKey = aesUtils.encrypt(request.getBinanceApiKey());
+		String encryptedSecretKey = aesUtils.encrypt(request.getBinanceSecretKey());
+
+		user.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey);
+	}
+
+	private Strategy findStrategyById(Long id) {
+		return strategyRepository.findById(id)
+			.orElseThrow(() -> new TradersException(NOT_FOUND_STRATEGY_EXCEPTION));
+	}
+
 	private static boolean isCurrentLongPosition(Strategy strategy) {
 		return strategy.isLongPosition();
 	}
 
 	private static boolean isCurrentShortPosition(Strategy strategy) {
 		return strategy.isShortPosition();
-	}
-
-	public FindStrategiesInfoResponseDto findStrategiesInfo() {
-		List<StrategyInfoDao> strategiesInfo = findStrategyInfoDaos();
-		return new FindStrategiesInfoResponseDto(strategiesInfo);
 	}
 
 	private void closeHistory(Strategy strategy, WebHookDto request) {

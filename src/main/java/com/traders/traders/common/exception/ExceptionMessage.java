@@ -36,6 +36,8 @@ public enum ExceptionMessage {
 	IP_RATE_LIMIT_EXCEEDED_EXCEPTION(TOO_MANY_REQUESTS, "IP당 최대 요청 횟수를 초과하였습니다."),
 
 	//500 Internal Server Error
+	ENCRYPT_FAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "암호화에 실패하였습니다."),
+	DECRYPT_FAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "복호화에 실패하였습니다."),
 	;
 
 	private final HttpStatus httpStatus;

@@ -8,11 +8,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.traders.traders.common.jpa.AuditTime;
+import com.traders.traders.module.strategy.domain.Strategy;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -48,8 +51,9 @@ public class Users extends AuditTime implements UserDetails {
 	@Column
 	private String binanceSecretKey;
 
-	@Column
-	private String subscribedStrategyName;
+	@JoinColumn(name = "strategy_id")
+	@ManyToOne
+	private Strategy strategy;
 
 	@Builder
 	private Users(String email, String encryptedPassword) {
@@ -60,7 +64,7 @@ public class Users extends AuditTime implements UserDetails {
 		this.quantity = 0;
 		this.binanceApiKey = null;
 		this.binanceSecretKey = null;
-		this.subscribedStrategyName = null;
+		this.strategy = null;
 	}
 
 	public static Users of(String email, String encryptedPassword) {
@@ -68,6 +72,12 @@ public class Users extends AuditTime implements UserDetails {
 			.email(email)
 			.encryptedPassword(encryptedPassword)
 			.build();
+	}
+
+	public void subscribeStrategy(Strategy strategy, String encryptedApiKey, String encryptedSecretKey) {
+		this.strategy = strategy;
+		this.binanceApiKey = encryptedApiKey;
+		this.binanceSecretKey = encryptedSecretKey;
 	}
 
 	@Override
