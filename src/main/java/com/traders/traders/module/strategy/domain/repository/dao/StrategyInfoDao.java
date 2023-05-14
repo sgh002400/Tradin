@@ -16,7 +16,7 @@ public class StrategyInfoDao {
 	private final double winningRate;
 	private final double totalProfitRate;
 	private final double totalLossRate;
-	private final double totalTradeCount;
+	private final int totalTradeCount;
 	private final int winCount;
 	private final int lossCount;
 	private final TradingType tradingType;
@@ -25,7 +25,7 @@ public class StrategyInfoDao {
 
 	@QueryProjection
 	public StrategyInfoDao(Long id, String name, double profitFactor, double netProfitRate, double winningRate,
-		double totalProfitRate, double totalLossRate, double totalTradeCount, int winCount, int lossCount,
+		double totalProfitRate, double totalLossRate, int totalTradeCount, int winCount, int lossCount,
 		TradingType tradingType, LocalDateTime time, int price) {
 		this.id = id;
 		this.name = name;

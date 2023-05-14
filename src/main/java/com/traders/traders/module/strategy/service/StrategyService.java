@@ -12,6 +12,7 @@ import com.traders.traders.common.exception.TradersException;
 import com.traders.traders.common.utils.AESUtils;
 import com.traders.traders.module.feign.service.FeignService;
 import com.traders.traders.module.history.service.HistoryService;
+import com.traders.traders.module.strategy.controller.dto.request.CreateStrategyDto;
 import com.traders.traders.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
 import com.traders.traders.module.strategy.domain.Strategy;
 import com.traders.traders.module.strategy.domain.repository.StrategyRepository;
@@ -55,13 +56,7 @@ public class StrategyService {
 			String apiKey = autoTradingSubscriber.getBinanceApiKey();
 			String secretKey = autoTradingSubscriber.getBinanceSecretKey();
 			//TODO - 전략은 롱, 유저는 숏일 때 테스트
-			if (isCurrentLongPosition(strategy)) {
-				feignService.closePosition(apiKey, secretKey, "SELL");
-				feignService.createOrder(apiKey, secretKey, "BUY", autoTradingSubscriber.getQuantity());
-			} else if (isCurrentShortPosition(strategy)) {
-				feignService.closePosition(apiKey, secretKey, "BUY");
-				feignService.createOrder(apiKey, secretKey, "SELL", autoTradingSubscriber.getQuantity());
-			}
+			closeCurrentPositionAndOpenNewPosition(strategy, autoTradingSubscriber, apiKey, secretKey);
 		}
 	}
 
@@ -77,6 +72,25 @@ public class StrategyService {
 		String encryptedSecretKey = getEncryptedApiKey(request.getBinanceSecretKey());
 
 		savedUser.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey);
+	}
+
+	public void createStrategy(CreateStrategyDto request) {
+		Strategy strategy = Strategy.of(request.getName(), request.getProfitFactor(), request.getNetProfitRate(),
+			request.getWinningRate(), request.getTotalProfitRate(),
+			request.getTotalLossRate(), request.getWinCount(), request.getLossCount(), request.getCurrentPosition());
+
+		strategyRepository.save(strategy);
+	}
+
+	private void closeCurrentPositionAndOpenNewPosition(Strategy strategy,
+		AutoTradingSubscriberDao autoTradingSubscriber, String apiKey, String secretKey) {
+		if (isCurrentLongPosition(strategy)) {
+			feignService.closePosition(apiKey, secretKey, "SELL");
+			feignService.createOrder(apiKey, secretKey, "BUY", autoTradingSubscriber.getQuantity());
+		} else if (isCurrentShortPosition(strategy)) {
+			feignService.closePosition(apiKey, secretKey, "BUY");
+			feignService.createOrder(apiKey, secretKey, "SELL", autoTradingSubscriber.getQuantity());
+		}
 	}
 
 	private String getEncryptedApiKey(String key) {

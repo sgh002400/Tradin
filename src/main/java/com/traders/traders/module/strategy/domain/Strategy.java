@@ -43,7 +43,7 @@ public class Strategy extends AuditTime {
 	private double totalLossRate;
 
 	@Column(nullable = false)
-	private double totalTradeCount;
+	private int totalTradeCount;
 
 	@Column(nullable = false)
 	private int winCount;
@@ -56,31 +56,31 @@ public class Strategy extends AuditTime {
 
 	@Builder
 	private Strategy(String name, double profitFactor, double netProfitRate, double winningRate,
-		Position currentPosition, double totalProfitRate, double totalLossRate, int winCount, int lossCount) {
+		double totalProfitRate, double totalLossRate, int winCount, int lossCount, Position currentPosition) {
 		this.name = name;
 		this.profitFactor = profitFactor;
 		this.netProfitRate = netProfitRate;
 		this.winningRate = winningRate;
-		this.currentPosition = currentPosition;
 		this.totalProfitRate = totalProfitRate;
 		this.totalLossRate = totalLossRate;
 		this.totalTradeCount = winCount + lossCount;
 		this.winCount = winCount;
 		this.lossCount = lossCount;
+		this.currentPosition = currentPosition;
 	}
 
 	public static Strategy of(String name, double profitFactor, double netProfitRate, double winningRate,
-		Position currentPosition, double totalProfitRate, double totalLossRate, int winCount, int lossCount) {
+		double totalProfitRate, double totalLossRate, int winCount, int lossCount, Position currentPosition) {
 		return Strategy.builder()
 			.name(name)
 			.profitFactor(profitFactor)
 			.netProfitRate(netProfitRate)
 			.winningRate(winningRate)
-			.currentPosition(currentPosition)
 			.totalProfitRate(totalProfitRate)
 			.totalLossRate(totalLossRate)
 			.winCount(winCount)
 			.lossCount(lossCount)
+			.currentPosition(currentPosition)
 			.build();
 	}
 
