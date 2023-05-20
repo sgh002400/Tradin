@@ -26,7 +26,7 @@ public class HistoryService {
 	}
 
 	public void createHistory(Strategy strategy, WebHookDto request) {
-		History.of(request.getPosition(), null, strategy);
+		History.of(request.getPosition(), strategy);
 	}
 
 	private History findLastHistoryByStrategyId(Long id) {
