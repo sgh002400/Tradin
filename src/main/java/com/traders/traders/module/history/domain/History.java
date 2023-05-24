@@ -41,7 +41,7 @@ public class History extends AuditTime {
 	private Position exitPosition;
 
 	@Column(nullable = false)
-	private double profit;
+	private double profitRate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "strategy_id", nullable = false)
@@ -51,7 +51,7 @@ public class History extends AuditTime {
 	private History(Position entryPosition, Strategy strategy) {
 		this.entryPosition = entryPosition;
 		this.exitPosition = null;
-		this.profit = 0;
+		this.profitRate = 0;
 		this.strategy = strategy;
 	}
 
