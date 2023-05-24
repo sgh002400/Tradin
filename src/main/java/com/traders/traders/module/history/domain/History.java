@@ -1,5 +1,7 @@
 package com.traders.traders.module.history.domain;
 
+import static com.traders.traders.module.strategy.domain.TradingType.*;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -64,5 +66,19 @@ public class History extends AuditTime {
 
 	public void closeOpenPosition(Position position) {
 		this.exitPosition = position;
+	}
+
+	public void calculateProfitRate() {
+		if (isOpenPositionLong()) {
+			this.profitRate =
+				(double)(this.exitPosition.getPrice() - this.entryPosition.getPrice()) / this.entryPosition.getPrice();
+		} else {
+			this.profitRate =
+				(double)(this.entryPosition.getPrice() - this.exitPosition.getPrice()) / this.entryPosition.getPrice();
+		}
+	}
+
+	private boolean isOpenPositionLong() {
+		return this.entryPosition.getTradingType() == LONG;
 	}
 }

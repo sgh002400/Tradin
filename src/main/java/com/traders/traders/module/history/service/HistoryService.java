@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.traders.traders.common.exception.TradersException;
 import com.traders.traders.module.history.domain.History;
 import com.traders.traders.module.history.domain.repository.HistoryRepository;
+import com.traders.traders.module.strategy.domain.Position;
 import com.traders.traders.module.strategy.domain.Strategy;
 import com.traders.traders.module.strategy.service.dto.WebHookDto;
 
@@ -21,12 +22,20 @@ public class HistoryService {
 
 	public void closeHistory(Strategy strategy, WebHookDto request) {
 		History history = findLastHistoryByStrategyId(strategy.getId());
-		//TODO - 해당 거래 수익률 계산
-		history.closeOpenPosition(request.getPosition());
+		closeOpenPosition(history, request.getPosition());
+		calculateProfitRate(history); //TODO - history.exitPosition 잘 되는지랑 수치 계산 잘 되는지 테스트 해보기
 	}
 
 	public void createHistory(Strategy strategy, WebHookDto request) {
 		History.of(request.getPosition(), strategy);
+	}
+
+	private static void calculateProfitRate(History history) {
+		history.calculateProfitRate();
+	}
+
+	private static void closeOpenPosition(History history, Position position) {
+		history.closeOpenPosition(position);
 	}
 
 	private History findLastHistoryByStrategyId(Long id) {
