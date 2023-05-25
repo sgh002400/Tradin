@@ -103,7 +103,6 @@ public class Strategy extends AuditTime {
 		updateProfitFactor();
 		updateWinRate();
 		updateNetProfitRate();
-
 		updateCurrentPosition(position);
 	}
 
@@ -148,7 +147,7 @@ public class Strategy extends AuditTime {
 	}
 
 	private void updateWinRate() {
-		this.winningRate = this.winCount / this.totalTradeCount;
+		this.winningRate = (double)this.winCount / this.totalTradeCount * 100;
 	}
 
 	private void updateNetProfitRate() {
