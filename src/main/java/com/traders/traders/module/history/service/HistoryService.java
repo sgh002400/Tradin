@@ -10,7 +10,6 @@ import com.traders.traders.module.history.domain.History;
 import com.traders.traders.module.history.domain.repository.HistoryRepository;
 import com.traders.traders.module.strategy.domain.Position;
 import com.traders.traders.module.strategy.domain.Strategy;
-import com.traders.traders.module.strategy.service.dto.WebHookDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,14 +19,15 @@ import lombok.RequiredArgsConstructor;
 public class HistoryService {
 	private final HistoryRepository historyRepository;
 
-	public void closeHistory(Strategy strategy, WebHookDto request) {
+	public void closeOngoingHistory(Strategy strategy, Position position) {
 		History history = findLastHistoryByStrategyId(strategy.getId());
-		closeOpenPosition(history, request.getPosition());
+		closeOpenPosition(history, position);
 		calculateProfitRate(history); //TODO - history.exitPosition 잘 되는지랑 수치 계산 잘 되는지 테스트 해보기
 	}
 
-	public void createHistory(Strategy strategy, WebHookDto request) {
-		History.of(request.getPosition(), strategy);
+	public void createNewHistory(Strategy strategy, Position position) {
+		History newHistory = History.of(position, strategy);
+		historyRepository.save(newHistory);
 	}
 
 	private static void calculateProfitRate(History history) {

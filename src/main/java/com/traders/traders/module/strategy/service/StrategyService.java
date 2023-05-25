@@ -14,6 +14,7 @@ import com.traders.traders.module.feign.service.FeignService;
 import com.traders.traders.module.history.service.HistoryService;
 import com.traders.traders.module.strategy.controller.dto.request.CreateStrategyDto;
 import com.traders.traders.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
+import com.traders.traders.module.strategy.domain.Position;
 import com.traders.traders.module.strategy.domain.Strategy;
 import com.traders.traders.module.strategy.domain.repository.StrategyRepository;
 import com.traders.traders.module.strategy.domain.repository.dao.StrategyInfoDao;
@@ -42,9 +43,9 @@ public class StrategyService {
 		Strategy strategy = findByName(request.getName());
 
 		autoTrading(strategy);
-		closeHistory(strategy, request);
-		createHistory(strategy, request);
-		updateStrategy(strategy, request);
+		closeOngoingHistory(strategy, request.getPosition());
+		createNewHistory(strategy, request.getPosition());
+		updateStrategy(strategy, request.getPosition());
 	}
 
 	@Async
@@ -115,16 +116,16 @@ public class StrategyService {
 		return strategy.isShortPosition();
 	}
 
-	private void closeHistory(Strategy strategy, WebHookDto request) {
-		historyService.closeHistory(strategy, request);
+	private void closeOngoingHistory(Strategy strategy, Position position) {
+		historyService.closeOngoingHistory(strategy, position);
 	}
 
-	private void createHistory(Strategy strategy, WebHookDto request) {
-		historyService.createHistory(strategy, request);
+	private void createNewHistory(Strategy strategy, Position position) {
+		historyService.createNewHistory(strategy, position);
 	}
 
-	private void updateStrategy(Strategy strategy, WebHookDto request) {
-		strategy.updateMetaData(request.getPosition());
+	private void updateStrategy(Strategy strategy, Position position) {
+		strategy.updateMetaData(position);
 	}
 
 	private Strategy findByName(String name) {
