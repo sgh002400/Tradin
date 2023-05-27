@@ -2,16 +2,18 @@ package com.traders.traders.common.utils;
 
 import static com.traders.traders.common.exception.ExceptionMessage.*;
 
+import java.nio.ByteBuffer;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -23,19 +25,25 @@ import com.traders.traders.common.exception.TradersException;
 public class AESUtils {
 	private static final String ALGORITHM = "AES/CTR/NoPadding"; //TODO - 잘 동작하는지 테스트 (원래는 "AES/CBC/PKCS5Padding")
 
+	private static final int GCM_TAG_LENGTH = 128;
+	private static final int IV_SIZE = 12;
 	@Value("${secret.aes-secret}")
 	private String key;
 
 	public String encrypt(String text) {
 		try {
-			String iv = key.substring(0, 16);
 			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), "AES");
-			IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes());
-			cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-
+			SecureRandom random = new SecureRandom();
+			byte[] iv = new byte[IV_SIZE];
+			random.nextBytes(iv);
+			GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+			cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmParameterSpec);
 			byte[] encrypted = cipher.doFinal(text.getBytes());
-			return Base64.getEncoder().encodeToString(encrypted);
+			ByteBuffer byteBuffer = ByteBuffer.allocate(iv.length + encrypted.length);
+			byteBuffer.put(iv);
+			byteBuffer.put(encrypted);
+			return Base64.getEncoder().encodeToString(byteBuffer.array());
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
 				 InvalidAlgorithmParameterException | IllegalBlockSizeException |
 				 BadPaddingException e) {
@@ -45,17 +53,19 @@ public class AESUtils {
 
 	public String decrypt(String encryptedText) {
 		try {
-			String iv = key.substring(0, 16);
 			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), "AES");
-			IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes());
-			cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-
 			byte[] decoded = Base64.getDecoder().decode(encryptedText);
-			return new String(cipher.doFinal(decoded));
+			ByteBuffer byteBuffer = ByteBuffer.wrap(decoded);
+			byte[] iv = new byte[IV_SIZE];
+			byteBuffer.get(iv);
+			byte[] encrypted = new byte[byteBuffer.remaining()];
+			byteBuffer.get(encrypted);
+			GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+			cipher.init(Cipher.DECRYPT_MODE, keySpec, gcmParameterSpec);
+			return new String(cipher.doFinal(encrypted));
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
-				 InvalidAlgorithmParameterException |
-				 IllegalBlockSizeException | BadPaddingException e) {
+				 InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
 			throw new TradersException(DECRYPT_FAIL_EXCEPTION);
 		}
 	}
