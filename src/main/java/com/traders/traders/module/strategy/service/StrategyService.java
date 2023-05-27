@@ -45,7 +45,7 @@ public class StrategyService {
 		autoTrading(strategy);
 		closeOngoingHistory(strategy, request.getPosition());
 		createNewHistory(strategy, request.getPosition());
-		updateStrategy(strategy, request.getPosition());
+		updateStrategyMetaData(strategy, request.getPosition());
 	}
 
 	@Async
@@ -76,8 +76,8 @@ public class StrategyService {
 	}
 
 	public void createStrategy(CreateStrategyDto request) {
-		Strategy strategy = Strategy.of(request.getName(), request.getProfitFactor(), request.getNetProfitRate(),
-			request.getWinningRate(), request.getTotalProfitRate(),
+		Strategy strategy = Strategy.of(request.getName(), request.getProfitFactor(), request.getWinningRate(),
+			request.getSimpleProfitRate(), request.getCompoundProfitRate(), request.getTotalProfitRate(),
 			request.getTotalLossRate(), request.getWinCount(), request.getLossCount(), request.getCurrentPosition());
 
 		strategyRepository.save(strategy);
@@ -124,7 +124,7 @@ public class StrategyService {
 		historyService.createNewHistory(strategy, position);
 	}
 
-	private void updateStrategy(Strategy strategy, Position position) {
+	private void updateStrategyMetaData(Strategy strategy, Position position) {
 		strategy.updateMetaData(position);
 	}
 

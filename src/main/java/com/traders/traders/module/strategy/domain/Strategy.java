@@ -31,16 +31,19 @@ public class Strategy extends AuditTime {
 	private double profitFactor;
 
 	@Column(nullable = false)
-	private double netProfitRate;
-
-	@Column(nullable = false)
 	private double winningRate;
 
 	@Column(nullable = false)
-	private double totalProfitRate;
+	private double simpleProfitRate; //단리 수익률
 
 	@Column(nullable = false)
-	private double totalLossRate;
+	private double compoundProfitRate; // 복리 수익률
+
+	@Column(nullable = false)
+	private double totalProfitRate; //총 수익률
+
+	@Column(nullable = false)
+	private double totalLossRate; //총 손해율
 
 	@Column(nullable = false)
 	private int totalTradeCount;
@@ -55,12 +58,14 @@ public class Strategy extends AuditTime {
 	private Position currentPosition;
 
 	@Builder
-	private Strategy(String name, double profitFactor, double netProfitRate, double winningRate,
+	private Strategy(String name, double profitFactor, double winningRate, double simpleProfitRate,
+		double compoundProfitRate,
 		double totalProfitRate, double totalLossRate, int winCount, int lossCount, Position currentPosition) {
 		this.name = name;
 		this.profitFactor = profitFactor;
-		this.netProfitRate = netProfitRate;
 		this.winningRate = winningRate;
+		this.simpleProfitRate = simpleProfitRate;
+		this.compoundProfitRate = compoundProfitRate;
 		this.totalProfitRate = totalProfitRate;
 		this.totalLossRate = totalLossRate;
 		this.totalTradeCount = winCount + lossCount;
@@ -69,13 +74,15 @@ public class Strategy extends AuditTime {
 		this.currentPosition = currentPosition;
 	}
 
-	public static Strategy of(String name, double profitFactor, double netProfitRate, double winningRate,
+	public static Strategy of(String name, double profitFactor, double winningRate, double simpleProfitRate,
+		double compoundProfitRate,
 		double totalProfitRate, double totalLossRate, int winCount, int lossCount, Position currentPosition) {
 		return Strategy.builder()
 			.name(name)
 			.profitFactor(profitFactor)
-			.netProfitRate(netProfitRate)
 			.winningRate(winningRate)
+			.simpleProfitRate(simpleProfitRate)
+			.compoundProfitRate(compoundProfitRate)
 			.totalProfitRate(totalProfitRate)
 			.totalLossRate(totalLossRate)
 			.winCount(winCount)
@@ -102,7 +109,8 @@ public class Strategy extends AuditTime {
 		addTotalTradeCount();
 		updateProfitFactor();
 		updateWinRate();
-		updateNetProfitRate();
+		updateSimpleProfitRate();
+		updateCompoundProfitRate(profitRate);
 		updateCurrentPosition(position);
 	}
 
@@ -150,8 +158,12 @@ public class Strategy extends AuditTime {
 		this.winningRate = (double)this.winCount / this.totalTradeCount * 100;
 	}
 
-	private void updateNetProfitRate() {
-		this.netProfitRate = this.totalProfitRate - this.totalLossRate;
+	private void updateSimpleProfitRate() {
+		this.simpleProfitRate = this.totalProfitRate - this.totalLossRate;
+	}
+
+	private void updateCompoundProfitRate(double profitRate) {
+		this.compoundProfitRate = this.compoundProfitRate * (1 + profitRate);
 	}
 
 	private double calculateProfitRate(Position position) {
