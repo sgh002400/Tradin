@@ -38,6 +38,7 @@ public enum ExceptionMessage {
 	//500 Internal Server Error
 	ENCRYPT_FAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "암호화에 실패하였습니다."),
 	DECRYPT_FAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "복호화에 실패하였습니다."),
+	SIGNATURE_GENERATION_FAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "JWT 서명 생성에 실패하였습니다."),
 	;
 
 	private final HttpStatus httpStatus;
