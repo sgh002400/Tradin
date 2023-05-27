@@ -10,8 +10,9 @@ import lombok.Getter;
 public class CreateStrategyDto {
 	private final String name;
 	private final double profitFactor;
-	private final double netProfitRate;
 	private final double winningRate;
+	private final double simpleProfitRate;
+	private final double compoundProfitRate;
 	private final double totalProfitRate;
 	private final double totalLossRate;
 	private final double totalTradeCount;

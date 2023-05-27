@@ -30,8 +30,23 @@ import lombok.extern.slf4j.Slf4j;
 public class StrategyController {
 	private final StrategyService strategyService;
 
-	@KafkaListener(topics = "Trading", groupId = "trading-strategy-executors")
-	public void handleWebHook(@RequestBody WebHookRequestDto request) {
+	@KafkaListener(topics = "future-short-term-v1", groupId = "trading-strategy-executors")
+	public void handleFutureShortTermV1WebHook(@RequestBody WebHookRequestDto request) {
+		CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
+	}
+
+	@KafkaListener(topics = "future-long-term-v1", groupId = "trading-strategy-executors")
+	public void handleFutureLongTermV1WebHook(@RequestBody WebHookRequestDto request) {
+		CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
+	}
+
+	@KafkaListener(topics = "spot-short-term-v1", groupId = "trading-strategy-executors")
+	public void handleSpotShortTermV1WebHook(@RequestBody WebHookRequestDto request) {
+		CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
+	}
+
+	@KafkaListener(topics = "spot-long-term-v1", groupId = "trading-strategy-executors")
+	public void handleSpotLongTermV1WebHook(@RequestBody WebHookRequestDto request) {
 		CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
 	}
 
@@ -41,7 +56,7 @@ public class StrategyController {
 	}
 
 	@PostMapping("/{id}/subscriptions")
-	public void subScribe(@AuthenticationPrincipal Users user, @Valid @RequestBody SubscribeStrategyRequestDto request,
+	public void subscribe(@AuthenticationPrincipal Users user, @Valid @RequestBody SubscribeStrategyRequestDto request,
 		@PathVariable Long id) {
 		strategyService.subscribeStrategy(user, request.toServiceDto(id));
 	}
