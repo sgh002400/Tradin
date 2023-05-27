@@ -21,7 +21,7 @@ import com.traders.traders.common.exception.TradersException;
 
 @Component
 public class AESUtils {
-	private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
+	private static final String ALGORITHM = "AES/CTR/NoPadding"; //TODO - 잘 동작하는지 테스트 (원래는 "AES/CBC/PKCS5Padding")
 
 	@Value("${secret.aes-secret}")
 	private String key;
