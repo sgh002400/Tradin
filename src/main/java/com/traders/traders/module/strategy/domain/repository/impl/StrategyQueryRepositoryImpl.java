@@ -20,10 +20,10 @@ public class StrategyQueryRepositoryImpl implements StrategyQueryRepository {
 	public Optional<List<StrategyInfoDao>> findStrategiesInfoDao() {
 		List<StrategyInfoDao> strategyInfoDaos = jpaQueryFactory
 			.select(
-				new QStrategyInfoDao(strategy.id, strategy.name, strategy.profitFactor, strategy.netProfitRate,
-					strategy.winningRate, strategy.totalProfitRate, strategy.totalLossRate, strategy.totalTradeCount,
-					strategy.winCount, strategy.lossCount, strategy.currentPosition.tradingType,
-					strategy.currentPosition.time, strategy.currentPosition.price)
+				new QStrategyInfoDao(strategy.id, strategy.name, strategy.profitFactor, strategy.winningRate,
+					strategy.simpleProfitRate, strategy.compoundProfitRate, strategy.totalProfitRate,
+					strategy.totalLossRate, strategy.totalTradeCount, strategy.winCount, strategy.lossCount,
+					strategy.currentPosition.tradingType, strategy.currentPosition.time, strategy.currentPosition.price)
 			)
 			.from(strategy)
 			.orderBy(strategy.id.asc())
