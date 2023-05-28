@@ -5,7 +5,6 @@ import java.util.concurrent.CompletableFuture;
 import javax.validation.Valid;
 
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +17,6 @@ import com.traders.traders.module.strategy.controller.dto.request.WebHookRequest
 import com.traders.traders.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
 import com.traders.traders.module.strategy.service.StrategyService;
 import com.traders.traders.module.users.controller.dto.request.SubscribeStrategyRequestDto;
-import com.traders.traders.module.users.domain.Users;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,9 +54,8 @@ public class StrategyController {
 	}
 
 	@PostMapping("/{id}/subscriptions")
-	public void subscribe(@AuthenticationPrincipal Users user, @Valid @RequestBody SubscribeStrategyRequestDto request,
-		@PathVariable Long id) {
-		strategyService.subscribeStrategy(user, request.toServiceDto(id));
+	public void subscribe(@Valid @RequestBody SubscribeStrategyRequestDto request, @PathVariable Long id) {
+		strategyService.subscribeStrategy(request.toServiceDto(id));
 	}
 
 	//TODO - 개발용 메서드!! 추후 삭제하기

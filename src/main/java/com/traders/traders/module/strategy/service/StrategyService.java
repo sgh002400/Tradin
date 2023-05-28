@@ -66,8 +66,8 @@ public class StrategyService {
 		return new FindStrategiesInfoResponseDto(strategiesInfo);
 	}
 
-	public void subscribeStrategy(Users user, SubscribeStrategyDto request) {
-		Users savedUser = findUserById(user.getId());
+	public void subscribeStrategy(SubscribeStrategyDto request) {
+		Users savedUser = getUserFromSecurityContext();
 		Strategy strategy = findStrategyById(request.getId());
 		String encryptedApiKey = getEncryptedKey(request.getBinanceApiKey());
 		String encryptedSecretKey = getEncryptedKey(request.getBinanceSecretKey());
@@ -99,8 +99,8 @@ public class StrategyService {
 		return aesUtils.decrypt(encryptedKey);
 	}
 
-	private Users findUserById(Long id) {
-		return userService.findById(id);
+	private Users getUserFromSecurityContext() {
+		return userService.getUserFromSecurityContext();
 	}
 
 	private Strategy findStrategyById(Long id) {

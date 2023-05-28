@@ -30,6 +30,8 @@ public class Strategy extends AuditTime {
 	@Column(nullable = false)
 	private double profitFactor;
 
+	//TODO - Rate, Count 클래스로 묶기
+
 	@Column(nullable = false)
 	private double winningRate;
 

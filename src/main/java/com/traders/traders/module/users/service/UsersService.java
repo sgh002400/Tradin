@@ -12,6 +12,7 @@ import com.traders.traders.common.exception.TradersException;
 import com.traders.traders.common.jwt.JwtProvider;
 import com.traders.traders.common.jwt.JwtRemover;
 import com.traders.traders.common.utils.PasswordEncoder;
+import com.traders.traders.common.utils.SecurityUtils;
 import com.traders.traders.module.users.controller.dto.response.TokenResponseDto;
 import com.traders.traders.module.users.domain.Users;
 import com.traders.traders.module.users.domain.repository.UsersRepository;
@@ -51,6 +52,15 @@ public class UsersService implements UserDetailsService {
 			.orElseThrow(() -> new TradersException(NOT_FOUND_USER_EXCEPTION));
 	}
 
+	public List<AutoTradingSubscriberDao> findAutoTradingSubscriberByStrategyName(String name) {
+		return usersRepository.findByAutoTradingSubscriber(name);
+	}
+
+	public Users getUserFromSecurityContext() {
+		Long userId = SecurityUtils.getUserId();
+		return findById(userId);
+	}
+
 	private void checkIfEmailExists(String email) {
 		if (usersRepository.findByEmail(email).isPresent()) {
 			throw new TradersException(EMAIL_ALREADY_EXISTS_EXCEPTION);
@@ -61,10 +71,6 @@ public class UsersService implements UserDetailsService {
 		if (!isPasswordCorrespond(password, encryptedPassword)) {
 			throw new TradersException(WRONG_PASSWORD_EXCEPTION);
 		}
-	}
-
-	public List<AutoTradingSubscriberDao> findAutoTradingSubscriberByStrategyName(String name) {
-		return usersRepository.findByAutoTradingSubscriber(name);
 	}
 
 	private boolean isPasswordCorrespond(String password, String encryptedPassword) {
