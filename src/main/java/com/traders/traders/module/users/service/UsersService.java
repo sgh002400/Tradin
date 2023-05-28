@@ -2,6 +2,8 @@ package com.traders.traders.module.users.service;
 
 import static com.traders.traders.common.exception.ExceptionMessage.*;
 
+import java.util.List;
+
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,9 +12,11 @@ import com.traders.traders.common.exception.TradersException;
 import com.traders.traders.common.jwt.JwtProvider;
 import com.traders.traders.common.jwt.JwtRemover;
 import com.traders.traders.common.utils.PasswordEncoder;
+import com.traders.traders.common.utils.SecurityUtils;
 import com.traders.traders.module.users.controller.dto.response.TokenResponseDto;
 import com.traders.traders.module.users.domain.Users;
 import com.traders.traders.module.users.domain.repository.UsersRepository;
+import com.traders.traders.module.users.domain.repository.dao.AutoTradingSubscriberDao;
 import com.traders.traders.module.users.service.dto.SignInDto;
 import com.traders.traders.module.users.service.dto.SignUpDto;
 
@@ -31,7 +35,7 @@ public class UsersService implements UserDetailsService {
 		checkIfEmailExists(request.getEmail());
 
 		String encryptedPassword = getEncryptedPassword(request.getPassword());
-		Users user = saveAndGetUser(request.getEmail(), encryptedPassword);
+		Users user = saveUser(request.getEmail(), encryptedPassword);
 
 		return createJwtToken(user.getId());
 	}
@@ -41,6 +45,20 @@ public class UsersService implements UserDetailsService {
 		checkPasswordCorrespond(request.getPassword(), user.getPassword());
 
 		return createJwtToken(user.getId());
+	}
+
+	public Users findById(Long id) {
+		return usersRepository.findById(id)
+			.orElseThrow(() -> new TradersException(NOT_FOUND_USER_EXCEPTION));
+	}
+
+	public List<AutoTradingSubscriberDao> findAutoTradingSubscriberByStrategyName(String name) {
+		return usersRepository.findByAutoTradingSubscriber(name);
+	}
+
+	public Users getUserFromSecurityContext() {
+		Long userId = SecurityUtils.getUserId();
+		return findById(userId);
 	}
 
 	private void checkIfEmailExists(String email) {
@@ -59,7 +77,7 @@ public class UsersService implements UserDetailsService {
 		return passwordEncoder.matches(password, encryptedPassword);
 	}
 
-	private Users saveAndGetUser(String email, String encryptedPassword) {
+	private Users saveUser(String email, String encryptedPassword) {
 		Users users = createUser(email, encryptedPassword);
 		return usersRepository.save(users);
 	}
@@ -67,7 +85,7 @@ public class UsersService implements UserDetailsService {
 	private static Users createUser(String email, String encryptedPassword) {
 		return Users.builder()
 			.email(email)
-			.password(encryptedPassword)
+			.encryptedPassword(encryptedPassword)
 			.build();
 	}
 

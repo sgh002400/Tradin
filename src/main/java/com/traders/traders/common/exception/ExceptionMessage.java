@@ -24,6 +24,10 @@ public enum ExceptionMessage {
 
 	//404 Not Found
 	NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "존재하지 않는 유저입니다."),
+	NOT_FOUND_STRATEGY_EXCEPTION(NOT_FOUND, "존재하지 않는 전략입니다."),
+	NOT_FOUND_OPEN_POSITION_EXCEPTION(NOT_FOUND, "해당 전략은 오픈된 포지션이 없습니다."),
+	NOT_FOUND_ANY_STRATEGY_EXCEPTION(NOT_FOUND, "전략이 아무것도 존재하지 않습니다."),
+	NOT_FOUND_SECURITY_CONTEXT_EXCEPTION(NOT_FOUND, "Security Context에 유저 정보가 존재하지 않습니다."),
 
 	//405 Method Not Allowed
 
@@ -33,6 +37,9 @@ public enum ExceptionMessage {
 	IP_RATE_LIMIT_EXCEEDED_EXCEPTION(TOO_MANY_REQUESTS, "IP당 최대 요청 횟수를 초과하였습니다."),
 
 	//500 Internal Server Error
+	ENCRYPT_FAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "암호화에 실패하였습니다."),
+	DECRYPT_FAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "복호화에 실패하였습니다."),
+	SIGNATURE_GENERATION_FAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "JWT 서명 생성에 실패하였습니다."),
 	;
 
 	private final HttpStatus httpStatus;

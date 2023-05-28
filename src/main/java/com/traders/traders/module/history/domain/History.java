@@ -1,4 +1,6 @@
-package com.traders.traders.module.trading.history.domain;
+package com.traders.traders.module.history.domain;
+
+import static com.traders.traders.module.strategy.domain.TradingType.*;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -12,8 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.traders.traders.common.jpa.AuditTime;
-import com.traders.traders.module.trading.strategy.domain.Position;
-import com.traders.traders.module.trading.strategy.domain.Strategy;
+import com.traders.traders.module.strategy.domain.Position;
+import com.traders.traders.module.strategy.domain.Strategy;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,22 +42,43 @@ public class History extends AuditTime {
 	@AttributeOverride(name = "price", column = @Column(name = "exit_price"))
 	private Position exitPosition;
 
+	@Column(nullable = false)
+	private double profitRate;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "strategy_id", nullable = false)
 	private Strategy strategy;
 
 	@Builder
-	private History(Position entryPosition, Position exitPosition, Strategy strategy) {
+	private History(Position entryPosition, Strategy strategy) {
 		this.entryPosition = entryPosition;
-		this.exitPosition = exitPosition;
+		this.exitPosition = null;
+		this.profitRate = 0;
 		this.strategy = strategy;
 	}
 
-	public static History of(Position entryPosition, Position exitPosition, Strategy strategy) {
+	public static History of(Position entryPosition, Strategy strategy) {
 		return History.builder()
 			.entryPosition(entryPosition)
-			.exitPosition(exitPosition)
 			.strategy(strategy)
 			.build();
+	}
+
+	public void closeOpenPosition(Position position) {
+		this.exitPosition = position;
+	}
+
+	public void calculateProfitRate() {
+		if (isOpenPositionLong()) {
+			this.profitRate =
+				(double)(this.exitPosition.getPrice() - this.entryPosition.getPrice()) / this.entryPosition.getPrice();
+		} else {
+			this.profitRate =
+				(double)(this.entryPosition.getPrice() - this.exitPosition.getPrice()) / this.entryPosition.getPrice();
+		}
+	}
+
+	private boolean isOpenPositionLong() {
+		return this.entryPosition.getTradingType() == LONG;
 	}
 }

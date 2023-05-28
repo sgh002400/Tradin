@@ -36,8 +36,11 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 	}
 
 	private void writeResponse(HttpServletResponse response, TradersException e) throws IOException {
-		ExceptionResponse exceptionResponse = ExceptionResponse.of(
-			e.getHttpStatus(), e.getMessage());
+		ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+			.httpStatus(e.getHttpStatus())
+			.message(e.getMessage())
+			.build();
+		
 		response.setStatus(exceptionResponse.getHttpStatus().value());
 		response.getWriter().write(toJson(exceptionResponse));
 	}

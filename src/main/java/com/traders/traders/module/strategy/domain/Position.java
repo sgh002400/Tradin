@@ -1,4 +1,4 @@
-package com.traders.traders.module.trading.strategy.domain;
+package com.traders.traders.module.strategy.domain;
 
 import java.time.LocalDateTime;
 
@@ -9,10 +9,12 @@ import javax.persistence.Enumerated;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Position {
 	@Enumerated(EnumType.STRING)
 	private TradingType tradingType;
@@ -21,16 +23,16 @@ public class Position {
 	private LocalDateTime time;
 
 	@Column(nullable = false)
-	private String price;
+	private int price;
 
 	@Builder
-	private Position(TradingType tradingType, LocalDateTime time, String price) {
+	private Position(TradingType tradingType, LocalDateTime time, int price) {
 		this.tradingType = tradingType;
 		this.time = time;
 		this.price = price;
 	}
 
-	public static Position of(TradingType tradingType, LocalDateTime time, String price) {
+	public static Position of(TradingType tradingType, LocalDateTime time, int price) {
 		return Position.builder()
 			.tradingType(tradingType)
 			.time(time)
