@@ -12,4 +12,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/trading/histories")
 public class HistoryController {
 	private final HistoryService historyService;
+
+	//TODO - 다른 전략이랑 한 화면에서 비교를 해줄 수도 있고!!
 }
