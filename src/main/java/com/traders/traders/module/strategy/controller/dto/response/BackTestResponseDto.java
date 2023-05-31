@@ -1,4 +1,4 @@
-package com.traders.traders.module.history.controller.dto.response;
+package com.traders.traders.module.strategy.controller.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

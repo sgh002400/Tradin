@@ -13,11 +13,13 @@ import com.traders.traders.common.utils.AESUtils;
 import com.traders.traders.module.feign.service.FeignService;
 import com.traders.traders.module.history.service.HistoryService;
 import com.traders.traders.module.strategy.controller.dto.request.CreateStrategyDto;
+import com.traders.traders.module.strategy.controller.dto.response.BackTestResponseDto;
 import com.traders.traders.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
 import com.traders.traders.module.strategy.domain.Position;
 import com.traders.traders.module.strategy.domain.Strategy;
 import com.traders.traders.module.strategy.domain.repository.StrategyRepository;
 import com.traders.traders.module.strategy.domain.repository.dao.StrategyInfoDao;
+import com.traders.traders.module.strategy.service.dto.BackTestDto;
 import com.traders.traders.module.strategy.service.dto.WebHookDto;
 import com.traders.traders.module.users.domain.Users;
 import com.traders.traders.module.users.domain.repository.dao.AutoTradingSubscriberDao;
@@ -68,11 +70,24 @@ public class StrategyService {
 
 	public void subscribeStrategy(SubscribeStrategyDto request) {
 		Users savedUser = getUserFromSecurityContext();
-		Strategy strategy = findStrategyById(request.getId());
+		Strategy strategy = findById(request.getId());
 		String encryptedApiKey = getEncryptedKey(request.getBinanceApiKey());
 		String encryptedSecretKey = getEncryptedKey(request.getBinanceSecretKey());
 
 		savedUser.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey);
+	}
+
+	public BackTestResponseDto backTest(BackTestDto request) {
+		// names 검증
+		List<Strategy> strategy = findByNames(request.getNames());
+
+		// 옵션 넣어서 조회
+
+		return null;
+	}
+
+	private List<Strategy> findByNames(List<String> names) {
+		return strategyRepository.findByNames(names);
 	}
 
 	public void createStrategy(CreateStrategyDto request) {
@@ -103,7 +118,7 @@ public class StrategyService {
 		return userService.getUserFromSecurityContext();
 	}
 
-	private Strategy findStrategyById(Long id) {
+	private Strategy findById(Long id) {
 		return strategyRepository.findById(id)
 			.orElseThrow(() -> new TradersException(NOT_FOUND_STRATEGY_EXCEPTION));
 	}

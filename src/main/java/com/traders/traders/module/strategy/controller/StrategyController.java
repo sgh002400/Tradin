@@ -6,14 +6,17 @@ import javax.validation.Valid;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.traders.traders.module.strategy.controller.dto.request.BackTestRequestDto;
 import com.traders.traders.module.strategy.controller.dto.request.CreateStrategyDto;
 import com.traders.traders.module.strategy.controller.dto.request.WebHookRequestDto;
+import com.traders.traders.module.strategy.controller.dto.response.BackTestResponseDto;
 import com.traders.traders.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
 import com.traders.traders.module.strategy.service.StrategyService;
 import com.traders.traders.module.users.controller.dto.request.SubscribeStrategyRequestDto;
@@ -56,6 +59,11 @@ public class StrategyController {
 	@PostMapping("/{id}/subscriptions")
 	public void subscribe(@Valid @RequestBody SubscribeStrategyRequestDto request, @PathVariable Long id) {
 		strategyService.subscribeStrategy(request.toServiceDto(id));
+	}
+
+	@GetMapping("/back-test")
+	public BackTestResponseDto backTest(@Valid @ModelAttribute BackTestRequestDto request) {
+		return strategyService.backTest(request.toServiceDto());
 	}
 
 	//TODO - 개발용 메서드!! 추후 삭제하기
