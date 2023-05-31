@@ -87,7 +87,9 @@ public class StrategyService {
 	}
 
 	private List<Strategy> findByNames(List<String> names) {
-		return strategyRepository.findByNames(names);
+		return names.stream()
+			.map(this::findByName)
+			.toList();
 	}
 
 	public void createStrategy(CreateStrategyDto request) {
