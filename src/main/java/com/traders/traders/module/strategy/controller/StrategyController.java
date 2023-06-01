@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class StrategyController {
 	private final StrategyService strategyService;
 
+	//TODO - 자동매매 구독자 잔뜩 생성해서 4개 전략 동시에 테스트 해보기
 	@KafkaListener(topics = "future-short-term-v1", groupId = "trading-strategy-executors")
 	public void handleFutureShortTermV1WebHook(@RequestBody WebHookRequestDto request) {
 		CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
