@@ -2,12 +2,15 @@ package com.traders.traders.module.history.service;
 
 import static com.traders.traders.common.exception.ExceptionMessage.*;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.traders.traders.common.exception.TradersException;
 import com.traders.traders.module.history.domain.History;
 import com.traders.traders.module.history.domain.repository.HistoryRepository;
+import com.traders.traders.module.history.domain.repository.dao.HistoryDao;
 import com.traders.traders.module.strategy.domain.Position;
 import com.traders.traders.module.strategy.domain.Strategy;
 
@@ -28,6 +31,10 @@ public class HistoryService {
 	public void createNewHistory(Strategy strategy, Position position) {
 		History newHistory = History.of(position, strategy);
 		historyRepository.save(newHistory);
+	}
+
+	public List<HistoryDao> findHistoryDaosByStrategyId(Long id) {
+		return historyRepository.findHistoryDaosByStrategyId(id);
 	}
 
 	private static void calculateProfitRate(History history) {

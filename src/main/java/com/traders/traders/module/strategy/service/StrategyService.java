@@ -2,6 +2,7 @@ package com.traders.traders.module.strategy.service;
 
 import static com.traders.traders.common.exception.ExceptionMessage.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.scheduling.annotation.Async;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.traders.traders.common.exception.TradersException;
 import com.traders.traders.common.utils.AESUtils;
 import com.traders.traders.module.feign.service.FeignService;
+import com.traders.traders.module.history.domain.repository.dao.HistoryDao;
 import com.traders.traders.module.history.service.HistoryService;
 import com.traders.traders.module.strategy.controller.dto.request.CreateStrategyDto;
 import com.traders.traders.module.strategy.controller.dto.response.BackTestResponseDto;
@@ -20,6 +22,7 @@ import com.traders.traders.module.strategy.domain.Strategy;
 import com.traders.traders.module.strategy.domain.repository.StrategyRepository;
 import com.traders.traders.module.strategy.domain.repository.dao.StrategyInfoDao;
 import com.traders.traders.module.strategy.service.dto.BackTestDto;
+import com.traders.traders.module.strategy.service.dto.StrategyHistoryDto;
 import com.traders.traders.module.strategy.service.dto.WebHookDto;
 import com.traders.traders.module.users.domain.Users;
 import com.traders.traders.module.users.domain.repository.dao.AutoTradingSubscriberDao;
@@ -78,18 +81,8 @@ public class StrategyService {
 	}
 
 	public BackTestResponseDto backTest(BackTestDto request) {
-		// names 검증
-		List<Strategy> strategy = findByNames(request.getNames());
-
-		// 옵션 넣어서 조회
-
-		return null;
-	}
-
-	private List<Strategy> findByNames(List<String> names) {
-		return names.stream()
-			.map(this::findByName)
-			.toList();
+		//TODO - 기간 설정, 자기자본 100 이런 옵션들 붙기 때문에 사실 History만 찾아서 계산을 해야 됨
+		return BackTestResponseDto.of(findStrategyHistoryDtos(request.getNames()));
 	}
 
 	public void createStrategy(CreateStrategyDto request) {
@@ -153,5 +146,24 @@ public class StrategyService {
 	private List<StrategyInfoDao> findStrategyInfoDaos() {
 		return strategyRepository.findStrategiesInfoDao()
 			.orElseThrow(() -> new TradersException(NOT_FOUND_ANY_STRATEGY_EXCEPTION));
+	}
+
+	private List<StrategyHistoryDto> findStrategyHistoryDtos(List<String> names) {
+		List<StrategyHistoryDto> strategyHistoryDtos = new ArrayList<>();
+
+		// 이름에 해당하는 모든 전략 정보 가져오기
+		List<StrategyInfoDao> strategyInfoDaos = strategyRepository.findStrategyInfoDaoByNameIn(names);
+
+		// 각 전략에 대해 HistoryDaos를 병렬로 가져옵니다.
+		strategyInfoDaos.parallelStream().forEach(strategyInfoDao -> {
+			List<HistoryDao> histories = findHistoryDaosByStrategyId(strategyInfoDao.getId());
+			strategyHistoryDtos.add(new StrategyHistoryDto(strategyInfoDao, histories));
+		});
+
+		return strategyHistoryDtos;
+	}
+
+	private List<HistoryDao> findHistoryDaosByStrategyId(Long strategyId) {
+		return historyService.findHistoryDaosByStrategyId(strategyId);
 	}
 }

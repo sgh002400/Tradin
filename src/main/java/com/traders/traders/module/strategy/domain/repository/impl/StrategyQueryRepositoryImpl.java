@@ -31,4 +31,19 @@ public class StrategyQueryRepositoryImpl implements StrategyQueryRepository {
 
 		return strategyInfoDaos.isEmpty() ? Optional.empty() : Optional.of(strategyInfoDaos);
 	}
+
+	@Override
+	public List<StrategyInfoDao> findStrategyInfoDaoByNameIn(List<String> names) {
+		return jpaQueryFactory
+			.select(
+				new QStrategyInfoDao(strategy.id, strategy.name, strategy.profitFactor, strategy.winningRate,
+					strategy.simpleProfitRate, strategy.compoundProfitRate, strategy.totalProfitRate,
+					strategy.totalLossRate, strategy.totalTradeCount, strategy.winCount, strategy.lossCount,
+					strategy.currentPosition.tradingType, strategy.currentPosition.time, strategy.currentPosition.price)
+			)
+			.from(strategy)
+			.where(strategy.name.in(names))
+			.orderBy(strategy.id.asc())
+			.fetch();
+	}
 }
