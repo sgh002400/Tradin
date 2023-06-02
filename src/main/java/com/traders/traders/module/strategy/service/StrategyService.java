@@ -4,6 +4,7 @@ import static com.traders.traders.common.exception.ExceptionMessage.*;
 
 import java.util.List;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.traders.traders.common.exception.TradersException;
 import com.traders.traders.common.utils.AESUtils;
 import com.traders.traders.module.feign.service.FeignService;
+import com.traders.traders.module.history.domain.History;
 import com.traders.traders.module.history.service.HistoryService;
 import com.traders.traders.module.strategy.controller.dto.request.CreateStrategyDto;
 import com.traders.traders.module.strategy.controller.dto.response.BackTestResponseDto;
@@ -20,6 +22,7 @@ import com.traders.traders.module.strategy.domain.Strategy;
 import com.traders.traders.module.strategy.domain.repository.StrategyRepository;
 import com.traders.traders.module.strategy.domain.repository.dao.StrategyInfoDao;
 import com.traders.traders.module.strategy.service.dto.BackTestDto;
+import com.traders.traders.module.strategy.service.dto.HistoryCache;
 import com.traders.traders.module.strategy.service.dto.WebHookDto;
 import com.traders.traders.module.users.domain.Users;
 import com.traders.traders.module.users.domain.repository.dao.AutoTradingSubscriberDao;
@@ -39,6 +42,7 @@ public class StrategyService {
 	private final UsersService userService;
 	private final StrategyRepository strategyRepository;
 	private final AESUtils aesUtils;
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	@Async //TODO - 동기 비동기 성능 차이 블로그 작성하기
 	public void handleWebHook(WebHookDto request) {
@@ -78,11 +82,23 @@ public class StrategyService {
 	}
 
 	public BackTestResponseDto backTest(BackTestDto request) {
-		//캐시에 매매 내역들 있는지 확인
 
-		//없다면 매매 내역 전체 캐싱
+		for (String name : request.getNames()) {
+			String cacheKey = "strategy:" + name;
 
-		//매매 내역들을 조건에 맞게 (기간, 자기 자본 100) 계산 후 응답
+			//캐시에 매매 내역들 있는지 확인
+			HistoryCache historyCache = (HistoryCache)redisTemplate.opsForValue().get(cacheKey);
+
+			//없다면 매매 내역 전체 캐싱
+			if (historyCache == null) {
+				List<History> histories = findHistoriesByStrategyName(name);
+				historyCache = HistoryCache.of(histories);
+				redisTemplate.opsForValue().set(cacheKey, historyCache);
+			}
+
+			//매매 내역들을 조건에 맞게 (기간, 자기 자본 100) 계산 후 응답
+
+		}
 
 		return null;
 	}
@@ -148,5 +164,9 @@ public class StrategyService {
 	private List<StrategyInfoDao> findStrategyInfoDaos() {
 		return strategyRepository.findStrategiesInfoDao()
 			.orElseThrow(() -> new TradersException(NOT_FOUND_ANY_STRATEGY_EXCEPTION));
+	}
+
+	private List<History> findHistoriesByStrategyName(String name) {
+		return historyService.findHistoriesByStrategyName(name);
 	}
 }
