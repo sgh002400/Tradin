@@ -29,6 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/v1/strategies")
 @Slf4j
 public class StrategyController {
+	//TODO - 비동기로 성능 개선 포인트 찾아보기
+
 	private final StrategyService strategyService;
 
 	//TODO - 자동매매 구독자 잔뜩 생성해서 4개 전략 동시에 테스트 해보기
