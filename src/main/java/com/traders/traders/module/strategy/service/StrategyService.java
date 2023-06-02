@@ -2,6 +2,7 @@ package com.traders.traders.module.strategy.service;
 
 import static com.traders.traders.common.exception.ExceptionMessage.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -97,7 +98,7 @@ public class StrategyService {
 			}
 
 			//매매 내역들을 조건에 맞게 (기간, 자기 자본 100) 계산 후 응답
-
+			calculateHistoryCache(historyCache, request);
 		}
 
 		return null;
@@ -168,5 +169,18 @@ public class StrategyService {
 
 	private List<History> findHistoriesByStrategyName(String name) {
 		return historyService.findHistoriesByStrategyName(name);
+	}
+
+	private void calculateHistoryCache(HistoryCache historyCache, BackTestDto request) {
+		for (History history : historyCache.getHistories()) {
+			if (isInPeriod(history, request.getStartDate(), request.getEndDate())) {
+				//TODO - 기획 픽스하고 처리
+				// StrategyInfoDto에 데이터 채우기
+			}
+		}
+	}
+
+	private boolean isInPeriod(History history, LocalDateTime startDate, LocalDateTime endDate) {
+		return history.getCreatedAt().isAfter(startDate) && history.getCreatedAt().isBefore(endDate);
 	}
 }
