@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,11 +34,8 @@ public class Users extends AuditTime implements UserDetails {
 	@Column(nullable = false)
 	private String name;
 
-	@Column(nullable = false, unique = true)
+	@Column(unique = true)
 	private String email;
-
-	@Column(nullable = false)
-	private String password;
 
 	@Column(nullable = false)
 	private int leverage;
@@ -51,15 +49,18 @@ public class Users extends AuditTime implements UserDetails {
 	@Column
 	private String binanceSecretKey;
 
+	@Embedded
+	private SocialInfo socialInfo;
+
 	@JoinColumn(name = "strategy_id")
 	@ManyToOne
 	private Strategy strategy;
 
 	@Builder
-	private Users(String email, String encryptedPassword) {
-		this.name = "트레이더";
+	private Users(String name, String email, String socialId, UserSocialType socialType) {
+		this.name = name;
 		this.email = email;
-		this.password = encryptedPassword;
+		this.socialInfo = SocialInfo.of(socialId, socialType);
 		this.leverage = 1;
 		this.quantity = 0;
 		this.binanceApiKey = null;
@@ -67,10 +68,12 @@ public class Users extends AuditTime implements UserDetails {
 		this.strategy = null;
 	}
 
-	public static Users of(String email, String encryptedPassword) {
+	public static Users of(String name, String email, String socialId, UserSocialType socialType) {
 		return Users.builder()
+			.name(name)
 			.email(email)
-			.encryptedPassword(encryptedPassword)
+			.socialId(socialId)
+			.socialType(socialType)
 			.build();
 	}
 
@@ -87,6 +90,11 @@ public class Users extends AuditTime implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return Collections.emptyList();
+	}
+
+	@Override
+	public String getPassword() {
+		return null;
 	}
 
 	@Override

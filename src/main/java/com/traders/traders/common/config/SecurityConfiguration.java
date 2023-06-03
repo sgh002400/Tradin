@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfiguration {
 	private final JwtUtil jwtUtil;
 
-	@Bean
+	@Bean //TODO - allowList 말고 여기서 로그인 처리하도록 수정하기
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		return http
 			.authorizeRequests().antMatchers("/**").permitAll()//auth 관련 요청은 인증 없이 접근을 허용한다. ->

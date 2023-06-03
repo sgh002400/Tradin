@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.traders.traders.common.exception.TradersException;
 import com.traders.traders.common.utils.AESUtils;
-import com.traders.traders.module.feign.service.FeignService;
+import com.traders.traders.module.feign.service.BinanceFeignService;
 import com.traders.traders.module.history.service.HistoryService;
 import com.traders.traders.module.strategy.controller.dto.request.CreateStrategyDto;
 import com.traders.traders.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class StrategyService {
 	private final HistoryService historyService;
-	private final FeignService feignService;
+	private final BinanceFeignService binanceFeignService;
 	private final UsersService userService;
 	private final StrategyRepository strategyRepository;
 	private final AESUtils aesUtils;
@@ -85,9 +85,9 @@ public class StrategyService {
 
 	private void switchPosition(Strategy strategy, String apiKey, String secretKey, double orderQuantity) {
 		if (isCurrentLongPosition(strategy)) {
-			feignService.switchPosition(apiKey, secretKey, "SELL", orderQuantity);
+			binanceFeignService.switchPosition(apiKey, secretKey, "SELL", orderQuantity);
 		} else if (isCurrentShortPosition(strategy)) {
-			feignService.switchPosition(apiKey, secretKey, "BUY", orderQuantity);
+			binanceFeignService.switchPosition(apiKey, secretKey, "BUY", orderQuantity);
 		}
 	}
 
