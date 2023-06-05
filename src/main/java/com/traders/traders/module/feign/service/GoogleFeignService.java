@@ -8,5 +8,5 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class FeignService {
+public class GoogleFeignService {
 }

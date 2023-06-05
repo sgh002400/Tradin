@@ -22,4 +22,9 @@ public class UsersController {
 	public ResponseEntity<SignInResponseDto> signInWithKakao(@RequestParam("code") String code) {
 		return ResponseEntity.ok(usersService.signInWithKakao(code));
 	}
+
+	@PostMapping("/signin/kakao")
+	public ResponseEntity<SignInResponseDto> signInWithGoogle(@RequestParam("code") String code) {
+		return ResponseEntity.ok(usersService.signInWithGoogle(code));
+	}
 }

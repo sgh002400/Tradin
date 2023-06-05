@@ -1,6 +1,7 @@
 package com.traders.traders.module.users.service;
 
 import static com.traders.traders.common.exception.ExceptionMessage.*;
+import static com.traders.traders.module.users.domain.UserSocialType.*;
 
 import java.util.List;
 
@@ -17,7 +18,6 @@ import com.traders.traders.module.feign.service.KakaoFeignService;
 import com.traders.traders.module.users.controller.dto.SignInResponseDto;
 import com.traders.traders.module.users.controller.dto.response.TokenResponseDto;
 import com.traders.traders.module.users.domain.SocialInfo;
-import com.traders.traders.module.users.domain.UserSocialType;
 import com.traders.traders.module.users.domain.Users;
 import com.traders.traders.module.users.domain.repository.UsersRepository;
 import com.traders.traders.module.users.domain.repository.dao.AutoTradingSubscriberDao;
@@ -38,11 +38,17 @@ public class UsersService implements UserDetailsService {
 		KakaoProfile kakaoProfile = kakaoFeignService.getKakaoProfile(code);
 
 		Users user = findUserIdBySocialIdAndSocialType(
-			SignUpUserDto.ofKakao(kakaoProfile, UserSocialType.KAKAO));
+			SignUpUserDto.ofKakao(kakaoProfile, KAKAO));
 
 		TokenResponseDto tokenResponseDto = createJwtToken(user.getId());
 
 		return SignInResponseDto.of(user.getId(), tokenResponseDto);
+	}
+
+	public SignInResponseDto signInWithGoogle(String code) {
+		//TODO
+
+		return null;
 	}
 
 	public Users findById(Long id) {
