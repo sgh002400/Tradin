@@ -34,6 +34,7 @@ public class StrategyController {
 	private final StrategyService strategyService;
 
 	//TODO - 자동매매 구독자 잔뜩 생성해서 4개 전략 동시에 테스트 해보기
+	//TODO - 웹 훅 발생시 매매 내역 캐시 삭제하고 다시 캐시하는 로직 추가하기
 	@KafkaListener(topics = "future-short-term-v1", groupId = "trading-strategy-executors")
 	public void handleFutureShortTermV1WebHook(@RequestBody WebHookRequestDto request) {
 		CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
