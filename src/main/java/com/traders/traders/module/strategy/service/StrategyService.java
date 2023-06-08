@@ -184,6 +184,7 @@ public class StrategyService {
 		double totalCount = 0; //TODO - 기간을 이상하게 설정해서 매매 내역이 없는 경우 0으로 나누게 됐을 때 예외 발생시키기
 		double totalProfitRate = 0;
 		double totalLossRate = 0;
+		//TODO - 숏 총 순익, 롱 총 순익 추가하기
 
 		for (HistoryDao history : historyCache.getHistories()) {
 			if (isInPeriod(history, request.getStartDate(), request.getEndDate())) {
