@@ -2,8 +2,8 @@ package com.traders.traders.module.history.domain.repository;
 
 import java.util.List;
 
-import com.traders.traders.module.history.domain.History;
+import com.traders.traders.module.history.domain.repository.dao.HistoryDao;
 
 public interface HistoryQueryRepository {
-	List<History> findHistoriesByStrategyName(String name);
+	List<HistoryDao> findHistoryDaoByStrategyName(String name);
 }

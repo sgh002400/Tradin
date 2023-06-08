@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.traders.traders.common.exception.TradersException;
 import com.traders.traders.module.history.domain.History;
 import com.traders.traders.module.history.domain.repository.HistoryRepository;
+import com.traders.traders.module.history.domain.repository.dao.HistoryDao;
 import com.traders.traders.module.strategy.domain.Position;
 import com.traders.traders.module.strategy.domain.Strategy;
 
@@ -32,8 +33,8 @@ public class HistoryService {
 		historyRepository.save(newHistory);
 	}
 
-	public List<History> findHistoriesByStrategyName(String name) {
-		return historyRepository.findHistoriesByStrategyName(name);
+	public List<HistoryDao> findHistoryDaoByStrategyName(String name) {
+		return historyRepository.findHistoryDaoByStrategyName(name);
 	}
 
 	private static void calculateProfitRate(History history) {

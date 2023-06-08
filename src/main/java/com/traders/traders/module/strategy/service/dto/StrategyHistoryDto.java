@@ -12,4 +12,8 @@ import lombok.Getter;
 public class StrategyHistoryDto {
 	private final StrategyInfoDto strategyInfoDto;
 	private final List<HistoryDao> historyDaos;
+
+	public static StrategyHistoryDto of(StrategyInfoDto strategyInfoDto, List<HistoryDao> historyDaos) {
+		return new StrategyHistoryDto(strategyInfoDto, historyDaos);
+	}
 }

@@ -3,6 +3,7 @@ package com.traders.traders.module.strategy.service;
 import static com.traders.traders.common.exception.ExceptionMessage.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.traders.traders.common.exception.TradersException;
 import com.traders.traders.common.utils.AESUtils;
 import com.traders.traders.module.feign.service.FeignService;
-import com.traders.traders.module.history.domain.History;
+import com.traders.traders.module.history.domain.repository.dao.HistoryDao;
 import com.traders.traders.module.history.service.HistoryService;
 import com.traders.traders.module.strategy.controller.dto.request.CreateStrategyDto;
 import com.traders.traders.module.strategy.controller.dto.response.BackTestResponseDto;
@@ -24,6 +25,8 @@ import com.traders.traders.module.strategy.domain.repository.StrategyRepository;
 import com.traders.traders.module.strategy.domain.repository.dao.StrategyInfoDao;
 import com.traders.traders.module.strategy.service.dto.BackTestDto;
 import com.traders.traders.module.strategy.service.dto.HistoryCache;
+import com.traders.traders.module.strategy.service.dto.StrategyHistoryDto;
+import com.traders.traders.module.strategy.service.dto.StrategyInfoDto;
 import com.traders.traders.module.strategy.service.dto.WebHookDto;
 import com.traders.traders.module.users.domain.Users;
 import com.traders.traders.module.users.domain.repository.dao.AutoTradingSubscriberDao;
@@ -84,6 +87,8 @@ public class StrategyService {
 
 	public BackTestResponseDto backTest(BackTestDto request) {
 
+		List<StrategyHistoryDto> strategyHistoryDtos = new ArrayList<>();
+
 		for (String name : request.getNames()) {
 			String cacheKey = "strategy:" + name;
 
@@ -92,16 +97,16 @@ public class StrategyService {
 
 			//없다면 매매 내역 전체 캐싱
 			if (historyCache == null) {
-				List<History> histories = findHistoriesByStrategyName(name);
+				List<HistoryDao> histories = findHistoryDaoByStrategyName(name);
 				historyCache = HistoryCache.of(histories);
 				redisTemplate.opsForValue().set(cacheKey, historyCache);
 			}
 
 			//매매 내역들을 조건에 맞게 (기간, 자기 자본 100) 계산 후 응답
-			calculateHistoryCache(historyCache, request);
+			strategyHistoryDtos.add(calculateHistoryCache(historyCache, request, name));
 		}
 
-		return null;
+		return BackTestResponseDto.of(strategyHistoryDtos);
 	}
 
 	public void createStrategy(CreateStrategyDto request) {
@@ -167,20 +172,42 @@ public class StrategyService {
 			.orElseThrow(() -> new TradersException(NOT_FOUND_ANY_STRATEGY_EXCEPTION));
 	}
 
-	private List<History> findHistoriesByStrategyName(String name) {
-		return historyService.findHistoriesByStrategyName(name);
+	private List<HistoryDao> findHistoryDaoByStrategyName(String name) {
+		return historyService.findHistoryDaoByStrategyName(name);
 	}
 
-	private void calculateHistoryCache(HistoryCache historyCache, BackTestDto request) {
-		for (History history : historyCache.getHistories()) {
+	private StrategyHistoryDto calculateHistoryCache(HistoryCache historyCache, BackTestDto request,
+		String strategyName) {
+		String name = strategyName;
+		double compoundProfitRate = 0;
+		double winCount = 0;
+		double totalCount = 0; //TODO - 기간을 이상하게 설정해서 매매 내역이 없는 경우 0으로 나누게 됐을 때 예외 발생시키기
+		double totalProfitRate = 0;
+		double totalLossRate = 0;
+
+		for (HistoryDao history : historyCache.getHistories()) {
 			if (isInPeriod(history, request.getStartDate(), request.getEndDate())) {
-				//TODO - 기획 픽스하고 처리
-				// StrategyInfoDto에 데이터 채우기
+				totalCount++;
+				compoundProfitRate = compoundProfitRate * (1 + history.getProfitRate());
+
+				if (history.getProfitRate() > 0) {
+					winCount++;
+					totalProfitRate += history.getProfitRate();
+				} else {
+					totalLossRate += history.getProfitRate();
+				}
 			}
 		}
+
+		StrategyInfoDto strategyInfoDto = StrategyInfoDto.of(name, compoundProfitRate, winCount / totalCount,
+			totalProfitRate / totalLossRate);
+
+		return StrategyHistoryDto.of(strategyInfoDto, historyCache.getHistories());
+
 	}
 
-	private boolean isInPeriod(History history, LocalDateTime startDate, LocalDateTime endDate) {
-		return history.getCreatedAt().isAfter(startDate) && history.getCreatedAt().isBefore(endDate);
+	private boolean isInPeriod(HistoryDao history, LocalDateTime startDate, LocalDateTime endDate) {
+		return history.getEntryPosition().getTime().isAfter(startDate) &&
+			history.getExitPosition().getTime().isBefore(endDate);
 	}
 }

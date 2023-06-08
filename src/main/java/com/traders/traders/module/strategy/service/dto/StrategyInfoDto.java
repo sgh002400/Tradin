@@ -7,6 +7,11 @@ import lombok.Getter;
 @Getter
 public class StrategyInfoDto {
 	private final String name;
-	private final double profitRate;
-	//TODO - 요소 추가하기
+	private final double compoundProfitRate;
+	private final double winRate;
+	private final double profitFactor;
+
+	public static StrategyInfoDto of(String name, double compoundProfitRate, double winRate, double profitFactor) {
+		return new StrategyInfoDto(name, compoundProfitRate, winRate, profitFactor);
+	}
 }
