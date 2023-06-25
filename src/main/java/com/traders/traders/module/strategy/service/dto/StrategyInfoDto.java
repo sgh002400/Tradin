@@ -6,12 +6,12 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class StrategyInfoDto {
-	private final String name;
-	private final double compoundProfitRate;
-	private final double winRate;
-	private final double profitFactor;
+    private final Long id;
+    private final double compoundProfitRate;
+    private final double winRate;
+    private final double profitFactor;
 
-	public static StrategyInfoDto of(String name, double compoundProfitRate, double winRate, double profitFactor) {
-		return new StrategyInfoDto(name, compoundProfitRate, winRate, profitFactor);
-	}
+    public static StrategyInfoDto of(Long id, double compoundProfitRate, double winRate, double profitFactor) {
+        return new StrategyInfoDto(id, compoundProfitRate, winRate, profitFactor);
+    }
 }
