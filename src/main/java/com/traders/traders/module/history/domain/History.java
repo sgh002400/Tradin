@@ -71,10 +71,12 @@ public class History extends AuditTime {
 	public void calculateProfitRate() {
 		if (isOpenPositionLong()) {
 			this.profitRate =
-				(double)(this.exitPosition.getPrice() - this.entryPosition.getPrice()) / this.entryPosition.getPrice();
+				(double)(this.exitPosition.getPrice() - this.entryPosition.getPrice()) / this.entryPosition.getPrice()
+					* 100;
 		} else {
 			this.profitRate =
-				(double)(this.entryPosition.getPrice() - this.exitPosition.getPrice()) / this.entryPosition.getPrice();
+				(double)(this.entryPosition.getPrice() - this.exitPosition.getPrice()) / this.entryPosition.getPrice()
+					* 100;
 		}
 	}
 

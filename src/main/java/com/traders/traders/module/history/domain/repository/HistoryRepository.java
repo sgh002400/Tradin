@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.traders.traders.module.history.domain.History;
 
 @Repository
-public interface HistoryRepository extends JpaRepository<History, Long> {
+public interface HistoryRepository extends JpaRepository<History, Long>, HistoryQueryRepository {
 	Optional<History> findLastHistoryByStrategyId(Long id);
 }

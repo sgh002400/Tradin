@@ -7,4 +7,6 @@ import com.traders.traders.module.strategy.domain.repository.dao.StrategyInfoDao
 
 public interface StrategyQueryRepository {
 	Optional<List<StrategyInfoDao>> findStrategiesInfoDao();
+
+	List<StrategyInfoDao> findStrategyInfoDaoByNameIn(List<String> names);
 }
