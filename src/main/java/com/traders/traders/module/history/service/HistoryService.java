@@ -63,7 +63,6 @@ public class HistoryService {
         return calculateHistoryCache(historyCache, request);
     }
 
-    //TODO - 누적 수익률 계산하기
     private BackTestResponseDto calculateHistoryCache(HistoryCache historyCache, BackTestDto request) {
         List<HistoryDao> histories = new ArrayList<>();
         double compoundProfitRate = 1;
@@ -74,23 +73,24 @@ public class HistoryService {
         double loseProfitRate = 0;
 
         for (HistoryDao history : historyCache.getHistories()) {
-            if (!isInPeriod(history, request.getStartDate(), request.getEndDate())) continue;
-            if (!isCorrespondTradingType(history, request.getTradingTypes())) continue;
+            if (isInPeriod(history, request.getStartDate(), request.getEndDate()) &&
+                    isCorrespondTradingType(history, request.getTradingTypes())) {
 
-            totalTradeCount++;
-            compoundProfitRate = compoundProfitRate * (1 + history.getProfitRate());
-            history.setCompoundProfitRate(compoundProfitRate);
-            histories.add(history);
+                totalTradeCount++;
+                compoundProfitRate = compoundProfitRate * (1 + history.getProfitRate());
+                history.setCompoundProfitRate(compoundProfitRate);
+                histories.add(history);
 
-            double profitRate = history.getProfitRate();
-            if (profitRate > 0) {
-                winProfitRate += profitRate;
-                winCount++;
-            } else if (profitRate < 0) {
-                loseProfitRate += Math.abs(profitRate);
+                double profitRate = history.getProfitRate();
+                if (profitRate > 0) {
+                    winProfitRate += profitRate;
+                    winCount++;
+                } else if (profitRate < 0) {
+                    loseProfitRate += Math.abs(profitRate);
+                }
+
+                simpleProfitRate += profitRate;
             }
-
-            simpleProfitRate += profitRate;
         }
 
         Collections.reverse(histories);
@@ -111,6 +111,7 @@ public class HistoryService {
 
         return BackTestResponseDto.of(strategyInfoDto, histories);
     }
+
 
     private double calculateWinRate(double winCount, int totalTradeCount) {
         return totalTradeCount == 0 ? 0 : winCount / totalTradeCount;
