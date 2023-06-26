@@ -66,7 +66,7 @@ public class HistoryService {
     //TODO - 누적 수익률 계산하기
     private BackTestResponseDto calculateHistoryCache(HistoryCache historyCache, BackTestDto request) {
         List<HistoryDao> histories = new ArrayList<>();
-        double compoundProfitRate = 0;
+        double compoundProfitRate = 1;
         double winCount = 0;
         int totalTradeCount = 0;
         double simpleProfitRate = 0;
@@ -79,6 +79,7 @@ public class HistoryService {
 
             totalTradeCount++;
             compoundProfitRate = compoundProfitRate * (1 + history.getProfitRate());
+            history.setCompoundProfitRate(compoundProfitRate);
             histories.add(history);
 
             double profitRate = history.getProfitRate();
