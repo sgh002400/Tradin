@@ -1,10 +1,11 @@
 package com.traders.traders.module.history.service.dto;
 
-import com.traders.traders.module.strategy.domain.BackTestType;
+import com.traders.traders.module.strategy.domain.TradingType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @Getter
@@ -13,10 +14,10 @@ public class BackTestDto {
     private String name;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private BackTestType backTestType; //공매도, 공매수, 공매도 & 공매수
+    private List<TradingType> tradingTypes; //공매도, 공매수, 공매도 & 공매수
 
     public static BackTestDto of(Long id, String name, LocalDateTime startDate, LocalDateTime endDate,
-                                 BackTestType backTestType) {
-        return new BackTestDto(id, name, startDate, endDate, backTestType);
+                                 List<TradingType> tradingTypes) {
+        return new BackTestDto(id, name, startDate, endDate, tradingTypes);
     }
 }

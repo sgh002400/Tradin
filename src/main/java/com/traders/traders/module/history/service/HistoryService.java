@@ -9,6 +9,7 @@ import com.traders.traders.module.history.service.dto.BackTestDto;
 import com.traders.traders.module.history.service.dto.StrategyInfoDto;
 import com.traders.traders.module.strategy.domain.Position;
 import com.traders.traders.module.strategy.domain.Strategy;
+import com.traders.traders.module.strategy.domain.TradingType;
 import com.traders.traders.module.strategy.service.dto.HistoryCache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.traders.traders.common.exception.ExceptionMessage.NOT_FOUND_OPEN_POSITION_EXCEPTION;
@@ -61,41 +63,74 @@ public class HistoryService {
         return calculateHistoryCache(historyCache, request);
     }
 
+    //TODO - 누적 수익률 계산하기
     private BackTestResponseDto calculateHistoryCache(HistoryCache historyCache, BackTestDto request) {
+        List<HistoryDao> histories = new ArrayList<>();
         double compoundProfitRate = 0;
         double winCount = 0;
-        double totalCount = 0; //TODO - 기간을 이상하게 설정해서 매매 내역이 없는 경우 0으로 나누게 됐을 때 예외 발생시키기
-        double totalProfitRate = 0;
-        double totalLossRate = 0;
-        List<HistoryDao> histories = new ArrayList<>();
-        //TODO - 숏 총 순익, 롱 총 순익 추가하기
+        int totalTradeCount = 0;
+        double simpleProfitRate = 0;
+        double winProfitRate = 0;
+        double loseProfitRate = 0;
 
         for (HistoryDao history : historyCache.getHistories()) {
-            if (isInPeriod(history, request.getStartDate(), request.getEndDate())) {
-                //TODO - 롱, 숏, 롱숏 if문 처리
-                totalCount++;
-                compoundProfitRate = compoundProfitRate * (1 + history.getProfitRate());
-                histories.add(history);
+            if (!isInPeriod(history, request.getStartDate(), request.getEndDate())) continue;
+            if (!isCorrespondTradingType(history, request.getTradingTypes())) continue;
 
-                if (history.getProfitRate() > 0) {
-                    winCount++;
-                    totalProfitRate += history.getProfitRate();
-                } else {
-                    totalLossRate += history.getProfitRate();
-                }
+            totalTradeCount++;
+            compoundProfitRate = compoundProfitRate * (1 + history.getProfitRate());
+            histories.add(history);
+
+            double profitRate = history.getProfitRate();
+            if (profitRate > 0) {
+                winProfitRate += profitRate;
+                winCount++;
+            } else if (profitRate < 0) {
+                loseProfitRate += Math.abs(profitRate);
             }
+
+            simpleProfitRate += profitRate;
         }
 
-        StrategyInfoDto strategyInfoDto = StrategyInfoDto.of(request.getId(), request.getName(), compoundProfitRate, winCount / totalCount,
-                totalProfitRate / totalLossRate);
+        Collections.reverse(histories);
+
+        double winRate = calculateWinRate(winCount, totalTradeCount);
+        double averageProfitRate = calculateAverageProfitRate(simpleProfitRate, totalTradeCount);
+        double profitFactor = calculateProfitFactor(winProfitRate, loseProfitRate);
+
+        StrategyInfoDto strategyInfoDto = StrategyInfoDto.builder()
+                .id(request.getId())
+                .name(request.getName())
+                .compoundProfitRate(compoundProfitRate)
+                .winRate(winRate)
+                .profitFactor(profitFactor)
+                .totalTradeCount(totalTradeCount)
+                .averageProfitRate(averageProfitRate)
+                .build();
 
         return BackTestResponseDto.of(strategyInfoDto, histories);
-
     }
+
+    private double calculateWinRate(double winCount, int totalTradeCount) {
+        return totalTradeCount == 0 ? 0 : winCount / totalTradeCount;
+    }
+
+    private double calculateAverageProfitRate(double simpleProfitRate, int totalTradeCount) {
+        return totalTradeCount == 0 ? 0 : simpleProfitRate / totalTradeCount;
+    }
+
+    private double calculateProfitFactor(double winProfitRate, double loseProfitRate) {
+        return loseProfitRate == 0 ? 0 : winProfitRate / loseProfitRate;
+    }
+
 
     private boolean isInPeriod(HistoryDao history, LocalDateTime startDate, LocalDateTime endDate) {
         return history.getEntryPosition().getTime().isAfter(startDate) &&
                 history.getExitPosition().getTime().isBefore(endDate);
+    }
+
+    private boolean isCorrespondTradingType(HistoryDao historyDao, List<TradingType> tradingTypes) {
+        return tradingTypes.contains(historyDao.getEntryPosition().getTradingType());
     }
 
     private static void calculateProfitRate(History history) {

@@ -20,6 +20,7 @@ public class HistoryQueryRepositoryImpl implements HistoryQueryRepository {
                         history.profitRate))
                 .from(history)
                 .where(history.strategy.id.eq(id))
+                .orderBy(history.id.asc())
                 .fetch();
     }
 }
