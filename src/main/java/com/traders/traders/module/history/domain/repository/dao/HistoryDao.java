@@ -15,11 +15,11 @@ public class HistoryDao {
     private double compoundProfitRate;
 
     @QueryProjection
-    public HistoryDao(Long id, Position entryPosition, Position exitPosition, double profitRate, double compoundProfitRate) {
+    public HistoryDao(Long id, Position entryPosition, Position exitPosition, double profitRate) {
         this.id = id;
         this.entryPosition = entryPosition;
         this.exitPosition = exitPosition;
         this.profitRate = profitRate;
-        this.compoundProfitRate = compoundProfitRate;
+        this.compoundProfitRate = 0;
     }
 }
