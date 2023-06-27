@@ -45,7 +45,7 @@ public class HistoryService {
         return historyRepository.findHistoryDaoByStrategyId(id);
     }
 
-    //TODO - 비동기 처리
+    //TODO - 비동기 처리 / 캐시 키를 전략Id,시작날짜,종료날짜,매매타입 한번에 묶어서 캐시하기
     public BackTestResponseDto backTest(BackTestDto request) {
         String cacheKey = "strategyId:" + request.getId();
 
