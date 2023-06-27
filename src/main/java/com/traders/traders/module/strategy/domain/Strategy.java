@@ -23,6 +23,10 @@ public class Strategy extends AuditTime {
     private String name;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private StrategyType strategyType;
+
+    @Column(nullable = false)
     private double profitFactor;
 
     //TODO - Rate, Count 클래스로 묶기
@@ -61,9 +65,10 @@ public class Strategy extends AuditTime {
     private Position currentPosition;
 
     @Builder
-    private Strategy(String name, double profitFactor, double winningRate, double simpleProfitRate, double compoundProfitRate,
+    private Strategy(String name, StrategyType strategyType, double profitFactor, double winningRate, double simpleProfitRate, double compoundProfitRate,
                      double totalProfitRate, double totalLossRate, int winCount, int lossCount, Position currentPosition, int averageHoldingPeriod, double averageProfitRate) {
         this.name = name;
+        this.strategyType = strategyType;
         this.profitFactor = profitFactor;
         this.winningRate = winningRate;
         this.simpleProfitRate = simpleProfitRate;
@@ -78,11 +83,12 @@ public class Strategy extends AuditTime {
         this.averageProfitRate = averageProfitRate;
     }
 
-    public static Strategy of(String name, double profitFactor, double winningRate, double simpleProfitRate,
+    public static Strategy of(String name, StrategyType strategyType, double profitFactor, double winningRate, double simpleProfitRate,
                               double compoundProfitRate,
                               double totalProfitRate, double totalLossRate, int winCount, int lossCount, Position currentPosition, int averageHoldingPeriod, double averageProfitRate) {
         return Strategy.builder()
                 .name(name)
+                .strategyType(strategyType)
                 .profitFactor(profitFactor)
                 .winningRate(winningRate)
                 .simpleProfitRate(simpleProfitRate)

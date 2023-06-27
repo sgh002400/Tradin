@@ -4,10 +4,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum TradingType {
-    LONG("매수"),
-    SHORT("매도"),
-    NONE("무");
+public enum StrategyType {
+    FUTURE("선물"),
+    SPOT("현물");
 
     private final String value;
 }

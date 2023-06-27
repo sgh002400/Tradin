@@ -1,12 +1,14 @@
 package com.traders.traders.module.strategy.domain.repository;
 
+import com.traders.traders.module.strategy.domain.repository.dao.StrategyInfoDao;
+
 import java.util.List;
 import java.util.Optional;
 
-import com.traders.traders.module.strategy.domain.repository.dao.StrategyInfoDao;
-
 public interface StrategyQueryRepository {
-	Optional<List<StrategyInfoDao>> findStrategiesInfoDao();
+    Optional<List<StrategyInfoDao>> findFutureStrategiesInfoDao();
 
-	List<StrategyInfoDao> findStrategyInfoDaoByNameIn(List<String> names);
+    Optional<List<StrategyInfoDao>> findSpotStrategiesInfoDao();
+
+    List<StrategyInfoDao> findStrategyInfoDaoByNameIn(List<String> names);
 }

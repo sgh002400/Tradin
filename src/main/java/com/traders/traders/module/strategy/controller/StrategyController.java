@@ -44,9 +44,14 @@ public class StrategyController {
         CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
     }
 
-    @GetMapping()
-    public FindStrategiesInfoResponseDto findStrategiesInfos() {
-        return strategyService.findStrategiesInfo();
+    @GetMapping("/future")
+    public FindStrategiesInfoResponseDto findFutureStrategiesInfos() {
+        return strategyService.findFutureStrategiesInfo();
+    }
+
+    @GetMapping("/spot")
+    public FindStrategiesInfoResponseDto findSpotStrategiesInfos() {
+        return strategyService.findSpotStrategiesInfo();
     }
 
     @PostMapping("/{id}/subscriptions")

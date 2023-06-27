@@ -60,8 +60,13 @@ public class StrategyService {
         }
     }
 
-    public FindStrategiesInfoResponseDto findStrategiesInfo() {
-        List<StrategyInfoDao> strategiesInfo = findStrategyInfoDaos();
+    public FindStrategiesInfoResponseDto findFutureStrategiesInfo() {
+        List<StrategyInfoDao> strategiesInfo = findFutureStrategyInfoDaos();
+        return new FindStrategiesInfoResponseDto(strategiesInfo);
+    }
+
+    public FindStrategiesInfoResponseDto findSpotStrategiesInfo() {
+        List<StrategyInfoDao> strategiesInfo = findSpotStrategyInfoDaos();
         return new FindStrategiesInfoResponseDto(strategiesInfo);
     }
 
@@ -73,12 +78,11 @@ public class StrategyService {
 
         savedUser.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey);
     }
-
-
+    
     public void createStrategy(CreateStrategyDto request) {
-        Strategy strategy = Strategy.of(request.getName(), request.getProfitFactor(), request.getWinningRate(),
+        Strategy strategy = Strategy.of(request.getName(), request.getStrategyType(), request.getProfitFactor(), request.getWinningRate(),
                 request.getSimpleProfitRate(), request.getCompoundProfitRate(), request.getTotalProfitRate(),
-                request.getTotalLossRate(), request.getWinCount(), request.getLossCount(), request.getCurrentPosition());
+                request.getTotalLossRate(), request.getWinCount(), request.getLossCount(), request.getCurrentPosition(), request.getAverageHoldingPeriod(), request.getAverageProfitRate());
 
         strategyRepository.save(strategy);
     }
@@ -133,8 +137,13 @@ public class StrategyService {
                 .orElseThrow(() -> new TradersException(NOT_FOUND_STRATEGY_EXCEPTION));
     }
 
-    private List<StrategyInfoDao> findStrategyInfoDaos() {
-        return strategyRepository.findStrategiesInfoDao()
+    private List<StrategyInfoDao> findFutureStrategyInfoDaos() {
+        return strategyRepository.findFutureStrategiesInfoDao()
+                .orElseThrow(() -> new TradersException(NOT_FOUND_ANY_STRATEGY_EXCEPTION));
+    }
+
+    private List<StrategyInfoDao> findSpotStrategyInfoDaos() {
+        return strategyRepository.findSpotStrategiesInfoDao()
                 .orElseThrow(() -> new TradersException(NOT_FOUND_ANY_STRATEGY_EXCEPTION));
     }
 }
