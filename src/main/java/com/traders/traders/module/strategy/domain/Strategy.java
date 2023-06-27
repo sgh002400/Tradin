@@ -121,7 +121,6 @@ public class Strategy extends AuditTime {
 
     private void updateTotalLossRate(double profitRate) {
         this.rate.updateTotalLossRate(profitRate);
-        ;
     }
 
     private void updateProfitFactor() {
