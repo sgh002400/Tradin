@@ -33,7 +33,7 @@ public class HistoryService {
     public void closeOngoingHistory(Strategy strategy, Position position) {
         History history = findLastHistoryByStrategyId(strategy.getId());
         closeOpenPosition(history, position);
-        calculateProfitRate(history); //TODO - history.exitPosition 잘 되는지랑 수치 계산 잘 되는지 테스트 해보기
+        calculateProfitRate(history);
     }
 
     public void createNewHistory(Strategy strategy, Position position) {
@@ -45,7 +45,6 @@ public class HistoryService {
         return historyRepository.findHistoryDaoByStrategyId(id);
     }
 
-    //TODO - 비동기 처리 / 캐시 키를 전략Id,시작날짜,종료날짜,매매타입 한번에 묶어서 캐시하기
     public BackTestResponseDto backTest(BackTestDto request) {
         String cacheKey = "strategyId:" + request.getId();
 

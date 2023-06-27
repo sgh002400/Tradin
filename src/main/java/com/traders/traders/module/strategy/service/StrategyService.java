@@ -36,7 +36,7 @@ public class StrategyService {
     private final StrategyRepository strategyRepository;
     private final AESUtils aesUtils;
 
-    @Async //TODO - 동기 비동기 성능 차이 블로그 작성하기
+    @Async
     public void handleWebHook(WebHookDto request) {
         Strategy strategy = findByName(request.getName());
 
