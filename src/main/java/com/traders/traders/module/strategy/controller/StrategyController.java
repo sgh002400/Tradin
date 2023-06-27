@@ -1,6 +1,5 @@
 package com.traders.traders.module.strategy.controller;
 
-import com.traders.traders.module.strategy.controller.dto.request.CreateStrategyDto;
 import com.traders.traders.module.strategy.controller.dto.request.WebHookRequestDto;
 import com.traders.traders.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
 import com.traders.traders.module.strategy.service.StrategyService;
@@ -61,8 +60,8 @@ public class StrategyController {
 
 
     //TODO - 개발용 메서드!! 추후 삭제하기
-    @PostMapping("/create")
-    public void createStrategy(@Valid @RequestBody CreateStrategyDto request) {
-        strategyService.createStrategy(request);
-    }
+//    @PostMapping("/create")
+//    public void createStrategy(@Valid @RequestBody CreateStrategyDto request) {
+//        strategyService.createStrategy(request);
+//    }
 }

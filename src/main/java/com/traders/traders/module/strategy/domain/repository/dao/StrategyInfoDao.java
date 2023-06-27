@@ -16,20 +16,17 @@ public class StrategyInfoDao {
     private final double compoundProfitRate;
     private final double totalProfitRate;
     private final double totalLossRate;
+    private final double averageProfitRate;
     private final int totalTradeCount;
     private final int winCount;
     private final int lossCount;
     private final TradingType tradingType;
     private final LocalDateTime time;
-    private final int averageHoldingPeriod;
-    private final double averageProfitRate;
     private final int price;
+    private final int averageHoldingPeriod;
 
     @QueryProjection
-    public StrategyInfoDao(Long id, String name, double profitFactor, double winningRate, double simpleProfitRate,
-                           double compoundProfitRate,
-                           double totalProfitRate, double totalLossRate, int totalTradeCount, int winCount, int lossCount,
-                           TradingType tradingType, LocalDateTime time, int price, int averageHoldingPeriod, double averageProfitRate) {
+    public StrategyInfoDao(Long id, String name, double profitFactor, double winningRate, double simpleProfitRate, double compoundProfitRate, double totalProfitRate, double totalLossRate, double averageProfitRate, int totalTradeCount, int winCount, int lossCount, TradingType tradingType, LocalDateTime time, int price, int averageHoldingPeriod) {
         this.id = id;
         this.name = name;
         this.profitFactor = profitFactor;
@@ -38,6 +35,7 @@ public class StrategyInfoDao {
         this.compoundProfitRate = compoundProfitRate;
         this.totalProfitRate = totalProfitRate;
         this.totalLossRate = totalLossRate;
+        this.averageProfitRate = averageProfitRate;
         this.totalTradeCount = totalTradeCount;
         this.winCount = winCount;
         this.lossCount = lossCount;
@@ -45,6 +43,5 @@ public class StrategyInfoDao {
         this.time = time;
         this.price = price;
         this.averageHoldingPeriod = averageHoldingPeriod;
-        this.averageProfitRate = averageProfitRate;
     }
 }

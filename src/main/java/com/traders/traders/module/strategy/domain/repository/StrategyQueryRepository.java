@@ -9,6 +9,4 @@ public interface StrategyQueryRepository {
     Optional<List<StrategyInfoDao>> findFutureStrategiesInfoDao();
 
     Optional<List<StrategyInfoDao>> findSpotStrategiesInfoDao();
-
-    List<StrategyInfoDao> findStrategyInfoDaoByNameIn(List<String> names);
 }

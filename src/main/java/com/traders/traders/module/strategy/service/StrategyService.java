@@ -4,7 +4,6 @@ import com.traders.traders.common.exception.TradersException;
 import com.traders.traders.common.utils.AESUtils;
 import com.traders.traders.module.feign.service.FeignService;
 import com.traders.traders.module.history.service.HistoryService;
-import com.traders.traders.module.strategy.controller.dto.request.CreateStrategyDto;
 import com.traders.traders.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
 import com.traders.traders.module.strategy.domain.Position;
 import com.traders.traders.module.strategy.domain.Strategy;
@@ -79,13 +78,13 @@ public class StrategyService {
         savedUser.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey);
     }
 
-    public void createStrategy(CreateStrategyDto request) {
-        Strategy strategy = Strategy.of(request.getName(), request.getStrategyType(), request.getCoinType(), request.getProfitFactor(), request.getWinningRate(),
-                request.getSimpleProfitRate(), request.getCompoundProfitRate(), request.getTotalProfitRate(),
-                request.getTotalLossRate(), request.getWinCount(), request.getLossCount(), request.getCurrentPosition(), request.getAverageHoldingPeriod(), request.getAverageProfitRate());
-
-        strategyRepository.save(strategy);
-    }
+//    public void createStrategy(CreateStrategyDto request) {
+//        Strategy strategy = Strategy.of(request.getName(), request.getStrategyType(), request.getCoinType(), request.getProfitFactor(), request.getWinningRate(),
+//                request.getSimpleProfitRate(), request.getCompoundProfitRate(), request.getTotalProfitRate(),
+//                request.getTotalLossRate(), request.getWinCount(), request.getLossCount(), request.getCurrentPosition(), request.getAverageHoldingPeriod(), request.getAverageProfitRate());
+//
+//        strategyRepository.save(strategy);
+//    }
 
     private void switchPosition(Strategy strategy, String apiKey, String secretKey, double orderQuantity) {
         if (isCurrentLongPosition(strategy)) {

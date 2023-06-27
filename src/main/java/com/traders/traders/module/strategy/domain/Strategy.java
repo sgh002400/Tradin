@@ -22,90 +22,44 @@ public class Strategy extends AuditTime {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private StrategyType strategyType;
+    @Embedded
+    private Type type;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private CoinType coinType;
+    @Embedded
+    private Rate rate;
 
-    @Column(nullable = false)
-    private double profitFactor;
-
-    //TODO - Rate, Count 클래스로 묶기
-
-    @Column(nullable = false)
-    private double winningRate;
-
-    @Column(nullable = false)
-    private double simpleProfitRate; //단리 수익률
-
-    @Column(nullable = false)
-    private double compoundProfitRate; // 복리 수익률
-
-    @Column(nullable = false)
-    private double totalProfitRate; //총 수익률
-
-    @Column(nullable = false)
-    private double totalLossRate; //총 손해율
-
-    @Column(nullable = false)
-    private int totalTradeCount;
-
-    @Column(nullable = false)
-    private int winCount;
-
-    @Column(nullable = false)
-    private int lossCount;
-
-    @Column(nullable = false)
-    private int averageHoldingPeriod;
-
-    @Column(nullable = false)
-    private double averageProfitRate;
+    @Embedded
+    private Count count;
 
     @Embedded
     private Position currentPosition;
 
+    @Column(nullable = false)
+    private double profitFactor;
+
+    @Column(nullable = false)
+    private int averageHoldingPeriod;
+
     @Builder
-    private Strategy(String name, StrategyType strategyType, CoinType coinType, double profitFactor, double winningRate, double simpleProfitRate, double compoundProfitRate,
-                     double totalProfitRate, double totalLossRate, int winCount, int lossCount, Position currentPosition, int averageHoldingPeriod, double averageProfitRate) {
+    private Strategy(String name, Type type, Rate rate, Count count, Position currentPosition, double profitFactor, int averageHoldingPeriod) {
         this.name = name;
-        this.strategyType = strategyType;
-        this.coinType = coinType;
-        this.profitFactor = profitFactor;
-        this.winningRate = winningRate;
-        this.simpleProfitRate = simpleProfitRate;
-        this.compoundProfitRate = compoundProfitRate;
-        this.totalProfitRate = totalProfitRate;
-        this.totalLossRate = totalLossRate;
-        this.totalTradeCount = winCount + lossCount;
-        this.winCount = winCount;
-        this.lossCount = lossCount;
+        this.type = type;
+        this.rate = rate;
+        this.count = count;
         this.currentPosition = currentPosition;
+        this.profitFactor = profitFactor;
         this.averageHoldingPeriod = averageHoldingPeriod;
-        this.averageProfitRate = averageProfitRate;
     }
 
-    public static Strategy of(String name, StrategyType strategyType, CoinType coinType, double profitFactor, double winningRate, double simpleProfitRate,
-                              double compoundProfitRate,
-                              double totalProfitRate, double totalLossRate, int winCount, int lossCount, Position currentPosition, int averageHoldingPeriod, double averageProfitRate) {
+    public static Strategy of(String name, Type type, Rate rate, Count count, Position currentPosition, double profitFactor, int averageHoldingPeriod) {
         return Strategy.builder()
                 .name(name)
-                .strategyType(strategyType)
-                .coinType(coinType)
-                .profitFactor(profitFactor)
-                .winningRate(winningRate)
-                .simpleProfitRate(simpleProfitRate)
-                .compoundProfitRate(compoundProfitRate)
-                .totalProfitRate(totalProfitRate)
-                .totalLossRate(totalLossRate)
-                .winCount(winCount)
-                .lossCount(lossCount)
+                .type(type)
+                .rate(rate)
+                .count(count)
                 .currentPosition(currentPosition)
+                .profitFactor(profitFactor)
                 .averageHoldingPeriod(averageHoldingPeriod)
-                .averageProfitRate(averageProfitRate)
                 .build();
     }
 
@@ -117,14 +71,14 @@ public class Strategy extends AuditTime {
         double profitRate = calculateProfitRate(position);
 
         if (isWin(profitRate)) {
-            addWinCount();
+            increaseWinCount();
             updateTotalProfitRate(profitRate);
         } else {
-            addLossCount();
+            increaseLossCount();
             updateTotalLossRate(profitRate);
         }
 
-        addTotalTradeCount();
+        increaseTotalTradeCount();
         updateProfitFactor();
         updateWinRate();
         updateSimpleProfitRate();
@@ -141,8 +95,8 @@ public class Strategy extends AuditTime {
         return this.currentPosition.getTradingType() == SHORT;
     }
 
-    private void addTotalTradeCount() {
-        this.totalTradeCount++;
+    private void increaseTotalTradeCount() {
+        this.count.increaseTotalTradeCount();
     }
 
     private boolean isWin(double profitRate) {
@@ -153,40 +107,41 @@ public class Strategy extends AuditTime {
         return this.currentPosition.getTradingType() == LONG;
     }
 
-    private void addWinCount() {
-        this.winCount++;
+    private void increaseWinCount() {
+        this.count.increaseWinCount();
     }
 
-    private void addLossCount() {
-        this.lossCount++;
+    private void increaseLossCount() {
+        this.count.increaseLossCount();
     }
 
     private void updateTotalProfitRate(double profitRate) {
-        this.totalProfitRate += profitRate;
+        this.rate.updateTotalProfitRate(profitRate);
     }
 
     private void updateTotalLossRate(double profitRate) {
-        this.totalLossRate -= profitRate;
+        this.rate.updateTotalLossRate(profitRate);
+        ;
     }
 
     private void updateProfitFactor() {
-        this.profitFactor = this.totalProfitRate / this.totalLossRate;
+        this.profitFactor = this.rate.getTotalProfitRate() / this.rate.getTotalLossRate();
     }
 
     private void updateWinRate() {
-        this.winningRate = (double) this.winCount / this.totalTradeCount * 100;
+        this.rate.updateWinRate(this.count.getWinCount(), this.count.getTotalTradeCount());
     }
 
     private void updateSimpleProfitRate() {
-        this.simpleProfitRate = this.totalProfitRate - this.totalLossRate;
+        rate.updateSimpleProfitRate();
     }
 
     private void updateCompoundProfitRate(double profitRate) {
-        this.compoundProfitRate = this.compoundProfitRate * (1 + profitRate);
+        rate.updateCompoundProfitRate(profitRate);
     }
 
     private void updateAverageProfitRate() {
-        this.averageProfitRate = this.simpleProfitRate / this.totalTradeCount;
+        this.rate.updateAverageProfitRate(this.count.getTotalTradeCount());
     }
 
     private double calculateProfitRate(Position position) {
