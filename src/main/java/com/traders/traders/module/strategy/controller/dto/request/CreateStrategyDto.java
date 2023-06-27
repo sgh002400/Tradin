@@ -1,5 +1,6 @@
 package com.traders.traders.module.strategy.controller.dto.request;
 
+import com.traders.traders.module.strategy.domain.CoinType;
 import com.traders.traders.module.strategy.domain.Position;
 import com.traders.traders.module.strategy.domain.StrategyType;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.Getter;
 public class CreateStrategyDto {
     private final String name;
     private final StrategyType strategyType;
+    private final CoinType coinType;
     private final double profitFactor;
     private final double winningRate;
     private final double simpleProfitRate;

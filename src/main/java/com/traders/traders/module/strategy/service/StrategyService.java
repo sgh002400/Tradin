@@ -78,9 +78,9 @@ public class StrategyService {
 
         savedUser.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey);
     }
-    
+
     public void createStrategy(CreateStrategyDto request) {
-        Strategy strategy = Strategy.of(request.getName(), request.getStrategyType(), request.getProfitFactor(), request.getWinningRate(),
+        Strategy strategy = Strategy.of(request.getName(), request.getStrategyType(), request.getCoinType(), request.getProfitFactor(), request.getWinningRate(),
                 request.getSimpleProfitRate(), request.getCompoundProfitRate(), request.getTotalProfitRate(),
                 request.getTotalLossRate(), request.getWinCount(), request.getLossCount(), request.getCurrentPosition(), request.getAverageHoldingPeriod(), request.getAverageProfitRate());
 
