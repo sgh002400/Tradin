@@ -23,4 +23,16 @@ public class StrategyInfoDto {
         this.totalTradeCount = totalTradeCount;
         this.averageProfitRate = averageProfitRate;
     }
+
+    public static StrategyInfoDto of(Long id, String name, double compoundProfitRate, double winRate, double profitFactor, int totalTradeCount, double averageProfitRate) {
+        return StrategyInfoDto.builder()
+                .id(id)
+                .name(name)
+                .compoundProfitRate(compoundProfitRate)
+                .winRate(winRate)
+                .profitFactor(profitFactor)
+                .totalTradeCount(totalTradeCount)
+                .averageProfitRate(averageProfitRate)
+                .build();
+    }
 }
