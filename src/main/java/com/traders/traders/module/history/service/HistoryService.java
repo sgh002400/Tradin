@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.traders.traders.common.exception.ExceptionMessage.NOT_FOUND_OPEN_POSITION_EXCEPTION;
+import static com.traders.traders.module.strategy.domain.TradingType.BOTH;
 
 @Service
 @Transactional
@@ -73,7 +74,7 @@ public class HistoryService {
 
         for (HistoryDao history : historyCache.getHistories()) {
             if (isInPeriod(history, request.getStartDate(), request.getEndDate()) &&
-                    isCorrespondTradingType(history, request.getTradingTypes())) {
+                    isCorrespondTradingType(history, request.getTradingType())) {
 
                 totalTradeCount++;
                 compoundProfitRate = compoundProfitRate * (1 + history.getProfitRate());
@@ -98,15 +99,7 @@ public class HistoryService {
         double averageProfitRate = calculateAverageProfitRate(simpleProfitRate, totalTradeCount);
         double profitFactor = calculateProfitFactor(winProfitRate, loseProfitRate);
 
-        StrategyInfoDto strategyInfoDto = StrategyInfoDto.builder()
-                .id(request.getId())
-                .name(request.getName())
-                .compoundProfitRate(compoundProfitRate)
-                .winRate(winRate)
-                .profitFactor(profitFactor)
-                .totalTradeCount(totalTradeCount)
-                .averageProfitRate(averageProfitRate)
-                .build();
+        StrategyInfoDto strategyInfoDto = StrategyInfoDto.of(request.getId(), request.getName(), compoundProfitRate, winRate, profitFactor, totalTradeCount, averageProfitRate);
 
         return BackTestResponseDto.of(strategyInfoDto, histories);
     }
@@ -130,8 +123,8 @@ public class HistoryService {
                 history.getExitPosition().getTime().isBefore(endDate);
     }
 
-    private boolean isCorrespondTradingType(HistoryDao historyDao, List<TradingType> tradingTypes) {
-        return tradingTypes.contains(historyDao.getEntryPosition().getTradingType());
+    private boolean isCorrespondTradingType(HistoryDao historyDao, TradingType tradingType) {
+        return tradingType == historyDao.getEntryPosition().getTradingType() || tradingType == BOTH;
     }
 
     private static void calculateProfitRate(History history) {

@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @AllArgsConstructor
 @Getter
@@ -15,9 +14,9 @@ public class BackTestRequestDto {
     private final String name;
     private final LocalDateTime startDate;
     private final LocalDateTime endDate;
-    private final List<TradingType> tradingTypes;
+    private final TradingType tradingType;
 
     public BackTestDto toServiceDto() {
-        return BackTestDto.of(id, name, startDate, endDate, tradingTypes);
+        return BackTestDto.of(id, name, startDate, endDate, tradingType);
     }
 }
