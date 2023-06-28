@@ -10,6 +10,7 @@ import com.traders.traders.module.users.controller.dto.response.TokenResponseDto
 import com.traders.traders.module.users.domain.Users;
 import com.traders.traders.module.users.domain.repository.UsersRepository;
 import com.traders.traders.module.users.domain.repository.dao.AutoTradingSubscriberDao;
+import com.traders.traders.module.users.service.dto.ChangeMetadataDto;
 import com.traders.traders.module.users.service.dto.PingDto;
 import com.traders.traders.module.users.service.dto.SignInDto;
 import com.traders.traders.module.users.service.dto.SignUpDto;
@@ -52,6 +53,21 @@ public class UsersService implements UserDetailsService {
     public String ping(PingDto request) {
         feignService.getBtcusdtPositionQuantity(request.getBinanceApiKey(), request.getBinanceSecretKey());
         return "pong";
+    }
+
+    public String changeMetaData(ChangeMetadataDto request) {
+        Users user = getUserFromSecurityContext();
+        int changedLeverage = getChangedLeverage(request, user);
+
+        user.changeLeverage(changedLeverage);
+        user.changeQuantityRate(request.getQuantityRate());
+        user.changeTradingType(request.getTradingTypes());
+
+        return "success";
+    }
+
+    private int getChangedLeverage(ChangeMetadataDto request, Users user) {
+        return feignService.changeLeverage(user.getBinanceApiKey(), user.getBinanceSecretKey(), request.getLeverage());
     }
 
     public Users findById(Long id) {

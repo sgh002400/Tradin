@@ -29,7 +29,7 @@ public class FeignService {
 
         String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
-        feignClient.closePosition(apiKey, quantity, 1000L, side, signature, TICKER, timestamp, "MARKET");
+        feignClient.order(apiKey, quantity, 1000L, side, signature, TICKER, timestamp, "MARKET");
     }
 
     public Double getBtcusdtPositionQuantity(String apiKey, String secretKey) {
@@ -42,6 +42,15 @@ public class FeignService {
                 apiKey, signature);
 
         return extractBtcusdtPositionQuantity(currentPositionInfoDtos);
+    }
+
+    public int changeLeverage(String apiKey, String secretKey, int leverage) {
+        Long timestamp = Instant.now().toEpochMilli();
+        String queryString = "leverage=" + leverage + "&recvWindow=1000" + "&symbol=" + TICKER + "&timestamp="
+                + timestamp;
+        String signature = SignatureGenerator.generateSignature(queryString, secretKey);
+
+        return feignClient.changeLeverage(apiKey, leverage, 1000L, TICKER, timestamp, signature).getLeverage();
     }
 
     private Double extractBtcusdtPositionQuantity(List<CurrentPositionInfoDto> currentPositionInfoDtos) {

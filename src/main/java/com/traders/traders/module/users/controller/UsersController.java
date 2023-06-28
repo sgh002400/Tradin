@@ -1,5 +1,6 @@
 package com.traders.traders.module.users.controller;
 
+import com.traders.traders.module.users.controller.dto.request.ChangeMetadataRequestDto;
 import com.traders.traders.module.users.controller.dto.request.PingRequestDto;
 import com.traders.traders.module.users.controller.dto.request.SignInRequestDto;
 import com.traders.traders.module.users.controller.dto.request.SignUpRequestDto;
@@ -34,5 +35,10 @@ public class UsersController {
     @PostMapping("/binance/ping")
     public ResponseEntity<String> ping(@Valid @RequestBody PingRequestDto request) {
         return ResponseEntity.ok(usersService.ping(request.toServiceDto()));
+    }
+
+    @PostMapping("/binance/metadata")
+    public ResponseEntity<String> changeMetaData(@Valid @RequestBody ChangeMetadataRequestDto request) {
+        return ResponseEntity.ok(usersService.changeMetaData(request.toServiceDto()));
     }
 }
