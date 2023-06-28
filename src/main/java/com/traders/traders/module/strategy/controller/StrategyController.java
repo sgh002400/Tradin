@@ -1,9 +1,10 @@
 package com.traders.traders.module.strategy.controller;
 
+import com.traders.traders.module.strategy.controller.dto.request.SubscribeStrategyRequestDto;
+import com.traders.traders.module.strategy.controller.dto.request.UnSubscribeStrategyRequestDto;
 import com.traders.traders.module.strategy.controller.dto.request.WebHookRequestDto;
 import com.traders.traders.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
 import com.traders.traders.module.strategy.service.StrategyService;
-import com.traders.traders.module.users.controller.dto.request.SubscribeStrategyRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -53,6 +54,10 @@ public class StrategyController {
         strategyService.subscribeStrategy(request.toServiceDto(id));
     }
 
+    @PatchMapping("/unsubscriptions")
+    public void unsubscribe(@Valid @RequestBody UnSubscribeStrategyRequestDto request) {
+        strategyService.unsubscribeStrategy(request.toServiceDto());
+    }
 
     //TODO - 개발용 메서드!! 추후 삭제하기
 //    @PostMapping("/create")

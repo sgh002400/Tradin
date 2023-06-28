@@ -10,6 +10,7 @@ import com.traders.traders.module.strategy.domain.Strategy;
 import com.traders.traders.module.strategy.domain.TradingType;
 import com.traders.traders.module.strategy.domain.repository.StrategyRepository;
 import com.traders.traders.module.strategy.domain.repository.dao.StrategyInfoDao;
+import com.traders.traders.module.strategy.service.dto.UnSubscribeStrategyDto;
 import com.traders.traders.module.strategy.service.dto.WebHookDto;
 import com.traders.traders.module.users.domain.Users;
 import com.traders.traders.module.users.service.UsersService;
@@ -82,6 +83,22 @@ public class StrategyService {
         savedUser.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey);
     }
 
+    public void unsubscribeStrategy(UnSubscribeStrategyDto request) {
+        Users savedUser = getUserFromSecurityContext();
+        //TODO - Strategy strategy = savedUser.getStrategy(); 이거 되는지 테스트
+        if (request.isPositionClose() && isUserPositionExist(savedUser.getCurrentPositionType())) {
+            String side = getSideFromUserCurrentPosition(savedUser);
+            closePosition(savedUser.getBinanceApiKey(), savedUser.getBinanceSecretKey(), side);
+        }
+
+        savedUser.unsubscribeStrategy();
+
+    }
+
+    private static String getSideFromUserCurrentPosition(Users savedUser) {
+        return savedUser.getCurrentPositionType().equals(LONG) ? "SELL" : "BUY";
+    }
+
 //    public void createStrategy(CreateStrategyDto request) {
 //        Strategy strategy = Strategy.of(request.getName(), request.getStrategyType(), request.getCoinType(), request.getProfitFactor(), request.getWinningRate(),
 //                request.getSimpleProfitRate(), request.getCompoundProfitRate(), request.getTotalProfitRate(),
@@ -107,7 +124,7 @@ public class StrategyService {
         if (isUserTradingTypeContainsShort(user)) {
             int orderQuantity = calculateOrderQuantity(apikey, secretKey, user.getLeverage(), user.getQuantityRate());
 
-            if (isUserPositionExist(user)) {
+            if (isUserPositionExist(user.getCurrentPositionType())) {
                 switchAndChangeCurrentPosition(apikey, secretKey, side, orderQuantity, user, SHORT);
             } else {
                 openAndChangeCurrentPosition(apikey, secretKey, side, orderQuantity, user, SHORT);
@@ -121,7 +138,7 @@ public class StrategyService {
         if (isUserTradingTypeContainsLong(user)) {
             int orderQuantity = calculateOrderQuantity(apikey, secretKey, user.getLeverage(), user.getQuantityRate());
 
-            if (isUserPositionExist(user)) {
+            if (isUserPositionExist(user.getCurrentPositionType())) {
                 switchAndChangeCurrentPosition(apikey, secretKey, side, orderQuantity, user, LONG);
             } else {
                 openAndChangeCurrentPosition(apikey, secretKey, side, orderQuantity, user, LONG);
@@ -167,8 +184,8 @@ public class StrategyService {
         return futureAccountBalance * leverage * quantityRate / 100;
     }
 
-    private boolean isUserPositionExist(Users user) {
-        return user.getCurrentPosition() != NONE;
+    private boolean isUserPositionExist(TradingType tradingType) {
+        return tradingType != NONE;
     }
 
     private boolean isUserTradingTypeContainsLong(Users user) {
