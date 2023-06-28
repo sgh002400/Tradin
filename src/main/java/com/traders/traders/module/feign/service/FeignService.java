@@ -16,6 +16,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FeignService {
     private static final String TICKER = "BTCUSDT";
+    private static final String TIMESTAMP = "&timestamp=";
+    private static final String TYPE = "&type=MARKET";
+    private static final String SIDE = "&side=";
+    private static final String QUANTITY = "&quantity=";
+    private static final String RECV_WINDOW = "&recvWindow=1000";
+    private static final String LEVERAGE = "&leverage=";
+    private static final String SYMBOL = "&symbol=";
+
     private final BinanceClient feignClient;
 
     //queryString은 이름 기준으로 오름차순으로 정렬해야 됨. 요청을 보낼 때 파라미터 순서는 queryString과 동일해야 됨
@@ -24,9 +32,7 @@ public class FeignService {
         double quantity = Math.abs(getBtcusdtPositionQuantity(apiKey, secretKey)) + orderQuantity;
 
         String queryString =
-                "quantity=" + quantity + "&recvWindow=1000" + "&side=" + side + "&symbol=" + TICKER + "&timestamp="
-                        + timestamp
-                        + "&type=MARKET";
+                QUANTITY + quantity + RECV_WINDOW + SIDE + side + SYMBOL + TICKER + TIMESTAMP + timestamp + TYPE;
 
         String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
@@ -38,9 +44,9 @@ public class FeignService {
         double quantity = Math.abs(getBtcusdtPositionQuantity(apiKey, secretKey));
 
         String queryString =
-                "quantity=" + quantity + "&recvWindow=1000" + "&side=" + side + "&symbol=" + TICKER + "&timestamp="
+                QUANTITY + quantity + RECV_WINDOW + SIDE + side + SYMBOL + TICKER + TIMESTAMP
                         + timestamp
-                        + "&type=MARKET";
+                        + TYPE;
 
         String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
@@ -49,7 +55,7 @@ public class FeignService {
 
     public Double getBtcusdtPositionQuantity(String apiKey, String secretKey) {
         Long timestamp = Instant.now().toEpochMilli();
-        String queryString = "recvWindow=1000" + "&symbol=" + TICKER + "&timestamp=" + timestamp;
+        String queryString = RECV_WINDOW + SYMBOL + TICKER + TIMESTAMP + timestamp;
         String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
         List<CurrentPositionInfoDto> currentPositionInfoDtos = feignClient.getCurrentPositionInfo(1000L, TICKER,
@@ -61,7 +67,7 @@ public class FeignService {
 
     public int changeLeverage(String apiKey, String secretKey, int leverage) {
         Long timestamp = Instant.now().toEpochMilli();
-        String queryString = "leverage=" + leverage + "&recvWindow=1000" + "&symbol=" + TICKER + "&timestamp="
+        String queryString = LEVERAGE + leverage + RECV_WINDOW + SYMBOL + TICKER + TIMESTAMP
                 + timestamp;
         String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
@@ -70,7 +76,7 @@ public class FeignService {
 
     public int getFutureAccountBalance(String apiKey, String secretKey) {
         Long timestamp = Instant.now().toEpochMilli();
-        String queryString = "recvWindow=1000" + "&timestamp=" + timestamp;
+        String queryString = RECV_WINDOW + TIMESTAMP + timestamp;
         String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
         List<FutureAccountBalanceDto> futureAccountBalanceDtos = feignClient.getFutureAccountBalance(apiKey, 1000L, timestamp, signature);
