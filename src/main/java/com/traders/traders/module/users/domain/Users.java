@@ -14,7 +14,7 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
 
-import static com.traders.traders.module.strategy.domain.TradingType.BOTH;
+import static com.traders.traders.module.strategy.domain.TradingType.*;
 
 @Getter
 @Entity
@@ -43,6 +43,10 @@ public class Users extends AuditTime implements UserDetails {
     @Enumerated(EnumType.STRING)
     private TradingType tradingType;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TradingType currentPosition;
+
     @Column
     private String binanceApiKey;
 
@@ -61,6 +65,7 @@ public class Users extends AuditTime implements UserDetails {
         this.leverage = 1;
         this.quantityRate = 100;
         this.tradingType = BOTH;
+        this.currentPosition = NONE;
         this.binanceApiKey = null;
         this.binanceSecretKey = null;
         this.strategy = null;
@@ -91,6 +96,13 @@ public class Users extends AuditTime implements UserDetails {
         this.tradingType = tradingType;
     }
 
+    public boolean isUserCurrentPositionExist() {
+        return this.currentPosition == LONG || this.currentPosition == SHORT;
+    }
+
+    public void changeCurrentPosition(TradingType tradingType) {
+        this.currentPosition = tradingType;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

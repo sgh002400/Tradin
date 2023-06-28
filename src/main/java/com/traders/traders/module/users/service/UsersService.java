@@ -9,7 +9,6 @@ import com.traders.traders.module.feign.service.FeignService;
 import com.traders.traders.module.users.controller.dto.response.TokenResponseDto;
 import com.traders.traders.module.users.domain.Users;
 import com.traders.traders.module.users.domain.repository.UsersRepository;
-import com.traders.traders.module.users.domain.repository.dao.AutoTradingSubscriberDao;
 import com.traders.traders.module.users.service.dto.ChangeMetadataDto;
 import com.traders.traders.module.users.service.dto.PingDto;
 import com.traders.traders.module.users.service.dto.SignInDto;
@@ -75,7 +74,7 @@ public class UsersService implements UserDetailsService {
                 .orElseThrow(() -> new TradersException(NOT_FOUND_USER_EXCEPTION));
     }
 
-    public List<AutoTradingSubscriberDao> findAutoTradingSubscriberByStrategyName(String name) {
+    public List<Users> findAutoTradingSubscriberByStrategyName(String name) {
         return usersRepository.findByAutoTradingSubscriber(name);
     }
 

@@ -2,6 +2,7 @@ package com.traders.traders.module.feign.client;
 
 import com.traders.traders.module.feign.client.dto.ChangeLeverageDto;
 import com.traders.traders.module.feign.client.dto.CurrentPositionInfoDto;
+import com.traders.traders.module.feign.client.dto.FutureAccountBalanceDto;
 import com.traders.traders.module.feign.client.dto.NewOrderDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +41,14 @@ public interface BinanceClient {
             @RequestParam("leverage") int leverage,
             @RequestParam("recvWindow") Long recvWindow,
             @RequestParam("symbol") String symbol,
+            @RequestParam("timestamp") Long timestamp,
+            @RequestParam("signature") String signature
+    );
+
+    @GetMapping("/fapi/v2/balance")
+    List<FutureAccountBalanceDto> getFutureAccountBalance(
+            @RequestHeader("X-MBX-APIKEY") String apiKey,
+            @RequestParam("recvWindow") Long recvWindow,
             @RequestParam("timestamp") Long timestamp,
             @RequestParam("signature") String signature
     );

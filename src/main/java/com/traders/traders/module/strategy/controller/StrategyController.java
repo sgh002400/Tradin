@@ -10,7 +10,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,22 +20,22 @@ public class StrategyController {
 
     @KafkaListener(topics = "future-short-term-v1", groupId = "trading-strategy-executors")
     public void handleFutureShortTermV1WebHook(@RequestBody WebHookRequestDto request) {
-        CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
+        strategyService.handleWebHook(request.toServiceDto());
     }
 
     @KafkaListener(topics = "future-long-term-v1", groupId = "trading-strategy-executors")
     public void handleFutureLongTermV1WebHook(@RequestBody WebHookRequestDto request) {
-        CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
+        strategyService.handleWebHook(request.toServiceDto());
     }
 
     @KafkaListener(topics = "spot-short-term-v1", groupId = "trading-strategy-executors")
     public void handleSpotShortTermV1WebHook(@RequestBody WebHookRequestDto request) {
-        CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
+        strategyService.handleWebHook(request.toServiceDto());
     }
 
     @KafkaListener(topics = "spot-long-term-v1", groupId = "trading-strategy-executors")
     public void handleSpotLongTermV1WebHook(@RequestBody WebHookRequestDto request) {
-        CompletableFuture.runAsync(() -> strategyService.handleWebHook(request.toServiceDto()));
+        strategyService.handleWebHook(request.toServiceDto());
     }
 
     @GetMapping("/future")
