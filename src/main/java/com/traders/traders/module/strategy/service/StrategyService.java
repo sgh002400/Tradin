@@ -110,10 +110,12 @@ public class StrategyService {
     private void trade(Users user, Strategy strategy, String apiKey, String secretKey) {
         TradingType currentPosition = getCurrentPosition(strategy);
 
-        switch (currentPosition) {
-            case LONG -> processLongPosition(apiKey, secretKey, "SELL", user);
-            case SHORT -> processShortPosition(apiKey, secretKey, "BUY", user);
+        if (currentPosition == LONG) {
+            processLongPosition(apiKey, secretKey, "SELL", user);
+        } else if (currentPosition == SHORT) {
+            processShortPosition(apiKey, secretKey, "BUY", user);
         }
+
     }
 
     private TradingType getCurrentPosition(Strategy strategy) {
