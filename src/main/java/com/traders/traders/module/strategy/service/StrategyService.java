@@ -213,14 +213,6 @@ public class StrategyService {
                 .orElseThrow(() -> new TradersException(NOT_FOUND_STRATEGY_EXCEPTION));
     }
 
-    private static boolean isCurrentLongPosition(Strategy strategy) {
-        return strategy.isLongPosition();
-    }
-
-    private static boolean isCurrentShortPosition(Strategy strategy) {
-        return strategy.isShortPosition();
-    }
-
     private void closeOngoingHistory(Strategy strategy, Position position) {
         historyService.closeOngoingHistory(strategy, position);
     }
