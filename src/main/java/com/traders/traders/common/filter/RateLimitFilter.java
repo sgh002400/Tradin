@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.traders.traders.common.exception.ExceptionMessage.IP_RATE_LIMIT_EXCEEDED_EXCEPTION;
@@ -21,6 +22,8 @@ import static com.traders.traders.common.exception.ExceptionMessage.IP_RATE_LIMI
 public class RateLimitFilter implements Filter {
 
     private static final Map<String, Bucket> bucketsByIp = new ConcurrentHashMap<>();
+    private static final Set<String> EXCLUDED_PATHS = Set.of(
+            "/swagger-ui", "/api-docs");
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws
@@ -29,17 +32,26 @@ public class RateLimitFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
-        String clientIp = getClientIP(httpServletRequest);
-        Bucket requestBucket = bucketsByIp.computeIfAbsent(clientIp, k -> createNewBucketForIp());
+        String requestUri = httpServletRequest.getRequestURI();
 
-        ConsumptionProbe probeForIpBucket = requestBucket.tryConsumeAndReturnRemaining(1);
-        if (!probeForIpBucket.isConsumed()) {
-            log.warn("IP당 최대 요청 횟수를 초과하였습니다.: {}", clientIp);
-            handleException(httpServletResponse);
-            return;
+        if (!isExcluded(requestUri)) {
+            log.info("Request URI: {}", requestUri);
+            String clientIp = getClientIP(httpServletRequest);
+            Bucket requestBucket = bucketsByIp.computeIfAbsent(clientIp, k -> createNewBucketForIp());
+
+            ConsumptionProbe probeForIpBucket = requestBucket.tryConsumeAndReturnRemaining(1);
+            if (!probeForIpBucket.isConsumed()) {
+                log.warn("IP당 최대 요청 횟수를 초과하였습니다.: {}", clientIp);
+                handleException(httpServletResponse);
+                return;
+            }
         }
 
         chain.doFilter(request, response);
+    }
+
+    private boolean isExcluded(String requestUri) {
+        return EXCLUDED_PATHS.stream().anyMatch(requestUri::contains);
     }
 
     private static Bucket createNewBucketForIp() {
