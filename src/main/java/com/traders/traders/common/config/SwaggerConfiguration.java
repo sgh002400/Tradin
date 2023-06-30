@@ -15,7 +15,7 @@ public class SwaggerConfiguration {
         return new OpenAPI()
                 .addServersItem(new Server().url("/"))
                 .info(new Info()
-                        .title("Ratrip API")
+                        .title("Tradin API")
                         .description("[인증]이 붙은 API는 요청 헤더에 Key: Authorization, Value: Bearer {token}을 포함해야 합니다."));
 //                .components(new Components()
 //                        .addSecuritySchemes("Access Token",
