@@ -6,6 +6,7 @@ import com.traders.traders.module.users.controller.dto.request.SignInRequestDto;
 import com.traders.traders.module.users.controller.dto.request.SignUpRequestDto;
 import com.traders.traders.module.users.controller.dto.response.TokenResponseDto;
 import com.traders.traders.module.users.service.UsersService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,11 +33,13 @@ public class UsersController {
         return ResponseEntity.ok(usersService.signIn(request.toServiceDto()));
     }
 
+    @Operation(summary = "[인증] 자동매매 탭 - Api&Secret Key 유효성 검사")
     @PostMapping("/binance/ping")
     public ResponseEntity<String> ping(@Valid @RequestBody PingRequestDto request) {
         return ResponseEntity.ok(usersService.ping(request.toServiceDto()));
     }
 
+    @Operation(summary = "[인증] 자동매매 탭 - 레버리지, 수량, 포지션 타입 변경")
     @PostMapping("/binance/metadata")
     public ResponseEntity<String> changeMetaData(@Valid @RequestBody ChangeMetadataRequestDto request) {
         return ResponseEntity.ok(usersService.changeMetaData(request.toServiceDto()));
