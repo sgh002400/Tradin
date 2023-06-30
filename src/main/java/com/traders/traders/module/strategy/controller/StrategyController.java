@@ -22,10 +22,10 @@ public class StrategyController {
     //TODO - 테스트용 메서드! 추후 삭제 예정
     @KafkaListener(topics = "tradin", groupId = "trading-strategy-executors")
     public void test(@RequestBody WebHookRequestDto request) {
-        log.info("strategyName", request.getName());
-        log.info("tradingType", request.getPosition().getTradingType());
-        log.info("tradingPrice", request.getPosition().getPrice());
-        log.info("time", request.getPosition().getTime());
+        log.info("strategyName: " + request.getName());
+        log.info("tradingType: " + request.getPosition().getTradingType());
+        log.info("tradingPrice: " + request.getPosition().getPrice());
+        log.info("time: " + request.getPosition().getTime());
     }
 
     @KafkaListener(topics = "future-short-term-v1", groupId = "trading-strategy-executors")
