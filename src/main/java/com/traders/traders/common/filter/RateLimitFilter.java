@@ -35,7 +35,6 @@ public class RateLimitFilter implements Filter {
         String requestUri = httpServletRequest.getRequestURI();
 
         if (!isExcluded(requestUri)) {
-            log.info("Request URI: {}", requestUri);
             String clientIp = getClientIP(httpServletRequest);
             Bucket requestBucket = bucketsByIp.computeIfAbsent(clientIp, k -> createNewBucketForIp());
 
