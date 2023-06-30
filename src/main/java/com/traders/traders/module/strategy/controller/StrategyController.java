@@ -5,6 +5,7 @@ import com.traders.traders.module.strategy.controller.dto.request.UnSubscribeStr
 import com.traders.traders.module.strategy.controller.dto.request.WebHookRequestDto;
 import com.traders.traders.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
 import com.traders.traders.module.strategy.service.StrategyService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -19,7 +20,7 @@ import javax.validation.Valid;
 public class StrategyController {
     private final StrategyService strategyService;
 
-//    //TODO - 테스트용 메서드! 추후 삭제 예정
+//    //TODO - 테스트용 메서드! 추후 삭제 예
 //    @KafkaListener(topics = "tradin", groupId = "trading-strategy-executors")
 //    public void test(@RequestBody WebHookRequestDto request) {
 //        log.info("strategyName: " + request.getName());
@@ -48,21 +49,25 @@ public class StrategyController {
         strategyService.handleWebHook(request.toServiceDto());
     }
 
+    @Operation(summary = "전략 탭 - 선물 전략 전체 조회")
     @GetMapping("/future")
     public FindStrategiesInfoResponseDto findFutureStrategiesInfos() {
         return strategyService.findFutureStrategiesInfo();
     }
 
+    @Operation(summary = "전략 탭 - 현물 전략 전체 조회")
     @GetMapping("/spot")
     public FindStrategiesInfoResponseDto findSpotStrategiesInfos() {
         return strategyService.findSpotStrategiesInfo();
     }
 
+    @Operation(summary = "[인증] 자동매매 탭 - 선물 전략 구독")
     @PostMapping("/{id}/subscriptions")
     public void subscribe(@Valid @RequestBody SubscribeStrategyRequestDto request, @PathVariable Long id) {
         strategyService.subscribeStrategy(request.toServiceDto(id));
     }
 
+    @Operation(summary = "[인증] 전략 탭 - 선물 전략 구독 취소")
     @PatchMapping("/unsubscriptions")
     public void unsubscribe(@Valid @RequestBody UnSubscribeStrategyRequestDto request) {
         strategyService.unsubscribeStrategy(request.toServiceDto());
