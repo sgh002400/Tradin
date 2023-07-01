@@ -1,14 +1,9 @@
 package com.traders.traders.module.users.domain.repository;
 
-import java.util.List;
-import java.util.Optional;
-
-import com.traders.traders.module.users.domain.SocialInfo;
 import com.traders.traders.module.users.domain.Users;
-import com.traders.traders.module.users.domain.repository.dao.AutoTradingSubscriberDao;
+
+import java.util.List;
 
 public interface UsersQueryRepository {
-	List<AutoTradingSubscriberDao> findByAutoTradingSubscriber(String name);
-
-	Optional<Users> findBySocialInfo(SocialInfo socialInfo);
+    List<Users> findByAutoTradingSubscriber(String name);
 }

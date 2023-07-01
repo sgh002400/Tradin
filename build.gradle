@@ -60,12 +60,17 @@ dependencies {
     //openfeign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
+    //encode&decode
     implementation 'commons-codec:commons-codec:1.15'
 
     // jwt
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.6.14'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'

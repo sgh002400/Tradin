@@ -7,10 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class SignUpDto {
-	private String email;
-	private String password;
+    private String email;
 
-	public static SignUpDto of(final String accessToken, final String refreshToken) {
-		return new SignUpDto(accessToken, refreshToken);
-	}
+    public static SignUpDto of(String email) {
+        return new SignUpDto(email);
+    }
 }

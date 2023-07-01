@@ -1,11 +1,12 @@
-package com.traders.traders.module.users.domain;
+package com.traders.traders.module.strategy.domain;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum UserSocialType {
-    GOOGLE("구글");
+public enum StrategyType {
+    FUTURE("선물"),
+    SPOT("현물");
 
     private final String value;
 }
