@@ -20,7 +20,7 @@ sonarqube {
     }
 }
 
-group = 'com.traders'
+group = 'com.tradin'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
