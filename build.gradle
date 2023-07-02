@@ -20,7 +20,7 @@ sonarqube {
     }
 }
 
-group = 'com.traders'
+group = 'com.tradin'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
@@ -54,8 +54,10 @@ dependencies {
     implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.6.0'
 
     // querydsl
-    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-jpa"
+    implementation "com.querydsl:querydsl-core"
+    annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jpa"
+
 
     //openfeign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
