@@ -36,6 +36,7 @@ repositories {
 
 ext {
     set('springCloudVersion', "2021.0.6")
+    set('commonsLangVersion', "3.12.0")
 }
 
 dependencies {
@@ -56,7 +57,7 @@ dependencies {
     // querydsl
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
-    
+
     //openfeign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
@@ -71,6 +72,9 @@ dependencies {
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.6.14'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
+
+    //StringUtils
+    implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
