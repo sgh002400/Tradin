@@ -2,9 +2,7 @@ server:
   port: 80
 
 spring:
-  config:
-    activate:
-      on-profile: dev
+
 
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_SCHEMA}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
@@ -56,4 +54,5 @@ feign:
 secret:
   jwt-secret: ${JWT_SECRET_KEY}
   aes-secret: ${AES_SECRET_KEY}
-  cognito-user-pool-id: ${COGNITO_USER_POOL_ID}
+  cognito-client-id: ${COGNITO_CLIENT_ID}
+  cognito-auth-redirect-url: ${COGNITO_AUTH_REDIRECT_URL}

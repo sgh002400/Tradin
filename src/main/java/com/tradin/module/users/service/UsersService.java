@@ -1,13 +1,10 @@
 package com.tradin.module.users.service;
 
 import com.tradin.common.exception.TradinException;
-import com.tradin.common.jwt.JwtProvider;
-import com.tradin.common.jwt.JwtRemover;
 import com.tradin.common.utils.PasswordEncoder;
 import com.tradin.common.utils.SecurityUtils;
 import com.tradin.module.auth.service.dto.UserDataDto;
 import com.tradin.module.feign.service.BinanceFeignService;
-import com.tradin.module.users.controller.dto.response.TokenResponseDto;
 import com.tradin.module.users.domain.UserSocialType;
 import com.tradin.module.users.domain.Users;
 import com.tradin.module.users.domain.repository.UsersRepository;
@@ -20,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.tradin.common.exception.ExceptionMessage.*;
+import static com.tradin.common.exception.ExceptionMessage.NOT_FOUND_USER_EXCEPTION;
 
 @Service
 @Transactional
@@ -29,8 +26,7 @@ public class UsersService implements UserDetailsService {
     private final BinanceFeignService binanceFeignService;
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
-    private final JwtRemover jwtRemover;
+
 
     public void saveUser(UserDataDto userDataDto, UserSocialType socialType) {
         Users users = userDataDto.toEntity(socialType);
@@ -70,36 +66,6 @@ public class UsersService implements UserDetailsService {
     public Users getUserFromSecurityContext() {
         Long userId = SecurityUtils.getUserId();
         return findById(userId);
-    }
-
-    private void checkIfEmailExists(String email) {
-        if (usersRepository.findByEmail(email).isPresent()) {
-            throw new TradinException(EMAIL_ALREADY_EXISTS_EXCEPTION);
-        }
-    }
-
-    private void checkPasswordCorrespond(String password, String encryptedPassword) {
-        if (!isPasswordCorrespond(password, encryptedPassword)) {
-            throw new TradinException(WRONG_PASSWORD_EXCEPTION);
-        }
-    }
-
-    private boolean isPasswordCorrespond(String password, String encryptedPassword) {
-        return passwordEncoder.matches(password, encryptedPassword);
-    }
-
-    private static Users createUser(String email) {
-        return Users.builder()
-                .email(email)
-                .build();
-    }
-
-    private String getEncryptedPassword(String password) {
-        return passwordEncoder.encode(password);
-    }
-
-    private TokenResponseDto createJwtToken(Long id) {
-        return jwtProvider.createJwtToken(id);
     }
 
     private Users findByEmail(String email) {

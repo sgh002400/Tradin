@@ -2,6 +2,7 @@ package com.tradin.common.jwt;
 
 import com.tradin.common.exception.ExceptionMessage;
 import com.tradin.common.exception.TradinException;
+import com.tradin.common.secret.SecretKeyManager;
 import com.tradin.module.auth.service.dto.UserDataDto;
 import com.tradin.module.feign.client.dto.cognito.JwkDto;
 import com.tradin.module.feign.client.dto.cognito.JwkDtos;
@@ -33,6 +34,7 @@ import static com.tradin.common.exception.ExceptionMessage.PUBLIC_KEY_GENERATE_F
 @Transactional
 @RequiredArgsConstructor
 public class JwtUtil {
+    private final SecretKeyManager secretKeyManager;
     private static final long JWK_KEY_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L;    // 7일
     private final UsersService userService;
     private final RedisTemplate<String, Object> redisTemplate;
@@ -49,11 +51,13 @@ public class JwtUtil {
     }
 
     private Claims parseClaim(String accessToken, PublicKey publicKey) {
+        final String COGNITO_ISSUER = secretKeyManager.getCognitoIssuer();
+
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(publicKey)
                     .requireExpiration(new Date())
-                    .requireIssuer("https://cognito-idp.ap-northeast-2.amazonaws.com/ap-northeast-2_45OUbYhf2")
+                    .requireIssuer(COGNITO_ISSUER)
                     .build()
                     .parseClaimsJws(accessToken)
                     .getBody();
