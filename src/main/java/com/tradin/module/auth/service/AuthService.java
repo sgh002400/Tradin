@@ -1,6 +1,7 @@
 package com.tradin.module.auth.service;
 
 import com.tradin.common.jwt.JwtUtil;
+import com.tradin.module.auth.service.dto.TokenReissueDto;
 import com.tradin.module.auth.service.dto.UserDataDto;
 import com.tradin.module.feign.client.dto.cognito.TokenDto;
 import com.tradin.module.feign.service.CognitoFeignService;
@@ -28,8 +29,16 @@ public class AuthService {
         return TokenResponseDto.of(token.getAccessToken(), token.getRefreshToken());
     }
 
+    public String reissueToken(TokenReissueDto tokenReissueDto) {
+        return reissueAccessTokenFromCognito(tokenReissueDto.getRefreshToken());
+    }
+
     private TokenDto getTokenFromCognito(String code) {
         return cognitoFeignService.getTokenFromCognito(code);
+    }
+
+    private String reissueAccessTokenFromCognito(String refreshToken) {
+        return cognitoFeignService.reissueAccessTokenFromCognito(refreshToken);
     }
 
     private UserDataDto extractUserDataFromIdToken(String idToken) {

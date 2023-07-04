@@ -5,6 +5,7 @@ import com.tradin.module.feign.client.CognitoClient;
 import com.tradin.module.feign.client.CognitoJwkFeignClient;
 import com.tradin.module.feign.client.dto.cognito.AuthDto;
 import com.tradin.module.feign.client.dto.cognito.JwkDtos;
+import com.tradin.module.feign.client.dto.cognito.ReissueAccessTokenDto;
 import com.tradin.module.feign.client.dto.cognito.TokenDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,14 @@ public class CognitoFeignService {
         AuthDto authDto = new AuthDto("authorization_code", COGNITO_CLIENT_ID, COGNITO_AUTH_REDIRECT_URI, code);
 
         return cognitoClient.getAccessAndRefreshToken(authDto);
+    }
+
+    public String reissueAccessTokenFromCognito(String refreshToken) {
+        final String COGNITO_CLIENT_ID = secretKeyManager.getCognitoClientId();
+
+        ReissueAccessTokenDto reissueAccessTokenDto = new ReissueAccessTokenDto("refresh_token", COGNITO_CLIENT_ID, refreshToken);
+
+        return cognitoClient.reissueRefreshToken(reissueAccessTokenDto).getAccessToken();
     }
 
     public JwkDtos getJwkKey() {
