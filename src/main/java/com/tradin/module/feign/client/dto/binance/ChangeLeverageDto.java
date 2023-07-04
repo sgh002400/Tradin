@@ -1,4 +1,4 @@
-package com.tradin.module.feign.client.dto;
+package com.tradin.module.feign.client.dto.binance;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

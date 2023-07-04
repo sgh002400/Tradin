@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Long validateAccessToken(String accessToken) {
-        return jwtUtil.validateAccessToken(accessToken);
+        return jwtUtil.validateToken(accessToken);
     }
 
     private String getAccessTokenFromBearer(String bearerToken) {

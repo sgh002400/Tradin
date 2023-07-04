@@ -25,6 +25,9 @@ public class Users extends AuditTime implements UserDetails {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String sub;
+
     @Column(unique = true)
     private String email;
 
@@ -56,30 +59,11 @@ public class Users extends AuditTime implements UserDetails {
     private Strategy strategy;
 
     @Builder
-    private Users(String name, String email, String socialId, UserSocialType socialType) {
-        this.name = name;
+    private Users(String sub, String email, String socialId, UserSocialType socialType) {
+        this.name = "트레이더";
+        this.sub = sub;
         this.email = email;
         this.socialInfo = SocialInfo.of(socialId, socialType);
-        this.leverage = 1;
-        this.quantityRate = 100;
-        this.binanceApiKey = null;
-        this.binanceSecretKey = null;
-        this.strategy = null;
-    }
-
-    public static Users of(String name, String email, String socialId, UserSocialType socialType) {
-        return Users.builder()
-                .name(name)
-                .email(email)
-                .socialId(socialId)
-                .socialType(socialType)
-                .build();
-    }
-
-    @Builder
-    private Users(String email) {
-        this.name = "트레이더";
-        this.email = email;
         this.leverage = 1;
         this.quantityRate = 100;
         this.tradingType = TradingType.BOTH;
@@ -87,12 +71,6 @@ public class Users extends AuditTime implements UserDetails {
         this.binanceApiKey = null;
         this.binanceSecretKey = null;
         this.strategy = null;
-    }
-
-    public static Users of(String email) {
-        return Users.builder()
-                .email(email)
-                .build();
     }
 
     public void subscribeStrategy(Strategy strategy, String encryptedApiKey, String encryptedSecretKey) {

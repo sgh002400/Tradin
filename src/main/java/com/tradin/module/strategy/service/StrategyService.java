@@ -3,7 +3,7 @@ package com.tradin.module.strategy.service;
 import com.tradin.common.exception.ExceptionMessage;
 import com.tradin.common.exception.TradinException;
 import com.tradin.common.utils.AESUtils;
-import com.tradin.module.feign.service.FeignService;
+import com.tradin.module.feign.service.BinanceFeignService;
 import com.tradin.module.history.service.HistoryService;
 import com.tradin.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
 import com.tradin.module.strategy.domain.Position;
@@ -31,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class StrategyService {
     private final HistoryService historyService;
-    private final FeignService feignService;
+    private final BinanceFeignService binanceFeignService;
     private final UsersService userService;
     private final StrategyRepository strategyRepository;
     private final AESUtils aesUtils;
@@ -163,15 +163,15 @@ public class StrategyService {
     }
 
     private void switchPosition(String apiKey, String secretKey, String side, int orderQuantity) {
-        feignService.openPosition(apiKey, secretKey, side, orderQuantity);
+        binanceFeignService.openPosition(apiKey, secretKey, side, orderQuantity);
     }
 
     private void closePosition(String apiKey, String secretKey, String side) {
-        feignService.closePosition(apiKey, secretKey, side);
+        binanceFeignService.closePosition(apiKey, secretKey, side);
     }
 
     private void openPosition(String apiKey, String secretKey, String side, int orderQuantity) {
-        feignService.openPosition(apiKey, secretKey, side, orderQuantity);
+        binanceFeignService.openPosition(apiKey, secretKey, side, orderQuantity);
     }
 
     private static void changeCurrentPosition(Users user, TradingType tradingType) {
@@ -179,7 +179,7 @@ public class StrategyService {
     }
 
     private int calculateOrderQuantity(String apiKey, String secretKey, int leverage, int quantityRate) {
-        int futureAccountBalance = feignService.getFutureAccountBalance(apiKey, secretKey);
+        int futureAccountBalance = binanceFeignService.getFutureAccountBalance(apiKey, secretKey);
         return futureAccountBalance * leverage * quantityRate / 100;
     }
 

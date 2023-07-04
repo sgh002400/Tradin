@@ -1,9 +1,9 @@
 package com.tradin.module.feign.client;
 
-import com.tradin.module.feign.client.dto.ChangeLeverageDto;
-import com.tradin.module.feign.client.dto.CurrentPositionInfoDto;
-import com.tradin.module.feign.client.dto.FutureAccountBalanceDto;
-import com.tradin.module.feign.client.dto.NewOrderDto;
+import com.tradin.module.feign.client.dto.binance.ChangeLeverageDto;
+import com.tradin.module.feign.client.dto.binance.CurrentPositionInfoDto;
+import com.tradin.module.feign.client.dto.binance.FutureAccountBalanceDto;
+import com.tradin.module.feign.client.dto.binance.NewOrderDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

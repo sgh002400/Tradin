@@ -5,14 +5,13 @@ import com.tradin.common.jwt.JwtProvider;
 import com.tradin.common.jwt.JwtRemover;
 import com.tradin.common.utils.PasswordEncoder;
 import com.tradin.common.utils.SecurityUtils;
-import com.tradin.module.feign.service.FeignService;
+import com.tradin.module.auth.service.dto.UserDataDto;
+import com.tradin.module.feign.service.BinanceFeignService;
 import com.tradin.module.users.controller.dto.response.TokenResponseDto;
 import com.tradin.module.users.domain.Users;
 import com.tradin.module.users.domain.repository.UsersRepository;
 import com.tradin.module.users.service.dto.ChangeMetadataDto;
 import com.tradin.module.users.service.dto.PingDto;
-import com.tradin.module.users.service.dto.SignInDto;
-import com.tradin.module.users.service.dto.SignUpDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -26,29 +25,17 @@ import static com.tradin.common.exception.ExceptionMessage.*;
 @Transactional
 @RequiredArgsConstructor
 public class UsersService implements UserDetailsService {
-    private final FeignService feignService;
+    private final BinanceFeignService binanceFeignService;
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final JwtRemover jwtRemover;
 
-    public TokenResponseDto signUp(SignUpDto request) {
-        checkIfEmailExists(request.getEmail());
-        Users user = saveUser(request.getEmail());
 
-        return createJwtToken(user.getId());
-    }
-
-    public TokenResponseDto signIn(SignInDto request) {
-        Users user = findByEmail(request.getEmail());
-        checkPasswordCorrespond(request.getPassword(), user.getPassword());
-
-        return createJwtToken(user.getId());
-    }
 
     //TODO - FeignClient 실패 처리하기
     public String ping(PingDto request) {
-        feignService.getBtcusdtPositionQuantity(request.getBinanceApiKey(), request.getBinanceSecretKey());
+        binanceFeignService.getBtcusdtPositionQuantity(request.getBinanceApiKey(), request.getBinanceSecretKey());
         return "pong";
     }
 
@@ -64,7 +51,7 @@ public class UsersService implements UserDetailsService {
     }
 
     private int getChangedLeverage(ChangeMetadataDto request, Users user) {
-        return feignService.changeLeverage(user.getBinanceApiKey(), user.getBinanceSecretKey(), request.getLeverage());
+        return binanceFeignService.changeLeverage(user.getBinanceApiKey(), user.getBinanceSecretKey(), request.getLeverage());
     }
 
     public Users findById(Long id) {
@@ -97,8 +84,8 @@ public class UsersService implements UserDetailsService {
         return passwordEncoder.matches(password, encryptedPassword);
     }
 
-    private Users saveUser(String email) {
-        Users users = createUser(email);
+    private Users saveUser(UserDataDto userDataDto) {
+        Users users = userDataDto.toEntity();
         return usersRepository.save(users);
     }
 
