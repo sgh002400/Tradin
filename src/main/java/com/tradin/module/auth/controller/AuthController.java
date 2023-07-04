@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "v1/")
+@RequestMapping(value = "/v1")
 public class AuthController {
     private final AuthService authService;
 
@@ -24,6 +24,6 @@ public class AuthController {
 
     @Operation(summary = "인증 - 엑세스 토큰 재발급")
     public ResponseEntity<String> reissueToken(@Valid @RequestBody TokenReissueRequestDto request) {
-        return ResponseEntity.ok(authService.reissueToken(request.toServiceDto());
+        return ResponseEntity.ok(authService.reissueToken(request.toServiceDto()));
     }
 }
