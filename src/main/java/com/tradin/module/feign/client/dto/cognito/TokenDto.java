@@ -1,23 +1,22 @@
-package com.tradin.module.auth.controller.dto.request;
+package com.tradin.module.feign.client.dto.cognito;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.tradin.module.auth.service.dto.TokenDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Getter
+@NoArgsConstructor
 @AllArgsConstructor
+@Getter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class TokenRequestDto {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class TokenDto {
     private String idToken;
     private String accessToken;
     private String refreshToken;
     private String expiresIn;
     private String tokenType;
-
-    public TokenDto toServiceDto() {
-        return TokenDto.of(idToken, accessToken, refreshToken, expiresIn, tokenType);
-    }
 }

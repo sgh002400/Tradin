@@ -1,8 +1,8 @@
 package com.tradin.module.auth.service;
 
 import com.tradin.common.jwt.JwtUtil;
-import com.tradin.module.auth.service.dto.TokenDto;
 import com.tradin.module.auth.service.dto.UserDataDto;
+import com.tradin.module.feign.client.dto.cognito.TokenDto;
 import com.tradin.module.feign.service.CognitoFeignService;
 import com.tradin.module.users.controller.dto.response.TokenResponseDto;
 import com.tradin.module.users.service.UsersService;
@@ -20,15 +20,16 @@ public class AuthService {
     private final CognitoFeignService cognitoFeignService;
     private final JwtUtil jwtUtil;
 
-    public void requestTokenToCognito(String code) {
-        cognitoFeignService.getTokenFromCognito(code);
-    }
-
-    public TokenResponseDto auth(TokenDto request) {
-        String idToken = request.getIdToken();
+    public TokenResponseDto auth(String code) {
+        TokenDto token = getTokenFromCognito(code);
+        String idToken = token.getIdToken();
         saveUser(extractUserDataFromIdToken(idToken));
 
-        return TokenResponseDto.of(request.getAccessToken(), request.getRefreshToken());
+        return TokenResponseDto.of(token.getAccessToken(), token.getRefreshToken());
+    }
+
+    private TokenDto getTokenFromCognito(String code) {
+        return cognitoFeignService.getTokenFromCognito(code);
     }
 
     private UserDataDto extractUserDataFromIdToken(String idToken) {
