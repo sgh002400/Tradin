@@ -8,6 +8,7 @@ import com.tradin.common.utils.SecurityUtils;
 import com.tradin.module.auth.service.dto.UserDataDto;
 import com.tradin.module.feign.service.BinanceFeignService;
 import com.tradin.module.users.controller.dto.response.TokenResponseDto;
+import com.tradin.module.users.domain.UserSocialType;
 import com.tradin.module.users.domain.Users;
 import com.tradin.module.users.domain.repository.UsersRepository;
 import com.tradin.module.users.service.dto.ChangeMetadataDto;
@@ -31,7 +32,10 @@ public class UsersService implements UserDetailsService {
     private final JwtProvider jwtProvider;
     private final JwtRemover jwtRemover;
 
-
+    public void saveUser(UserDataDto userDataDto, UserSocialType socialType) {
+        Users users = userDataDto.toEntity(socialType);
+        usersRepository.save(users);
+    }
 
     //TODO - FeignClient 실패 처리하기
     public String ping(PingDto request) {
@@ -84,11 +88,6 @@ public class UsersService implements UserDetailsService {
         return passwordEncoder.matches(password, encryptedPassword);
     }
 
-    private Users saveUser(UserDataDto userDataDto) {
-        Users users = userDataDto.toEntity();
-        return usersRepository.save(users);
-    }
-
     private static Users createUser(String email) {
         return Users.builder()
                 .email(email)
@@ -108,9 +107,13 @@ public class UsersService implements UserDetailsService {
                 .orElseThrow(() -> new TradinException(NOT_FOUND_USER_EXCEPTION));
     }
 
-    @Override
-    public Users loadUserByUsername(String id) {
-        return usersRepository.findById(Long.parseLong(id))
+    private Users findBySub(String sub) {
+        return usersRepository.findBySub(sub)
                 .orElseThrow(() -> new TradinException(NOT_FOUND_USER_EXCEPTION));
+    }
+
+    @Override
+    public Users loadUserByUsername(String sub) {
+        return findBySub(sub);
     }
 }

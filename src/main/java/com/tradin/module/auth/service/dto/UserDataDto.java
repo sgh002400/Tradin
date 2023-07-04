@@ -11,9 +11,12 @@ public class UserDataDto {
     private final String sub;
     private final String email;
     private final String socialId;
-    private final UserSocialType socialType;
 
-    public Users toEntity() {
+    public static UserDataDto of(String sub, String email, String socialId) {
+        return new UserDataDto(sub, email, socialId);
+    }
+
+    public Users toEntity(UserSocialType socialType) {
         return Users.builder()
                 .sub(sub)
                 .email(email)

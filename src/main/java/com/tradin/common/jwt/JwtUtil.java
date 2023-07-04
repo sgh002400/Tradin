@@ -2,6 +2,7 @@ package com.tradin.common.jwt;
 
 import com.tradin.common.exception.ExceptionMessage;
 import com.tradin.common.exception.TradinException;
+import com.tradin.module.auth.service.dto.UserDataDto;
 import com.tradin.module.feign.client.dto.cognito.JwkDto;
 import com.tradin.module.feign.client.dto.cognito.JwkDtos;
 import com.tradin.module.feign.service.CognitoFeignService;
@@ -37,35 +38,14 @@ public class JwtUtil {
     private final RedisTemplate<String, Object> redisTemplate;
     private final CognitoFeignService cognitoFeignService;
 
-    public String getEmailFromIdToken(String idToken) {
-        return validateToken(idToken).get("sub", String.class);
-    }
+    public UserDataDto extractUserDataFromIdToken(String idToken) {
+        Claims claims = validateToken(idToken);
 
-    public Long validateTokensAndGetUserId(String accessToken, String refreshToken) {
-        validateTokenClaims(refreshToken);
-        return getUserIdFromTokens(accessToken, refreshToken);
-    }
+        String sub = claims.get("sub", String.class);
+        String email = claims.get("email", String.class);
+        String socialId = claims.get("username", String.class);
 
-    private void validateTokenClaims(String token) {
-        parseClaim(token);
-    }
-
-    private Long getUserIdFromTokens(String accessToken, String refreshToken) {
-        String sub = validateToken(accessToken);
-        validateExistRefreshToken(refreshToken, userId);
-        return userId;
-    }
-
-    private void validateExistRefreshToken(String refreshToken, Long userId) {
-        Object refreshTokenFromDb = redisTemplate.opsForValue().get("RT:" + userId);
-
-        if (refreshTokenFromDb == null) {
-            throw new TradinException(ExceptionMessage.NOT_FOUND_REFRESH_TOKEN_EXCEPTION);
-        }
-
-        if (!refreshToken.equals(refreshTokenFromDb)) {
-            throw new TradinException(ExceptionMessage.DIFFERENT_REFRESH_TOKEN_EXCEPTION);
-        }
+        return UserDataDto.of(sub, email, socialId);
     }
 
     private Claims parseClaim(String accessToken, PublicKey publicKey) {
@@ -98,12 +78,6 @@ public class JwtUtil {
         PublicKey publicKey = generateRSAPublicKey(n, e);
 
         return parseClaim(token, publicKey);
-    }
-
-    private void validateExistUserIdFromAccessToken(Long userId) {
-        if (userId == null) {
-            throw new TradinException(ExceptionMessage.NOT_FOUND_JWT_USERID_EXCEPTION);
-        }
     }
 
     private Optional<Map<String, String>> getNAndEFromCachedJwkKey(String kid) {

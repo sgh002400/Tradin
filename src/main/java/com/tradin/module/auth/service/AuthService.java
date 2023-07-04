@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.tradin.module.users.domain.UserSocialType.GOOGLE;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -19,20 +21,23 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     public TokenResponseDto auth(String code) {
-        TokenDto token = cognitoFeignService.getAccessAndRefreshToken(code);
-
-        UserDataDto userDataDto = extractUserDataFromIdToken(token.getIdToken());
-        saveUser(userDataDto);
+        TokenDto token = getTokenFromCognito(code);
+        String idToken = token.getIdToken();
+        saveUser(extractUserDataFromIdToken(idToken));
 
         return TokenResponseDto.of(token.getAccessToken(), token.getRefreshToken());
     }
 
-    private String extractUserDataFromIdToken(String idToken) {
-        return jwtUtil.getEmailFromIdToken(idToken);
+    private TokenDto getTokenFromCognito(String code) {
+        return cognitoFeignService.getTokenFromCognito(code);
+    }
+
+    private UserDataDto extractUserDataFromIdToken(String idToken) {
+        return jwtUtil.extractUserDataFromIdToken(idToken);
     }
 
     private void saveUser(UserDataDto userDataDto) {
-        usersService.saveUser(userDataDto);
+        usersService.saveUser(userDataDto, GOOGLE);
     }
 
 }
