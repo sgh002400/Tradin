@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 public class UnSubscribeStrategyRequestDto {
-    @NotNull
+    @NotNull(message = "isPositionClose must not be null")
     private final boolean isPositionClose;
 
     public UnSubscribeStrategyDto toServiceDto() {
