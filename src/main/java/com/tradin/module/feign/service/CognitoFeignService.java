@@ -23,7 +23,7 @@ public class CognitoFeignService {
         final String COGNITO_CLIENT_ID = secretKeyManager.getCognitoClientId();
         final String COGNITO_AUTH_REDIRECT_URI = secretKeyManager.getCognitoAuthRedirectUri();
 
-        AuthDto authDto = new AuthDto("authorization_code", COGNITO_CLIENT_ID, COGNITO_AUTH_REDIRECT_URI, code);
+        AuthDto authDto = AuthDto.of("authorization_code", COGNITO_CLIENT_ID, COGNITO_AUTH_REDIRECT_URI, code);
 
         return cognitoClient.getAccessAndRefreshToken(authDto);
     }

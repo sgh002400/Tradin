@@ -1,7 +1,6 @@
 package com.tradin.module.feign.client.dto.cognito;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -12,11 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TokenDto {
-    private String idToken;
-    private String accessToken;
-    private String refreshToken;
-    private String expiresIn;
-    private String tokenType;
+    private String id_token;
+    private String access_token;
+    private String refresh_token;
+    private String expires_in;
+    private String token_type;
 }

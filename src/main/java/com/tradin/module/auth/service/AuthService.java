@@ -23,10 +23,10 @@ public class AuthService {
 
     public TokenResponseDto auth(String code) {
         TokenDto token = getTokenFromCognito(code);
-        String idToken = token.getIdToken();
+        String idToken = token.getId_token();
         saveUser(extractUserDataFromIdToken(idToken));
 
-        return TokenResponseDto.of(token.getAccessToken(), token.getRefreshToken());
+        return TokenResponseDto.of(token.getAccess_token(), token.getRefresh_token());
     }
 
     public String reissueToken(TokenReissueDto tokenReissueDto) {

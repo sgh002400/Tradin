@@ -1,6 +1,6 @@
 package com.tradin.common.jwt;
 
-import com.tradin.common.exception.ExceptionMessage;
+import com.google.gson.JsonParser;
 import com.tradin.common.exception.TradinException;
 import com.tradin.common.secret.SecretKeyManager;
 import com.tradin.module.auth.service.dto.UserDataDto;
@@ -20,14 +20,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.RSAPublicKeySpec;
-import java.util.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static com.tradin.common.exception.ExceptionMessage.NOT_FOUND_JWK_PARTS_EXCEPTION;
-import static com.tradin.common.exception.ExceptionMessage.PUBLIC_KEY_GENERATE_FAIL_EXCEPTION;
+import static com.tradin.common.exception.ExceptionMessage.*;
 
 @Slf4j
 @Component
@@ -45,37 +48,38 @@ public class JwtUtil {
 
         String sub = claims.get("sub", String.class);
         String email = claims.get("email", String.class);
-        String socialId = claims.get("username", String.class);
+        String socialId = claims.get("cognito:username", String.class);
 
         return UserDataDto.of(sub, email, socialId);
     }
 
-    private Claims parseClaim(String accessToken, PublicKey publicKey) {
+    private Claims parseClaim(String token, PublicKey publicKey) {
         final String COGNITO_ISSUER = secretKeyManager.getCognitoIssuer();
 
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(publicKey)
-                    .requireExpiration(new Date())
                     .requireIssuer(COGNITO_ISSUER)
                     .build()
-                    .parseClaimsJws(accessToken)
+                    .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
-            throw new TradinException(ExceptionMessage.INVALID_JWT_TOKEN_EXCEPTION);
+            throw new TradinException(INVALID_JWT_TOKEN_EXCEPTION);
         }
     }
 
-    private String getKidFromAccessTokenHeader(String accessToken) {
-        return Jwts.parserBuilder()
-                .build()
-                .parseClaimsJws(accessToken)
-                .getHeader()
-                .get("kid").toString();
+    private String getKidFromTokenHeader(String token) {
+        String[] parts = token.split("\\."); // Split the token into parts
+        if (parts.length > 1) {
+            String header = new String(Base64.getUrlDecoder().decode(parts[0]), StandardCharsets.UTF_8); // Decode the header
+            return JsonParser.parseString(header).getAsJsonObject().get("kid").getAsString(); // Parse the JSON and get the "kid" field
+        } else {
+            throw new TradinException(INVALID_JWT_TOKEN_EXCEPTION);
+        }
     }
 
     public Claims validateToken(String token) {
-        String kidFromTokenHeader = getKidFromAccessTokenHeader(token);
+        String kidFromTokenHeader = getKidFromTokenHeader(token);
         Map<String, String> jwtKeyParts = getNAndEFromCachedJwkKey(kidFromTokenHeader).orElseThrow(() -> new TradinException(NOT_FOUND_JWK_PARTS_EXCEPTION));
         String n = jwtKeyParts.get("n");
         String e = jwtKeyParts.get("e");
