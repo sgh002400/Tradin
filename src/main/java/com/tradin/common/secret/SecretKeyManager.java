@@ -22,4 +22,10 @@ public final class SecretKeyManager {
 
     @NotBlank
     private final String cognitoIssuer;
+
+    @NotBlank
+    private final String swaggerUsername;
+
+    @NotBlank
+    private final String swaggerPassword;
 }

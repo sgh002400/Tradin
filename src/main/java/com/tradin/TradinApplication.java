@@ -23,4 +23,9 @@ public class TradinApplication {
     public String healthCheck() {
         return "Health Check Success";
     }
+
+    @GetMapping("/auth")
+    public String auth() {
+        return "Auth Success";
+    }
 }

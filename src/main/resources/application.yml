@@ -36,7 +36,7 @@ logging:
 
 springdoc:
   api-docs:
-    path: /v1/api-docs
+    path: /api-docs
   default-produces-media-type: application/json
   override-with-generic-response: true
   writer-with-default-pretty-printer: true
@@ -55,3 +55,5 @@ secret:
   cognito-client-id: ${COGNITO_CLIENT_ID}
   cognito-auth-redirect-uri: ${COGNITO_AUTH_REDIRECT_URI}
   cognito-issuer: ${COGNITO_ISSUER}
+  swagger-username: ${SWAGGER_USERNAME}
+  swagger-password: ${SWAGGER_PASSWORD}
