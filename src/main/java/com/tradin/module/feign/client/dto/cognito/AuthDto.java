@@ -9,8 +9,8 @@ import lombok.Getter;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @AllArgsConstructor
 public class AuthDto {
-    private String grant_type;
-    private String client_id;
-    private String redirect_uri;
+    private String grantType;
+    private String clientId;
+    private String redirectUri;
     private String code;
 }
