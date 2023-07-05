@@ -14,7 +14,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/histories")
+@RequestMapping("/v1/histories")
 public class HistoryController {
     private final HistoryService historyService;
 

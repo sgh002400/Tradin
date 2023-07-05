@@ -36,7 +36,7 @@ logging:
 
 springdoc:
   api-docs:
-    path: /v1/api-docs
+    path: /api-docs
   default-produces-media-type: application/json
   override-with-generic-response: true
   writer-with-default-pretty-printer: true

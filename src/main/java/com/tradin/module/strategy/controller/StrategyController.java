@@ -15,7 +15,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/strategies")
+@RequestMapping("/v1/strategies")
 @Slf4j
 public class StrategyController {
     private final StrategyService strategyService;
