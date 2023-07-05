@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Getter
 public class TokenReissueRequestDto {
-    @NotBlank(message = "RefreshToken must not be blank")
+    @NotBlank(message = "Refresh Token must not be blank")
     private String refreshToken;
 
     public TokenReissueDto toServiceDto() {
