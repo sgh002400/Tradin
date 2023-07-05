@@ -54,7 +54,7 @@ public class RateLimitFilter implements Filter {
     }
 
     private static Bucket createNewBucketForIp() {
-        Bandwidth limit = Bandwidth.simple(3, Duration.ofSeconds(1)); // 1초에 3개
+        Bandwidth limit = Bandwidth.simple(5, Duration.ofSeconds(1)); // 1초에 3개
         return Bucket.builder().addLimit(limit).build();
     }
 

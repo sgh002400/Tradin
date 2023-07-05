@@ -21,8 +21,7 @@ import static com.tradin.common.exception.ExceptionMessage.INVALID_BEARER_FORMAT
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER_PREFIX = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
-    private static final List<String> ALLOW_LIST = List.of("/swagger-ui", "/api-docs", "/health-check", "/signUp",
-            "/signIn");
+    private static final List<String> ALLOW_LIST = List.of("/swagger-ui", "/api-docs", "/health-check", "/cognito");
 
     private final JwtUtil jwtUtil;
 
