@@ -32,8 +32,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (!isAllowList(request.getRequestURI())) {
             String bearerToken = request.getHeader(AUTHORIZATION_HEADER_PREFIX);
-            Long userId = validateHeaderAndGetUserId(bearerToken);
-            setAuthentication(userId);
+            String sub = validateHeaderAndGetSub(bearerToken);
+            setAuthentication(sub);
         }
 
         filterChain.doFilter(request, response);
@@ -43,10 +43,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return ALLOW_LIST.stream().anyMatch(requestURI::contains);
     }
 
-    private Long validateHeaderAndGetUserId(String bearerToken) {
+    private String validateHeaderAndGetSub(String bearerToken) {
         validateHasText(bearerToken);
         validateStartWithBearer(bearerToken);
-        return validateAccessToken(getAccessTokenFromBearer(bearerToken));
+        return validateAccessTokenAndGetSub(getAccessTokenFromBearer(bearerToken));
     }
 
     private void validateHasText(String bearerToken) {
@@ -61,15 +61,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private Long validateAccessToken(String accessToken) {
-        return jwtUtil.validateAccessToken(accessToken);
+    private String validateAccessTokenAndGetSub(String accessToken) {
+        return jwtUtil.validateToken(accessToken).get("sub", String.class);
     }
 
     private String getAccessTokenFromBearer(String bearerToken) {
         return bearerToken.substring(BEARER_PREFIX.length());
     }
 
-    private void setAuthentication(Long userId) {
-        SecurityContextHolder.getContext().setAuthentication(jwtUtil.getAuthentication(userId));
+    private void setAuthentication(String sub) {
+        SecurityContextHolder.getContext().setAuthentication(jwtUtil.getAuthentication(sub));
     }
 }

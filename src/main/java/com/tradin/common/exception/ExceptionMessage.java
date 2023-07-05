@@ -18,6 +18,7 @@ public enum ExceptionMessage {
     NOT_FOUND_JWT_USERID_EXCEPTION(UNAUTHORIZED, "JWT 토큰에 유저 아이디가 존재하지 않습니다."),
     WRONG_PASSWORD_EXCEPTION(UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
     EMAIL_ALREADY_EXISTS_EXCEPTION(UNAUTHORIZED, "이미 존재하는 이메일입니다."),
+    NOT_FOUND_JWK_PARTS_EXCEPTION(UNAUTHORIZED, "존재하지 않는 kid입니다."),
 
     //403 Forbidden
 
@@ -39,6 +40,7 @@ public enum ExceptionMessage {
     ENCRYPT_FAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "암호화에 실패하였습니다."),
     DECRYPT_FAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "복호화에 실패하였습니다."),
     SIGNATURE_GENERATION_FAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "JWT 서명 생성에 실패하였습니다."),
+    PUBLIC_KEY_GENERATE_FAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "공개키 생성에 실패하였습니다."),
     ;
 
     private final HttpStatus httpStatus;

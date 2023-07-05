@@ -1,4 +1,4 @@
-package com.tradin.common.generator;
+package com.tradin.generator;
 
 import com.tradin.common.exception.TradinException;
 import lombok.experimental.UtilityClass;

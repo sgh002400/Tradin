@@ -25,11 +25,11 @@ public class Users extends AuditTime implements UserDetails {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
     @Column(nullable = false)
-    private String password;
+    private String sub;
+
+    @Column(unique = true)
+    private String email;
 
     @Column(nullable = false)
     private int leverage;
@@ -45,6 +45,9 @@ public class Users extends AuditTime implements UserDetails {
     @Enumerated(EnumType.STRING)
     private TradingType currentPositionType;
 
+    @Embedded
+    private SocialInfo socialInfo;
+
     @Column
     private String binanceApiKey;
 
@@ -56,10 +59,11 @@ public class Users extends AuditTime implements UserDetails {
     private Strategy strategy;
 
     @Builder
-    private Users(String email, String encryptedPassword) {
+    private Users(String sub, String email, String socialId, UserSocialType socialType) {
         this.name = "트레이더";
+        this.sub = sub;
         this.email = email;
-        this.password = encryptedPassword;
+        this.socialInfo = SocialInfo.of(socialId, socialType);
         this.leverage = 1;
         this.quantityRate = 100;
         this.tradingType = TradingType.BOTH;
@@ -67,13 +71,6 @@ public class Users extends AuditTime implements UserDetails {
         this.binanceApiKey = null;
         this.binanceSecretKey = null;
         this.strategy = null;
-    }
-
-    public static Users of(String email, String encryptedPassword) {
-        return Users.builder()
-                .email(email)
-                .encryptedPassword(encryptedPassword)
-                .build();
     }
 
     public void subscribeStrategy(Strategy strategy, String encryptedApiKey, String encryptedSecretKey) {
@@ -105,6 +102,11 @@ public class Users extends AuditTime implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
     }
 
     @Override
