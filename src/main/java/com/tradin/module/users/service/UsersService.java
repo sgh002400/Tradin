@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.tradin.common.exception.ExceptionMessage.NOT_FOUND_USER_EXCEPTION;
 
@@ -29,8 +30,10 @@ public class UsersService implements UserDetailsService {
 
 
     public void saveUser(UserDataDto userDataDto, UserSocialType socialType) {
-        Users users = userDataDto.toEntity(socialType);
-        usersRepository.save(users);
+        if (!isUserExist(userDataDto.getEmail())) {
+            Users users = userDataDto.toEntity(socialType);
+            usersRepository.save(users);
+        }
     }
 
     //TODO - FeignClient 실패 처리하기
@@ -68,6 +71,13 @@ public class UsersService implements UserDetailsService {
         return findById(userId);
     }
 
+    private boolean isUserExist(String email) {
+        return findByEmail(email).isPresent();
+    }
+
+    private Optional<Users> findByEmail(String email) {
+        return usersRepository.findByEmail(email);
+    }
 
     private Users findBySub(String sub) {
         return usersRepository.findBySub(sub)

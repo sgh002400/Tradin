@@ -27,7 +27,7 @@ spring:
 
 logging:
   level:
-    com.traders.traders: DEBUG
+    com.tradin.module.feign.client: DEBUG
     org:
       hibernate:
         type:
@@ -49,10 +49,9 @@ feign:
       default:
         connectTimeout: 1000
         readTimeout: 3000
-        loggerLevel: FULL
 
 secret:
   aes-secret: ${AES_SECRET_KEY}
   cognito-client-id: ${COGNITO_CLIENT_ID}
-  cognito-auth-redirect-url: ${COGNITO_AUTH_REDIRECT_URL}
+  cognito-auth-redirect-uri: ${COGNITO_AUTH_REDIRECT_URI}
   cognito-issuer: ${COGNITO_ISSUER}
