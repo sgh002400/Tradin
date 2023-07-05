@@ -52,7 +52,6 @@ feign:
         loggerLevel: FULL
 
 secret:
-  jwt-secret: ${JWT_SECRET_KEY}
   aes-secret: ${AES_SECRET_KEY}
   cognito-client-id: ${COGNITO_CLIENT_ID}
   cognito-auth-redirect-url: ${COGNITO_AUTH_REDIRECT_URL}
