@@ -28,9 +28,9 @@ public class SecurityConfiguration {
                 .mvcMatchers("/v1/histories").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .httpBasic().disable() //사용자 인증방법인 HTTP Basic Authentication을 사용하지 않는다.
-                .formLogin().disable() //formLogin 검증 방법은 사용하지 않겠다.
-                .logout().disable() //logout 방식은 사용하지 않는다.
+                .httpBasic().disable()
+                .formLogin().disable()
+                .logout().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
