@@ -56,3 +56,4 @@ secret:
   aes-secret: ${AES_SECRET_KEY}
   cognito-client-id: ${COGNITO_CLIENT_ID}
   cognito-auth-redirect-url: ${COGNITO_AUTH_REDIRECT_URL}
+  cognito-issuer: ${COGNITO_ISSUER}
