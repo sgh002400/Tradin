@@ -68,10 +68,6 @@ public class UsersService implements UserDetailsService {
         return findById(userId);
     }
 
-    private Users findByEmail(String email) {
-        return usersRepository.findByEmail(email)
-                .orElseThrow(() -> new TradinException(NOT_FOUND_USER_EXCEPTION));
-    }
 
     private Users findBySub(String sub) {
         return usersRepository.findBySub(sub)
