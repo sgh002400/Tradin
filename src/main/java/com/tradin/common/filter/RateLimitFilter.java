@@ -40,7 +40,7 @@ public class RateLimitFilter implements Filter {
 
             ConsumptionProbe probeForIpBucket = requestBucket.tryConsumeAndReturnRemaining(1);
             if (!probeForIpBucket.isConsumed()) {
-                log.warn("IP당 최대 요청 횟수를 초과하였습니다.: {}", clientIp);
+                log.warn("최대 요청 횟수 초과 IP: {}, 요청 URI: {}", clientIp, requestUri);
                 handleException(httpServletResponse);
                 return;
             }
