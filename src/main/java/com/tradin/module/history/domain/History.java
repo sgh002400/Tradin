@@ -14,6 +14,7 @@ import static com.tradin.module.strategy.domain.TradingType.LONG;
 
 @Entity
 @Getter
+@Table(indexes = {@Index(name = "index_strategy_id", columnList = "strategy_id")})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class History extends AuditTime {
     @Id
