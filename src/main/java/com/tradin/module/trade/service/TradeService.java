@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Transactional
@@ -23,16 +24,18 @@ public class TradeService {
     private final AESUtils aesUtils;
 
     @Async
-    public void autoTrading(String strategyName, TradingType strategyCurrentPosition) {
+    public CompletableFuture<Void> autoTrading(String strategyName, TradingType strategyCurrentPosition) {
         List<Users> autoTradingSubscribers = userService.findAutoTradingSubscriberByStrategyName(
                 strategyName);
 
-        for (Users autoTradingSubscriber : autoTradingSubscribers) {
-            String apiKey = getDecryptedKey(autoTradingSubscriber.getBinanceApiKey());
-            String secretKey = getDecryptedKey(autoTradingSubscriber.getBinanceSecretKey());
+        autoTradingSubscribers.forEach(user -> {
+            String apiKey = getDecryptedKey(user.getBinanceApiKey());
+            String secretKey = getDecryptedKey(user.getBinanceSecretKey());
 
-            trade(autoTradingSubscriber, strategyCurrentPosition, apiKey, secretKey);
-        }
+            trade(user, strategyCurrentPosition, apiKey, secretKey);
+        });
+
+        return CompletableFuture.completedFuture(null);
     }
 
     private String getDecryptedKey(String encryptedKey) {

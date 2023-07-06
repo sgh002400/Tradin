@@ -39,8 +39,10 @@ public class StrategyService {
 
     public void handleWebHook(WebHookDto request) {
         Strategy strategy = findByName(request.getName());
+        String strategyName = strategy.getName();
+        TradingType strategyCurrentPosition = strategy.getCurrentPosition().getTradingType();
 
-        autoTrading(strategy.getName(), strategy.getCurrentPosition().getTradingType()).thenRun(() -> {
+        autoTrading(strategyName, strategyCurrentPosition).thenRun(() -> {
             closeOngoingHistory(strategy, request.getPosition());
             createNewHistory(strategy, request.getPosition());
             updateStrategyMetaData(strategy, request.getPosition());
@@ -79,8 +81,7 @@ public class StrategyService {
     }
 
     private CompletableFuture<Void> autoTrading(String name, TradingType tradingType) {
-        tradeService.autoTrading(name, tradingType);
-        return null;
+        return tradeService.autoTrading(name, tradingType);
     }
 
     private static String getSideFromUserCurrentPosition(Users savedUser) {
