@@ -80,6 +80,10 @@ dependencies {
     //StringUtils
     implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
 
+    //flyway
+    implementation group: 'org.flywaydb', name: 'flyway-core', version: '8.4.1'
+
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     annotationProcessor 'org.projectlombok:lombok'
