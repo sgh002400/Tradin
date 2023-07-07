@@ -25,10 +25,10 @@ public class Users extends AuditTime implements UserDetails {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String sub;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -48,10 +48,10 @@ public class Users extends AuditTime implements UserDetails {
     @Embedded
     private SocialInfo socialInfo;
 
-    @Column
+    @Column(unique = true)
     private String binanceApiKey;
 
-    @Column
+    @Column(unique = true)
     private String binanceSecretKey;
 
     @JoinColumn(name = "strategy_id")
