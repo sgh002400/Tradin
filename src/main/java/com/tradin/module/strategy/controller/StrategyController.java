@@ -1,5 +1,6 @@
 package com.tradin.module.strategy.controller;
 
+import com.tradin.common.annotation.DisableAuthInSwagger;
 import com.tradin.module.strategy.controller.dto.request.SubscribeStrategyRequestDto;
 import com.tradin.module.strategy.controller.dto.request.UnSubscribeStrategyRequestDto;
 import com.tradin.module.strategy.controller.dto.request.WebHookRequestDto;
@@ -49,25 +50,27 @@ public class StrategyController {
         strategyService.handleWebHook(request.toServiceDto());
     }
 
-    @Operation(summary = "전략 탭 - 선물 전략 전체 조회")
+    @Operation(summary = "선물 전략 전체 조회")
+    @DisableAuthInSwagger
     @GetMapping("/future")
     public FindStrategiesInfoResponseDto findFutureStrategiesInfos() {
         return strategyService.findFutureStrategiesInfo();
     }
 
-    @Operation(summary = "전략 탭 - 현물 전략 전체 조회")
+    @Operation(summary = "현물 전략 전체 조회")
+    @DisableAuthInSwagger
     @GetMapping("/spot")
     public FindStrategiesInfoResponseDto findSpotStrategiesInfos() {
         return strategyService.findSpotStrategiesInfo();
     }
 
-    @Operation(summary = "[인증] 자동매매 탭 - 선물 전략 구독")
+    @Operation(summary = "선물 전략 구독")
     @PostMapping("/{id}/subscriptions")
     public void subscribe(@Valid @RequestBody SubscribeStrategyRequestDto request, @PathVariable Long id) {
         strategyService.subscribeStrategy(request.toServiceDto(id));
     }
 
-    @Operation(summary = "[인증] 전략 탭 - 선물 전략 구독 취소")
+    @Operation(summary = "선물 전략 구독 취소")
     @PatchMapping("/unsubscriptions")
     public void unsubscribe(@Valid @RequestBody UnSubscribeStrategyRequestDto request) {
         strategyService.unsubscribeStrategy(request.toServiceDto());
