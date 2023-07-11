@@ -33,7 +33,7 @@ public class SecurityConfiguration {
                 .mvcMatchers("/v1/strategies/future", "/v1/strategies/spot").permitAll()
                 .mvcMatchers("/v1/histories").permitAll()
                 .mvcMatchers("/swagger-ui/**", "/api-docs/**").authenticated()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .httpBasic()
                 .and()
