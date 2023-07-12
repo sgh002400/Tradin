@@ -1,10 +1,9 @@
 package com.tradin.module.users.service.dto;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @Getter
 public class PingDto {
     private final String binanceApiKey;
