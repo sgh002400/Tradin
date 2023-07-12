@@ -1,4 +1,4 @@
-package com.tradin.module.users.controller;
+package com.tradin.module.strategy.controller;
 
 import com.tradin.common.config.TestContainerConfiguration;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @ExtendWith(TestContainerConfiguration.class)
-public class UsersControllerTest {
+public class StrategyControllerTest {
 
 }
