@@ -66,21 +66,3 @@ secret:
   swagger-username: ${SWAGGER_USERNAME}
   swagger-password: ${SWAGGER_PASSWORD}
 
----
-
-spring:
-  config:
-    activate:
-      on-profile: test
-  datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:testdb;
-    username: sa
-    password: sa
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
