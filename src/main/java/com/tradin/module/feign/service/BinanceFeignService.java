@@ -1,6 +1,6 @@
 package com.tradin.module.feign.service;
 
-import com.tradin.generator.SignatureGenerator;
+import com.tradin.common.generator.SignatureGenerator;
 import com.tradin.module.feign.client.BinanceClient;
 import com.tradin.module.feign.client.dto.binance.CurrentPositionInfoDto;
 import com.tradin.module.feign.client.dto.binance.FutureAccountBalanceDto;
