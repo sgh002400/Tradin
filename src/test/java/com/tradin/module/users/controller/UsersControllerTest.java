@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @ExtendWith(TestContainerConfiguration.class)
-public class UsersControllerTest {
+class UsersControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -33,7 +33,7 @@ public class UsersControllerTest {
 
     @Test
     @WithMockUser
-    public void API_AND_SECRET_KEY_유효성_테스트() throws Exception {
+    void API_AND_SECRET_KEY_유효성_테스트() throws Exception {
         String binanceApiKey = "5abe3b3ac2e84742e3bcc4f15077d595cb782f6e8457c14c6e1c420b4ca277eb";
         String binanceSecretKey = "ebf63090b614608d051d0dfca05c1c117a362be9a5b80f28027fd27bc48de797";
 
@@ -46,7 +46,7 @@ public class UsersControllerTest {
 
     @Test
     @WithMockUser
-    public void API_AND_SECRET_KEY_잘못_입력_테스트() throws Exception {
+    void API_AND_SECRET_KEY_잘못_입력_테스트() throws Exception {
         String binanceApiKey = "WRONG_API_KEY";
         String binanceSecretKey = "WRONG_SECRET_KEY";
 
