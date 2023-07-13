@@ -15,14 +15,6 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class BinanceFeignService {
-    private static final String TICKER = "BTCUSDT";
-    private static final String TIMESTAMP = "&timestamp=";
-    private static final String TYPE = "&type=MARKET";
-    private static final String SIDE = "&side=";
-    private static final String QUANTITY = "&quantity=";
-    private static final String RECV_WINDOW = "&recvWindow=1000";
-    private static final String LEVERAGE = "&leverage=";
-    private static final String SYMBOL = "&symbol=";
 
     private final BinanceClient binanceFeignClient;
 
@@ -31,12 +23,11 @@ public class BinanceFeignService {
         Long timestamp = Instant.now().toEpochMilli();
         double quantity = Math.abs(getBtcusdtPositionQuantity(apiKey, secretKey)) + orderQuantity;
 
-        String queryString =
-                QUANTITY + quantity + RECV_WINDOW + SIDE + side + SYMBOL + TICKER + TIMESTAMP + timestamp + TYPE;
+        String queryString = "quantity=" + quantity + "&side=" + side + "&symbol=BTCUSDT" + "&timestamp=" + timestamp + "&type=MARKET";
 
         String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
-        binanceFeignClient.order(apiKey, quantity, 1000L, side, signature, TICKER, timestamp, "MARKET");
+        binanceFeignClient.order(apiKey, quantity, side, signature, "BTCUSDT", timestamp, "MARKET");
     }
 
     public void closePosition(String apiKey, String secretKey, String side) {
@@ -44,49 +35,44 @@ public class BinanceFeignService {
         double quantity = Math.abs(getBtcusdtPositionQuantity(apiKey, secretKey));
 
         String queryString =
-                QUANTITY + quantity + RECV_WINDOW + SIDE + side + SYMBOL + TICKER + TIMESTAMP
-                        + timestamp
-                        + TYPE;
+                "quantity=" + quantity + "&side=" + side + "&symbol=BTCUSDT" + "&timestamp=" + timestamp + "&type=MARKEY";
 
         String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
-        binanceFeignClient.order(apiKey, quantity, 1000L, side, signature, TICKER, timestamp, "MARKET");
+        binanceFeignClient.order(apiKey, quantity, side, signature, "BTCUSDT", timestamp, "MARKET");
     }
 
     public Double getBtcusdtPositionQuantity(String apiKey, String secretKey) {
         Long timestamp = Instant.now().toEpochMilli();
-        String queryString = RECV_WINDOW + SYMBOL + TICKER + TIMESTAMP + timestamp;
+        String queryString = "symbol=BTCUSDT" + "&timestamp=" + timestamp;
         String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
-        List<CurrentPositionInfoDto> currentPositionInfoDtos = binanceFeignClient.getCurrentPositionInfo(1000L, TICKER,
-                timestamp,
-                apiKey, signature);
+        List<CurrentPositionInfoDto> currentPositionInfoDtos = binanceFeignClient.getCurrentPositionInfo("BTCUSDT", timestamp, apiKey, signature);
 
         return extractBtcusdtPositionQuantity(currentPositionInfoDtos);
     }
 
     public int changeLeverage(String apiKey, String secretKey, int leverage) {
         Long timestamp = Instant.now().toEpochMilli();
-        String queryString = LEVERAGE + leverage + RECV_WINDOW + SYMBOL + TICKER + TIMESTAMP
-                + timestamp;
+        String queryString = "leverage=" + leverage + "&symbol=BTCUSDT" + "&timestamp=" + timestamp + "&type=MARKEY";
         String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
-        return binanceFeignClient.changeLeverage(apiKey, leverage, 1000L, TICKER, timestamp, signature).getLeverage();
+        return binanceFeignClient.changeLeverage(apiKey, leverage, "BTCUSDT", timestamp, signature).getLeverage();
     }
 
     public int getFutureAccountBalance(String apiKey, String secretKey) {
         Long timestamp = Instant.now().toEpochMilli();
-        String queryString = RECV_WINDOW + TIMESTAMP + timestamp;
+        String queryString = "timestamp=" + timestamp;
         String signature = SignatureGenerator.generateSignature(queryString, secretKey);
 
-        List<FutureAccountBalanceDto> futureAccountBalanceDtos = binanceFeignClient.getFutureAccountBalance(apiKey, 1000L, timestamp, signature);
+        List<FutureAccountBalanceDto> futureAccountBalanceDtos = binanceFeignClient.getFutureAccountBalance(apiKey, timestamp, signature);
 
         return extractUsdtBalance(futureAccountBalanceDtos);
     }
 
     private Double extractBtcusdtPositionQuantity(List<CurrentPositionInfoDto> currentPositionInfoDtos) {
         for (CurrentPositionInfoDto dto : currentPositionInfoDtos) {
-            if (dto.getSymbol().equals(TICKER)) {
+            if (dto.getSymbol().equals("BTCUSDT")) {
                 return Double.parseDouble(dto.getPositionAmt());
             }
         }

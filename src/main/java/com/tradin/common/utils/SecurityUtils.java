@@ -15,6 +15,6 @@ public class SecurityUtils {
             throw new TradinException(ExceptionMessage.NOT_FOUND_SECURITY_CONTEXT_EXCEPTION);
         }
 
-        return Long.valueOf(authentication.getName());
+        return Long.valueOf(authentication.getName()); //Users 클래스에서 id를 리턴하도록 오버라이드 함.
     }
 }

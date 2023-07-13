@@ -55,7 +55,7 @@ public class Users extends AuditTime implements UserDetails {
     private String binanceSecretKey;
 
     @JoinColumn(name = "strategy_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Strategy strategy;
 
     @Builder
@@ -111,7 +111,7 @@ public class Users extends AuditTime implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.name;
+        return this.id.toString();
     }
 
     @Override
