@@ -1,5 +1,6 @@
 package com.tradin.common.config;
 
+import com.tradin.common.exception.CustomAuthenticationEntryPoint;
 import com.tradin.common.filter.JwtAuthenticationFilter;
 import com.tradin.common.filter.JwtExceptionFilter;
 import com.tradin.common.jwt.JwtUtil;
@@ -45,6 +46,9 @@ public class SecurityConfiguration {
                 .headers()
                 .frameOptions().sameOrigin()
                 .httpStrictTransportSecurity().disable()
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(), JwtAuthenticationFilter.class)
