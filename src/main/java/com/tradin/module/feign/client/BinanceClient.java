@@ -17,7 +17,6 @@ public interface BinanceClient {
 
     @GetMapping("/fapi/v2/positionRisk")
     List<CurrentPositionInfoDto> getCurrentPositionInfo(
-            @RequestParam("recvWindow") Long recvWindow,
             @RequestParam("symbol") String symbol,
             @RequestParam("timestamp") Long timestamp,
             @RequestHeader("X-MBX-APIKEY") String apiKey,
@@ -27,7 +26,6 @@ public interface BinanceClient {
     NewOrderDto order(
             @RequestHeader("X-MBX-APIKEY") String apiKey,
             @RequestParam("quantity") double quantity,
-            @RequestParam("recvWindow") Long recvWindow,
             @RequestParam("side") String side,
             @RequestParam("signature") String signature,
             @RequestParam("symbol") String symbol,
@@ -39,7 +37,6 @@ public interface BinanceClient {
     ChangeLeverageDto changeLeverage(
             @RequestHeader("X-MBX-APIKEY") String apiKey,
             @RequestParam("leverage") int leverage,
-            @RequestParam("recvWindow") Long recvWindow,
             @RequestParam("symbol") String symbol,
             @RequestParam("timestamp") Long timestamp,
             @RequestParam("signature") String signature
@@ -48,7 +45,6 @@ public interface BinanceClient {
     @GetMapping("/fapi/v2/balance")
     List<FutureAccountBalanceDto> getFutureAccountBalance(
             @RequestHeader("X-MBX-APIKEY") String apiKey,
-            @RequestParam("recvWindow") Long recvWindow,
             @RequestParam("timestamp") Long timestamp,
             @RequestParam("signature") String signature
     );
