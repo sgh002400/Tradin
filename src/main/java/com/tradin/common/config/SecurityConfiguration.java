@@ -1,6 +1,5 @@
 package com.tradin.common.config;
 
-import com.tradin.common.exception.CustomAuthenticationEntryPoint;
 import com.tradin.common.filter.JwtAuthenticationFilter;
 import com.tradin.common.filter.JwtExceptionFilter;
 import com.tradin.common.jwt.JwtUtil;
@@ -25,6 +24,8 @@ public class SecurityConfiguration {
     private final PasswordEncoder passwordEncoder;
     private final SecretKeyManager secretKeyManager;
 
+    private final String[] SWAGGER_PATTERN = {"/swagger-ui", "/api-docs"};
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
@@ -33,7 +34,7 @@ public class SecurityConfiguration {
                 .mvcMatchers("/v1/auth/cognito").permitAll()
                 .mvcMatchers("/v1/strategies/future", "/v1/strategies/spot").permitAll()
                 .mvcMatchers("/v1/histories").permitAll()
-                .mvcMatchers("/swagger-ui/**", "/api-docs/**").authenticated()
+                .mvcMatchers(SWAGGER_PATTERN).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
@@ -46,9 +47,9 @@ public class SecurityConfiguration {
                 .headers()
                 .frameOptions().sameOrigin()
                 .httpStrictTransportSecurity().disable()
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+//                .and()
+//                .exceptionHandling()
+//                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(), JwtAuthenticationFilter.class)

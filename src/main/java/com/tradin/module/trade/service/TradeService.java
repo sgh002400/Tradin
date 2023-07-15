@@ -28,6 +28,7 @@ public class TradeService {
         List<Users> autoTradingSubscribers = userService.findAutoTradingSubscriberByStrategyName(
                 strategyName);
 
+        //TODO - 메타 데이터 한번만 업데이트 되는지 확인
         autoTradingSubscribers.forEach(user -> {
             String apiKey = getDecryptedKey(user.getBinanceApiKey());
             String secretKey = getDecryptedKey(user.getBinanceSecretKey());

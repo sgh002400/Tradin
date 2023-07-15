@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 import static com.tradin.common.exception.ExceptionMessage.EMPTY_HEADER_EXCEPTION;
 import static com.tradin.common.exception.ExceptionMessage.INVALID_BEARER_FORMAT_EXCEPTION;
@@ -21,21 +22,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER_PREFIX = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
     private final JwtUtil jwtUtil;
+    private static final List<String> ALLOW_LIST = List.of("/swagger-ui", "/api-docs", "/health-check", "/v1/auth/cognito", "/v1/strategies/future", "/v1/strategies/spot", "/v1/histories");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String token = request.getHeader(AUTHORIZATION_HEADER_PREFIX);
-
-        if (token != null) {
-            String sub = validateHeaderAndGetSub(token);
+        if (!isAllowList(request.getRequestURI())) {
+            String bearerToken = request.getHeader(AUTHORIZATION_HEADER_PREFIX);
+            String sub = validateHeaderAndGetSub(bearerToken);
             setAuthentication(sub);
         }
 
         filterChain.doFilter(request, response);
     }
 
+    private boolean isAllowList(String requestURI) {
+        return ALLOW_LIST.stream().anyMatch(requestURI::contains);
+    }
+    
     private String validateHeaderAndGetSub(String bearerToken) {
         validateHasText(bearerToken);
         validateStartWithBearer(bearerToken);
