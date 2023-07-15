@@ -34,7 +34,7 @@ public class SecurityConfiguration {
                 .mvcMatchers("/v1/auth/cognito").permitAll()
                 .mvcMatchers("/v1/strategies/future", "/v1/strategies/spot").permitAll()
                 .mvcMatchers("/v1/histories").permitAll()
-                .mvcMatchers(SWAGGER_PATTERN).permitAll()
+                .mvcMatchers(SWAGGER_PATTERN).authenticated()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
