@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -132,12 +133,12 @@ public class StrategyService {
 
     private List<StrategyInfoDao> findFutureStrategyInfoDaos() {
         return strategyRepository.findFutureStrategiesInfoDao()
-                .orElseThrow(() -> new TradinException(ExceptionMessage.NOT_FOUND_ANY_STRATEGY_EXCEPTION));
+                .orElse(Collections.emptyList());
     }
 
     private List<StrategyInfoDao> findSpotStrategyInfoDaos() {
         return strategyRepository.findSpotStrategiesInfoDao()
-                .orElseThrow(() -> new TradinException(ExceptionMessage.NOT_FOUND_ANY_STRATEGY_EXCEPTION));
+                .orElse(Collections.emptyList());
     }
 
     private boolean isUserPositionExist(TradingType tradingType) {
