@@ -34,7 +34,7 @@ public class SecurityConfiguration {
         return http
                 .authorizeRequests()
                 .mvcMatchers("/health-check").permitAll()
-                .mvcMatchers("/v1/auth/cognito").permitAll()
+                .mvcMatchers("/v1/auth/cognito", "/v1/auth/token").permitAll()
                 .mvcMatchers("/v1/strategies/future", "/v1/strategies/spot").permitAll()
                 .mvcMatchers("/v1/histories").permitAll()
                 .mvcMatchers(SWAGGER_PATTERN).authenticated()
