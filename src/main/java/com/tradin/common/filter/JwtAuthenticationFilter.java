@@ -22,13 +22,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER_PREFIX = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
     private final JwtUtil jwtUtil;
-    private static final List<String> ALLOW_LIST = List.of("/swagger-ui", "/api-docs", "/health-check", "/v1/auth/cognito", "/v1/strategies/future", "/v1/strategies/spot", "/v1/histories");
+    private static final List<String> ALLOW_LIST = List.of("/swagger-ui", "/api-docs", "/health-check", "/v1/auth/cognito", "/v1/auth/token", "/v1/strategies/future", "/v1/strategies/spot", "/v1/histories");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
         if (!isAllowList(request.getRequestURI())) {
+            System.out.println("request.getRequestURI() = " + request.getRequestURI());
             String bearerToken = request.getHeader(AUTHORIZATION_HEADER_PREFIX);
             String sub = validateHeaderAndGetSub(bearerToken);
             setAuthentication(sub);
@@ -40,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private boolean isAllowList(String requestURI) {
         return ALLOW_LIST.stream().anyMatch(requestURI::contains);
     }
-    
+
     private String validateHeaderAndGetSub(String bearerToken) {
         validateHasText(bearerToken);
         validateStartWithBearer(bearerToken);

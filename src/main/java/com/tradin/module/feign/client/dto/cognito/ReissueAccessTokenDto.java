@@ -9,7 +9,7 @@ import lombok.Getter;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @AllArgsConstructor
 public class ReissueAccessTokenDto {
-    private String grantType;
-    private String clientId;
-    private String redirectUri;
+    private String grant_type;
+    private String client_id;
+    private String refresh_token;
 }
