@@ -1,6 +1,7 @@
 package com.tradin.module.strategy.domain.repository.dao;
 
 import com.querydsl.core.annotations.QueryProjection;
+import com.tradin.module.strategy.domain.CoinType;
 import com.tradin.module.strategy.domain.TradingType;
 import lombok.Getter;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 public class StrategyInfoDao {
     private final Long id;
     private final String name;
+    private final CoinType coinType;
     private final double profitFactor;
     private final double winningRate;
     private final double simpleProfitRate;
@@ -26,9 +28,10 @@ public class StrategyInfoDao {
     private final int averageHoldingPeriod;
 
     @QueryProjection
-    public StrategyInfoDao(Long id, String name, double profitFactor, double winningRate, double simpleProfitRate, double compoundProfitRate, double totalProfitRate, double totalLossRate, double averageProfitRate, int totalTradeCount, int winCount, int lossCount, TradingType tradingType, LocalDateTime time, int price, int averageHoldingPeriod) {
+    public StrategyInfoDao(Long id, String name, CoinType coinType, double profitFactor, double winningRate, double simpleProfitRate, double compoundProfitRate, double totalProfitRate, double totalLossRate, double averageProfitRate, int totalTradeCount, int winCount, int lossCount, TradingType tradingType, LocalDateTime time, int price, int averageHoldingPeriod) {
         this.id = id;
         this.name = name;
+        this.coinType = coinType;
         this.profitFactor = profitFactor;
         this.winningRate = winningRate;
         this.simpleProfitRate = simpleProfitRate;

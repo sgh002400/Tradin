@@ -4,7 +4,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tradin.module.strategy.domain.StrategyType;
 import com.tradin.module.strategy.domain.repository.StrategyQueryRepository;
 import com.tradin.module.strategy.domain.repository.dao.QStrategyInfoDao;
+import com.tradin.module.strategy.domain.repository.dao.QSubscriptionStrategyInfoDao;
 import com.tradin.module.strategy.domain.repository.dao.StrategyInfoDao;
+import com.tradin.module.strategy.domain.repository.dao.SubscriptionStrategyInfoDao;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -34,6 +36,7 @@ public class StrategyQueryRepositoryImpl implements StrategyQueryRepository {
                         new QStrategyInfoDao(
                                 strategy.id,
                                 strategy.name,
+                                strategy.type.coinType,
                                 strategy.profitFactor,
                                 strategy.rate.winningRate,
                                 strategy.rate.simpleProfitRate,
@@ -55,5 +58,26 @@ public class StrategyQueryRepositoryImpl implements StrategyQueryRepository {
                 .fetch();
 
         return strategyInfoDaos.isEmpty() ? Optional.empty() : Optional.of(strategyInfoDaos);
+    }
+
+    @Override
+    public Optional<List<SubscriptionStrategyInfoDao>> findSubscriptionStrategiesInfoDao() {
+        List<SubscriptionStrategyInfoDao> subscriptionStrategyInfoDaos = jpaQueryFactory
+                .select(
+                        new QSubscriptionStrategyInfoDao(
+                                strategy.id,
+                                strategy.name,
+                                strategy.type.coinType,
+                                strategy.profitFactor,
+                                strategy.rate.winningRate,
+                                strategy.rate.compoundProfitRate,
+                                strategy.rate.averageProfitRate
+                        ))
+                .from(strategy)
+                .where(strategy.type.strategyType.eq(FUTURE))
+                .orderBy(strategy.id.asc())
+                .fetch();
+
+        return subscriptionStrategyInfoDaos.isEmpty() ? Optional.empty() : Optional.of(subscriptionStrategyInfoDaos);
     }
 }

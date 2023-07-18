@@ -6,11 +6,13 @@ import com.tradin.common.utils.AESUtils;
 import com.tradin.module.feign.service.BinanceFeignService;
 import com.tradin.module.history.service.HistoryService;
 import com.tradin.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
+import com.tradin.module.strategy.controller.dto.response.FindSubscriptionStrategiesInfoResponseDto;
 import com.tradin.module.strategy.domain.Position;
 import com.tradin.module.strategy.domain.Strategy;
 import com.tradin.module.strategy.domain.TradingType;
 import com.tradin.module.strategy.domain.repository.StrategyRepository;
 import com.tradin.module.strategy.domain.repository.dao.StrategyInfoDao;
+import com.tradin.module.strategy.domain.repository.dao.SubscriptionStrategyInfoDao;
 import com.tradin.module.strategy.service.dto.UnSubscribeStrategyDto;
 import com.tradin.module.strategy.service.dto.WebHookDto;
 import com.tradin.module.trade.service.TradeService;
@@ -52,6 +54,11 @@ public class StrategyService {
         });
     }
 
+    public FindSubscriptionStrategiesInfoResponseDto findSubscriptionStrategiesInfo() {
+        List<SubscriptionStrategyInfoDao> subscriptionStrategyInfo = findSubscriptionStrategyInfoDaos();
+        return new FindSubscriptionStrategiesInfoResponseDto(subscriptionStrategyInfo);
+    }
+
     public FindStrategiesInfoResponseDto findFutureStrategiesInfo() {
         List<StrategyInfoDao> strategiesInfo = findFutureStrategyInfoDaos();
         return new FindStrategiesInfoResponseDto(strategiesInfo);
@@ -61,6 +68,7 @@ public class StrategyService {
         List<StrategyInfoDao> strategiesInfo = findSpotStrategyInfoDaos();
         return new FindStrategiesInfoResponseDto(strategiesInfo);
     }
+
 
     public void subscribeStrategy(SubscribeStrategyDto request) {
         Users savedUser = getUserFromSecurityContext();
@@ -154,8 +162,18 @@ public class StrategyService {
                 .orElse(Collections.emptyList());
     }
 
+//    private List<SubscriptionStrategyInfoDao> findSubscriptionStrategyInfoDaos() {
+//        return strategyRepository.findSubscriptionStrategiesInfoDao()
+//                .orElse(Collections.emptyList());
+//    }
+
     private List<StrategyInfoDao> findSpotStrategyInfoDaos() {
         return strategyRepository.findSpotStrategiesInfoDao()
+                .orElse(Collections.emptyList());
+    }
+
+    private List<SubscriptionStrategyInfoDao> findSubscriptionStrategyInfoDaos() {
+        return strategyRepository.findSubscriptionStrategiesInfoDao()
                 .orElse(Collections.emptyList());
     }
 

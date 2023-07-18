@@ -5,6 +5,7 @@ import com.tradin.module.strategy.controller.dto.request.SubscribeStrategyReques
 import com.tradin.module.strategy.controller.dto.request.UnSubscribeStrategyRequestDto;
 import com.tradin.module.strategy.controller.dto.request.WebHookRequestDto;
 import com.tradin.module.strategy.controller.dto.response.FindStrategiesInfoResponseDto;
+import com.tradin.module.strategy.controller.dto.response.FindSubscriptionStrategiesInfoResponseDto;
 import com.tradin.module.strategy.service.StrategyService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +63,12 @@ public class StrategyController {
     @GetMapping("/spot")
     public FindStrategiesInfoResponseDto findSpotStrategiesInfos() {
         return strategyService.findSpotStrategiesInfo();
+    }
+
+    @Operation(summary = "선물 전략 구독 리스트")
+    @GetMapping("/subscriptions")
+    public FindSubscriptionStrategiesInfoResponseDto findSubscriptionStrategiesInfos() {
+        return strategyService.findSubscriptionStrategiesInfo();
     }
 
     @Operation(summary = "선물 전략 구독")
