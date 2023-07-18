@@ -11,10 +11,13 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UnSubscribeStrategyRequestDto {
+    @NotNull(message = "StrategyId must not be null")
+    private long id;
+
     @NotNull(message = "isPositionClose must not be null")
     private boolean isPositionClose;
 
     public UnSubscribeStrategyDto toServiceDto() {
-        return new UnSubscribeStrategyDto(isPositionClose);
+        return UnSubscribeStrategyDto.of(id, isPositionClose);
     }
 }

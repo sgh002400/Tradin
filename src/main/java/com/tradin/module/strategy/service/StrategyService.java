@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static com.tradin.common.exception.ExceptionMessage.NOT_SUBSCRIBED_STRATEGY_EXCEPTION;
+
 @Service
 @Transactional
 @Slf4j
@@ -71,21 +73,37 @@ public class StrategyService {
 
     public void unsubscribeStrategy(UnSubscribeStrategyDto request) {
         Users savedUser = getUserFromSecurityContext();
+        Strategy strategy = findById(request.getId());
         //TODO - Strategy strategy = savedUser.getStrategy(); 이거 되는지 테스트
+
+        if (!isSubscribedStrategy(savedUser, strategy)) {
+            throw new TradinException(NOT_SUBSCRIBED_STRATEGY_EXCEPTION);
+        }
+
         if (request.isPositionClose() && isUserPositionExist(savedUser.getCurrentPositionType())) {
             String side = getSideFromUserCurrentPosition(savedUser);
             closePosition(savedUser.getBinanceApiKey(), savedUser.getBinanceSecretKey(), side);
         }
 
         savedUser.unsubscribeStrategy();
+    }
 
+    private boolean isSubscribedStrategy(Users savedUser, Strategy strategy) {
+        if (isSubscribedStrategyExist(savedUser.getStrategy())) {
+            return savedUser.getStrategy().getId() == strategy.getId(); //TODO - 쿼리 확인해보기!! (연관관계)
+        }
+        return false;
+    }
+
+    private boolean isSubscribedStrategyExist(Strategy strategy) {
+        return strategy != null;
     }
 
     private CompletableFuture<Void> autoTrading(String name, TradingType tradingType) {
         return tradeService.autoTrading(name, tradingType);
     }
 
-    private static String getSideFromUserCurrentPosition(Users savedUser) {
+    private String getSideFromUserCurrentPosition(Users savedUser) {
         return savedUser.getCurrentPositionType().equals(TradingType.LONG) ? "SELL" : "BUY";
     }
 

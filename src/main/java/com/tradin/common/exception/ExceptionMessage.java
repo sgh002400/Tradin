@@ -8,6 +8,7 @@ import static org.springframework.http.HttpStatus.*;
 @Getter
 public enum ExceptionMessage {
     //400 Bad Request
+    NOT_SUBSCRIBED_STRATEGY_EXCEPTION(BAD_REQUEST, "구독하지 않은 전략입니다."),
 
     //401 Unauthorized
     EMPTY_HEADER_EXCEPTION(UNAUTHORIZED, "헤더가 비어있습니다."),
