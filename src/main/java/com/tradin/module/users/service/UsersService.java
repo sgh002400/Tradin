@@ -5,6 +5,7 @@ import com.tradin.common.utils.PasswordEncoder;
 import com.tradin.common.utils.SecurityUtils;
 import com.tradin.module.auth.service.dto.UserDataDto;
 import com.tradin.module.feign.service.BinanceFeignService;
+import com.tradin.module.users.controller.dto.response.FindUserInfoResponseDto;
 import com.tradin.module.users.domain.UserSocialType;
 import com.tradin.module.users.domain.Users;
 import com.tradin.module.users.domain.repository.UsersRepository;
@@ -51,6 +52,11 @@ public class UsersService implements UserDetailsService {
         user.changeTradingType(request.getTradingTypes());
 
         return "success";
+    }
+
+    public FindUserInfoResponseDto findUserInfo() {
+        Users user = getUserFromSecurityContext();
+        return new FindUserInfoResponseDto(user.getName(), user.getEmail());
     }
 
     private int getChangedLeverage(ChangeMetadataDto request, Users user) {

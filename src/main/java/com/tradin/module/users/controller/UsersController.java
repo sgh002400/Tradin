@@ -2,14 +2,12 @@ package com.tradin.module.users.controller;
 
 import com.tradin.module.users.controller.dto.request.ChangeMetadataRequestDto;
 import com.tradin.module.users.controller.dto.request.PingRequestDto;
+import com.tradin.module.users.controller.dto.response.FindUserInfoResponseDto;
 import com.tradin.module.users.service.UsersService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -30,5 +28,11 @@ public class UsersController {
     @PostMapping("/binance/metadata")
     public ResponseEntity<String> changeMetaData(@Valid @RequestBody ChangeMetadataRequestDto request) {
         return ResponseEntity.ok(usersService.changeMetaData(request.toServiceDto()));
+    }
+
+    @Operation(summary = "유저 정보")
+    @GetMapping("/me")
+    public ResponseEntity<FindUserInfoResponseDto> findUserInfo() {
+        return ResponseEntity.ok(usersService.findUserInfo());
     }
 }
