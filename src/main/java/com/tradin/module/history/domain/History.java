@@ -1,6 +1,5 @@
 package com.tradin.module.history.domain;
 
-import com.tradin.common.jpa.AuditTime;
 import com.tradin.module.strategy.domain.Position;
 import com.tradin.module.strategy.domain.Strategy;
 import lombok.AccessLevel;
@@ -16,7 +15,7 @@ import static com.tradin.module.strategy.domain.TradingType.LONG;
 @Getter
 @Table(indexes = {@Index(name = "index_strategy_id", columnList = "strategy_id")})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class History extends AuditTime {
+public class History {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
