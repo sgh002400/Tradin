@@ -32,7 +32,7 @@ public class History {
     @AttributeOverride(name = "price", column = @Column(name = "exit_price"))
     private Position exitPosition;
 
-    @Column(nullable = false)
+    @Column
     private double profitRate;
 
     @ManyToOne(fetch = FetchType.LAZY)
