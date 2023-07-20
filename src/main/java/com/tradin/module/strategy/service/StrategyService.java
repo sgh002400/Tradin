@@ -82,7 +82,6 @@ public class StrategyService {
     public void unsubscribeStrategy(UnSubscribeStrategyDto request) {
         Users savedUser = getUserFromSecurityContext();
         Strategy strategy = findById(request.getId());
-        //TODO - Strategy strategy = savedUser.getStrategy(); 이거 되는지 테스트
 
         if (!isSubscribedStrategy(savedUser, strategy)) {
             throw new TradinException(NOT_SUBSCRIBED_STRATEGY_EXCEPTION);
