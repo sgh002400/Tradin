@@ -20,7 +20,7 @@ import java.util.Base64;
 
 @Component
 public class AESUtils {
-    private static final String ALGORITHM = "AES/CTR/NoPadding"; //TODO - 잘 동작하는지 테스트 (원래는 "AES/CBC/PKCS5Padding")
+    private static final String ALGORITHM = "AES/CTR/NoPadding";
 
     private static final int GCM_TAG_LENGTH = 128;
     private static final int IV_SIZE = 12;

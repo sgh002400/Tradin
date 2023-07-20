@@ -115,14 +115,6 @@ public class StrategyService {
         return savedUser.getCurrentPositionType().equals(TradingType.LONG) ? "SELL" : "BUY";
     }
 
-//    public void createStrategy(CreateStrategyDto request) {
-//        Strategy strategy = Strategy.of(request.getName(), request.getStrategyType(), request.getCoinType(), request.getProfitFactor(), request.getWinningRate(),
-//                request.getSimpleProfitRate(), request.getCompoundProfitRate(), request.getTotalProfitRate(),
-//                request.getTotalLossRate(), request.getWinCount(), request.getLossCount(), request.getCurrentPosition(), request.getAverageHoldingPeriod(), request.getAverageProfitRate());
-//
-//        strategyRepository.save(strategy);
-//    }
-
     private void closePosition(String apiKey, String secretKey, String side) {
         binanceFeignService.closePosition(apiKey, secretKey, side);
     }

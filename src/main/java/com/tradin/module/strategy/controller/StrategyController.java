@@ -82,10 +82,4 @@ public class StrategyController {
     public void unsubscribe(@Valid @RequestBody UnSubscribeStrategyRequestDto request) {
         strategyService.unsubscribeStrategy(request.toServiceDto());
     }
-
-    //TODO - 개발용 메서드!! 추후 삭제하기
-//    @PostMapping("/create")
-//    public void createStrategy(@Valid @RequestBody CreateStrategyDto request) {
-//        strategyService.createStrategy(request);
-//    }
 }
