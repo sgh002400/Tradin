@@ -83,9 +83,7 @@ public class StrategyService {
         Users savedUser = getUserFromSecurityContext();
         Strategy strategy = findById(request.getId());
 
-        if (!isSubscribedStrategy(savedUser, strategy)) {
-            throw new TradinException(NOT_SUBSCRIBED_STRATEGY_EXCEPTION);
-        }
+        isUserSubscribedStrategy(savedUser, strategy);
 
         if (request.isPositionClose() && isUserPositionExist(savedUser.getCurrentPositionType())) {
             String side = getSideFromUserCurrentPosition(savedUser);
@@ -95,15 +93,10 @@ public class StrategyService {
         savedUser.unsubscribeStrategy();
     }
 
-    private boolean isSubscribedStrategy(Users savedUser, Strategy strategy) {
-        if (isSubscribedStrategyExist(savedUser.getStrategy())) {
-            return savedUser.getStrategy().getId() == strategy.getId(); //TODO - 쿼리 확인해보기!! (연관관계)
+    private static void isUserSubscribedStrategy(Users users, Strategy strategy) {
+        if (!users.getStrategy().getId().equals(strategy.getId())) {
+            throw new TradinException(NOT_SUBSCRIBED_STRATEGY_EXCEPTION);
         }
-        return false;
-    }
-
-    private boolean isSubscribedStrategyExist(Strategy strategy) {
-        return strategy != null;
     }
 
     private CompletableFuture<Void> autoTrading(String name, TradingType tradingType) {
