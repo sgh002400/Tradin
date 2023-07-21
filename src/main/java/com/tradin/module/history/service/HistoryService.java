@@ -132,7 +132,7 @@ public class HistoryService {
     }
 
     private static void closeOpenPosition(History ongoingHistory, Position exitPosition) {
-        if (ongoingHistory.getExitPosition().getTime() != null) {
+        if (ongoingHistory.getExitPosition() != null) {
             throw new TradinException(NOT_FOUND_OPEN_POSITION_EXCEPTION);
 
         }

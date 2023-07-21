@@ -33,7 +33,7 @@ public class History {
     private Position exitPosition;
 
     @Column
-    private double profitRate;
+    private Double profitRate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "strategy_id", nullable = false)
@@ -43,7 +43,7 @@ public class History {
     private History(Position entryPosition, Strategy strategy) {
         this.entryPosition = entryPosition;
         this.exitPosition = null;
-        this.profitRate = 0;
+        this.profitRate = null;
         this.strategy = strategy;
     }
 
