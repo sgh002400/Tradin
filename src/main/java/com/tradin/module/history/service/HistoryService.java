@@ -31,10 +31,10 @@ public class HistoryService {
     private final HistoryRepository historyRepository;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void closeOngoingHistory(Strategy strategy, Position position) {
-        History history = findLastHistoryByStrategyId(strategy.getId());
-        closeOpenPosition(history, position);
-        calculateProfitRate(history);
+    public void closeOngoingHistory(Strategy strategy, Position exitPosition) {
+        History ongoingHistory = findLastHistoryByStrategyId(strategy.getId());
+        closeOpenPosition(ongoingHistory, exitPosition);
+        calculateProfitRate(ongoingHistory);
     }
 
     public void createNewHistory(Strategy strategy, Position position) {
@@ -131,8 +131,12 @@ public class HistoryService {
         history.calculateProfitRate();
     }
 
-    private static void closeOpenPosition(History history, Position position) {
-        history.closeOpenPosition(position);
+    private static void closeOpenPosition(History ongoingHistory, Position exitPosition) {
+        if (ongoingHistory.getExitPosition() != null) {
+            throw new TradinException(NOT_FOUND_OPEN_POSITION_EXCEPTION);
+
+        }
+        ongoingHistory.closeOpenPosition(exitPosition);
     }
 
     private History findLastHistoryByStrategyId(Long id) {

@@ -9,7 +9,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 import java.security.InvalidAlgorithmParameterException;
@@ -20,9 +20,7 @@ import java.util.Base64;
 
 @Component
 public class AESUtils {
-    private static final String ALGORITHM = "AES/CTR/NoPadding"; //TODO - 잘 동작하는지 테스트 (원래는 "AES/CBC/PKCS5Padding")
-
-    private static final int GCM_TAG_LENGTH = 128;
+    private static final String ALGORITHM = "AES/CTR/NoPadding";
     private static final int IV_SIZE = 12;
     @Value("${secret.aes-secret}")
     private String key;
@@ -34,8 +32,8 @@ public class AESUtils {
             SecureRandom random = new SecureRandom();
             byte[] iv = new byte[IV_SIZE];
             random.nextBytes(iv);
-            GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
-            cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmParameterSpec);
+            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+            cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivParameterSpec);
             byte[] encrypted = cipher.doFinal(text.getBytes());
             ByteBuffer byteBuffer = ByteBuffer.allocate(iv.length + encrypted.length);
             byteBuffer.put(iv);
@@ -58,8 +56,8 @@ public class AESUtils {
             byteBuffer.get(iv);
             byte[] encrypted = new byte[byteBuffer.remaining()];
             byteBuffer.get(encrypted);
-            GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
-            cipher.init(Cipher.DECRYPT_MODE, keySpec, gcmParameterSpec);
+            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivParameterSpec);
             return new String(cipher.doFinal(encrypted));
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
                  InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {

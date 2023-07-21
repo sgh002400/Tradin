@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import static com.tradin.common.exception.ExceptionMessage.NOT_SUBSCRIBED_STRATEGY_EXCEPTION;
 
@@ -47,11 +46,11 @@ public class StrategyService {
         String strategyName = strategy.getName();
         TradingType strategyCurrentPosition = strategy.getCurrentPosition().getTradingType();
 
-        autoTrading(strategyName, strategyCurrentPosition).thenRun(() -> {
-            closeOngoingHistory(strategy, request.getPosition());
-            createNewHistory(strategy, request.getPosition());
-            updateStrategyMetaData(strategy, request.getPosition());
-        });
+
+//        autoTrading(strategyName, strategyCurrentPosition);
+        closeOngoingHistory(strategy, request.getPosition());
+        createNewHistory(strategy, request.getPosition());
+        updateStrategyMetaData(strategy, request.getPosition());
     }
 
     public FindSubscriptionStrategiesInfoResponseDto findSubscriptionStrategiesInfo() {
@@ -76,17 +75,14 @@ public class StrategyService {
         String encryptedApiKey = getEncryptedKey(request.getBinanceApiKey());
         String encryptedSecretKey = getEncryptedKey(request.getBinanceSecretKey());
 
-        savedUser.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey);
+        savedUser.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey, request.getLeverage(), request.getQuantityRate(), request.getTradingType());
     }
 
     public void unsubscribeStrategy(UnSubscribeStrategyDto request) {
         Users savedUser = getUserFromSecurityContext();
         Strategy strategy = findById(request.getId());
-        //TODO - Strategy strategy = savedUser.getStrategy(); 이거 되는지 테스트
 
-        if (!isSubscribedStrategy(savedUser, strategy)) {
-            throw new TradinException(NOT_SUBSCRIBED_STRATEGY_EXCEPTION);
-        }
+        isUserSubscribedStrategy(savedUser, strategy);
 
         if (request.isPositionClose() && isUserPositionExist(savedUser.getCurrentPositionType())) {
             String side = getSideFromUserCurrentPosition(savedUser);
@@ -96,32 +92,19 @@ public class StrategyService {
         savedUser.unsubscribeStrategy();
     }
 
-    private boolean isSubscribedStrategy(Users savedUser, Strategy strategy) {
-        if (isSubscribedStrategyExist(savedUser.getStrategy())) {
-            return savedUser.getStrategy().getId() == strategy.getId(); //TODO - 쿼리 확인해보기!! (연관관계)
+    private static void isUserSubscribedStrategy(Users users, Strategy strategy) {
+        if (!users.getStrategy().getId().equals(strategy.getId())) {
+            throw new TradinException(NOT_SUBSCRIBED_STRATEGY_EXCEPTION);
         }
-        return false;
     }
 
-    private boolean isSubscribedStrategyExist(Strategy strategy) {
-        return strategy != null;
-    }
-
-    private CompletableFuture<Void> autoTrading(String name, TradingType tradingType) {
-        return tradeService.autoTrading(name, tradingType);
+    private void autoTrading(String name, TradingType tradingType) {
+        tradeService.autoTrading(name, tradingType);
     }
 
     private String getSideFromUserCurrentPosition(Users savedUser) {
         return savedUser.getCurrentPositionType().equals(TradingType.LONG) ? "SELL" : "BUY";
     }
-
-//    public void createStrategy(CreateStrategyDto request) {
-//        Strategy strategy = Strategy.of(request.getName(), request.getStrategyType(), request.getCoinType(), request.getProfitFactor(), request.getWinningRate(),
-//                request.getSimpleProfitRate(), request.getCompoundProfitRate(), request.getTotalProfitRate(),
-//                request.getTotalLossRate(), request.getWinCount(), request.getLossCount(), request.getCurrentPosition(), request.getAverageHoldingPeriod(), request.getAverageProfitRate());
-//
-//        strategyRepository.save(strategy);
-//    }
 
     private void closePosition(String apiKey, String secretKey, String side) {
         binanceFeignService.closePosition(apiKey, secretKey, side);
@@ -140,8 +123,8 @@ public class StrategyService {
                 .orElseThrow(() -> new TradinException(ExceptionMessage.NOT_FOUND_STRATEGY_EXCEPTION));
     }
 
-    private void closeOngoingHistory(Strategy strategy, Position position) {
-        historyService.closeOngoingHistory(strategy, position);
+    private void closeOngoingHistory(Strategy strategy, Position exitPosition) {
+        historyService.closeOngoingHistory(strategy, exitPosition);
     }
 
     private void createNewHistory(Strategy strategy, Position position) {

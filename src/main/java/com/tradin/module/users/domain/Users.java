@@ -55,7 +55,7 @@ public class Users extends AuditTime implements UserDetails {
     private String binanceSecretKey;
 
     @JoinColumn(name = "strategy_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private Strategy strategy;
 
     @Builder
@@ -73,10 +73,13 @@ public class Users extends AuditTime implements UserDetails {
         this.strategy = null;
     }
 
-    public void subscribeStrategy(Strategy strategy, String encryptedApiKey, String encryptedSecretKey) {
+    public void subscribeStrategy(Strategy strategy, String encryptedApiKey, String encryptedSecretKey, int leverage, int quantityRate, TradingType tradingType) {
         this.strategy = strategy;
         this.binanceApiKey = encryptedApiKey;
         this.binanceSecretKey = encryptedSecretKey;
+        this.leverage = leverage;
+        this.quantityRate = quantityRate;
+        this.tradingType = tradingType;
     }
 
     public void changeLeverage(int leverage) {

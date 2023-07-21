@@ -32,8 +32,8 @@ public class History {
     @AttributeOverride(name = "price", column = @Column(name = "exit_price"))
     private Position exitPosition;
 
-    @Column(nullable = false)
-    private double profitRate;
+    @Column
+    private Double profitRate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "strategy_id", nullable = false)
@@ -43,7 +43,7 @@ public class History {
     private History(Position entryPosition, Strategy strategy) {
         this.entryPosition = entryPosition;
         this.exitPosition = null;
-        this.profitRate = 0;
+        this.profitRate = null;
         this.strategy = strategy;
     }
 

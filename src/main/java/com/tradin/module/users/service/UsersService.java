@@ -1,7 +1,6 @@
 package com.tradin.module.users.service;
 
 import com.tradin.common.exception.TradinException;
-import com.tradin.common.utils.PasswordEncoder;
 import com.tradin.common.utils.SecurityUtils;
 import com.tradin.module.auth.service.dto.UserDataDto;
 import com.tradin.module.feign.service.BinanceFeignService;
@@ -27,8 +26,6 @@ import static com.tradin.common.exception.ExceptionMessage.NOT_FOUND_USER_EXCEPT
 public class UsersService implements UserDetailsService {
     private final BinanceFeignService binanceFeignService;
     private final UsersRepository usersRepository;
-    private final PasswordEncoder passwordEncoder;
-
 
     public void saveUser(UserDataDto userDataDto, UserSocialType socialType) {
         if (!isUserExist(userDataDto.getEmail())) {

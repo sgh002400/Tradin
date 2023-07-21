@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -14,9 +16,14 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class ChangeMetadataRequestDto {
     @NotNull(message = "Leverage must not be null")
+    @Min(value = 1, message = "레버리지는 최소 1이어야 합니다.")
+    @Max(value = 125, message = "레버리지는 최대 125까지 가능합니다.")
+    @Schema(description = "레버리지", example = "1 ~ 125")
     private int leverage;
 
     @NotNull(message = "QuantityRate must not be null")
+    @Min(value = 1, message = "수량 비율은 최소 1이어야 합니다.")
+    @Max(value = 100, message = "수량 비율은 최대 100까지 가능합니다.")
     private int quantityRate;
 
     @Schema(description = "매매 타입", example = "LONG, SHORT, BOTH")
