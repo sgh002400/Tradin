@@ -21,8 +21,6 @@ import java.util.Base64;
 @Component
 public class AESUtils {
     private static final String ALGORITHM = "AES/CTR/NoPadding";
-
-    private static final int GCM_TAG_LENGTH = 128;
     private static final int IV_SIZE = 12;
     @Value("${secret.aes-secret}")
     private String key;
