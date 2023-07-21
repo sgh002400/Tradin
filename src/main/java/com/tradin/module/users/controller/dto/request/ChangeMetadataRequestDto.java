@@ -22,6 +22,8 @@ public class ChangeMetadataRequestDto {
     private int leverage;
 
     @NotNull(message = "QuantityRate must not be null")
+    @Min(value = 1, message = "수량 비율은 최소 1이어야 합니다.")
+    @Max(value = 100, message = "수량 비율은 최대 100까지 가능합니다.")
     private int quantityRate;
 
     @Schema(description = "매매 타입", example = "LONG, SHORT, BOTH")

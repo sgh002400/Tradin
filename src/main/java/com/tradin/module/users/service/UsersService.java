@@ -29,7 +29,6 @@ public class UsersService implements UserDetailsService {
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     public void saveUser(UserDataDto userDataDto, UserSocialType socialType) {
         if (!isUserExist(userDataDto.getEmail())) {
             Users users = userDataDto.toEntity(socialType);
