@@ -82,7 +82,7 @@ public class BinanceFeignService {
     private int extractUsdtBalance(List<FutureAccountBalanceDto> futureAccountBalanceDtos) {
         for (FutureAccountBalanceDto dto : futureAccountBalanceDtos) {
             if (dto.getAsset().equals("USDT")) {
-                return Integer.parseInt(dto.getAvailableBalance());
+                return (int) Double.parseDouble(dto.getAvailableBalance());
             }
         }
         return 0;

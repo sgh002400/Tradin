@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import static com.tradin.common.exception.ExceptionMessage.NOT_SUBSCRIBED_STRATEGY_EXCEPTION;
 
@@ -47,11 +46,11 @@ public class StrategyService {
         String strategyName = strategy.getName();
         TradingType strategyCurrentPosition = strategy.getCurrentPosition().getTradingType();
 
-        autoTrading(strategyName, strategyCurrentPosition).thenRun(() -> {
-            closeOngoingHistory(strategy, request.getPosition());
-            createNewHistory(strategy, request.getPosition());
-            updateStrategyMetaData(strategy, request.getPosition());
-        });
+
+//        autoTrading(strategyName, strategyCurrentPosition);
+        closeOngoingHistory(strategy, request.getPosition());
+        createNewHistory(strategy, request.getPosition());
+        updateStrategyMetaData(strategy, request.getPosition());
     }
 
     public FindSubscriptionStrategiesInfoResponseDto findSubscriptionStrategiesInfo() {
@@ -76,7 +75,7 @@ public class StrategyService {
         String encryptedApiKey = getEncryptedKey(request.getBinanceApiKey());
         String encryptedSecretKey = getEncryptedKey(request.getBinanceSecretKey());
 
-        savedUser.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey);
+        savedUser.subscribeStrategy(strategy, encryptedApiKey, encryptedSecretKey, request.getLeverage(), request.getQuantityRate(), request.getTradingType());
     }
 
     public void unsubscribeStrategy(UnSubscribeStrategyDto request) {
@@ -99,8 +98,8 @@ public class StrategyService {
         }
     }
 
-    private CompletableFuture<Void> autoTrading(String name, TradingType tradingType) {
-        return tradeService.autoTrading(name, tradingType);
+    private void autoTrading(String name, TradingType tradingType) {
+        tradeService.autoTrading(name, tradingType);
     }
 
     private String getSideFromUserCurrentPosition(Users savedUser) {
@@ -124,8 +123,8 @@ public class StrategyService {
                 .orElseThrow(() -> new TradinException(ExceptionMessage.NOT_FOUND_STRATEGY_EXCEPTION));
     }
 
-    private void closeOngoingHistory(Strategy strategy, Position position) {
-        historyService.closeOngoingHistory(strategy, position);
+    private void closeOngoingHistory(Strategy strategy, Position exitPosition) {
+        historyService.closeOngoingHistory(strategy, exitPosition);
     }
 
     private void createNewHistory(Strategy strategy, Position position) {

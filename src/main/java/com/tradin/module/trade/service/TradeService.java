@@ -7,12 +7,10 @@ import com.tradin.module.users.domain.Users;
 import com.tradin.module.users.service.UsersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @Transactional
@@ -23,20 +21,16 @@ public class TradeService {
     private final BinanceFeignService binanceFeignService;
     private final AESUtils aesUtils;
 
-    @Async
-    public CompletableFuture<Void> autoTrading(String strategyName, TradingType strategyCurrentPosition) {
+    public void autoTrading(String strategyName, TradingType strategyCurrentPosition) {
         List<Users> autoTradingSubscribers = userService.findAutoTradingSubscriberByStrategyName(
                 strategyName);
 
-        //TODO - 메타 데이터 한번만 업데이트 되는지 확인
         autoTradingSubscribers.forEach(user -> {
             String apiKey = getDecryptedKey(user.getBinanceApiKey());
             String secretKey = getDecryptedKey(user.getBinanceSecretKey());
 
             trade(user, strategyCurrentPosition, apiKey, secretKey);
         });
-
-        return CompletableFuture.completedFuture(null);
     }
 
     private String getDecryptedKey(String encryptedKey) {
