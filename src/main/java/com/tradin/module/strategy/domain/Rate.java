@@ -57,7 +57,8 @@ public class Rate {
     }
 
     public void updateCompoundProfitRate(double profitRate) {
-        this.compoundProfitRate = this.compoundProfitRate * (1 + profitRate);
+        this.compoundProfitRate = ((1 + this.compoundProfitRate / 100.0) * (1 + profitRate / 100.0)) - 1;
+        this.compoundProfitRate *= 100;
     }
 
     public void updateAverageProfitRate(int totalTradeCount) {
