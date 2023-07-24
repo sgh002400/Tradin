@@ -21,6 +21,6 @@ public class TradinApplication {
 
     @GetMapping("/health-check")
     public String healthCheck() {
-        return "Health Check Success";
+        return "Health Check Success!";
     }
 }
