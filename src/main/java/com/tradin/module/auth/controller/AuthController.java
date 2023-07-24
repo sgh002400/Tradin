@@ -24,6 +24,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.auth(code));
     }
 
+    @DisableAuthInSwagger
     @Operation(summary = "엑세스 토큰 재발급")
     @PostMapping("/token")
     public ResponseEntity<String> reissueToken(@Valid @RequestBody TokenReissueRequestDto request) {

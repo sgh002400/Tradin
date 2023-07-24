@@ -1,5 +1,6 @@
 package com.tradin;
 
+import com.tradin.common.annotation.DisableAuthInSwagger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -19,6 +20,7 @@ public class TradinApplication {
         SpringApplication.run(TradinApplication.class, args);
     }
 
+    @DisableAuthInSwagger
     @GetMapping("/health-check")
     public String healthCheck() {
         return "Health Check Success!";

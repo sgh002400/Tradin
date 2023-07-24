@@ -29,7 +29,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         if (!isAllowList(request.getRequestURI())) {
-            System.out.println("request.getRequestURI() = " + request.getRequestURI());
             String bearerToken = request.getHeader(AUTHORIZATION_HEADER_PREFIX);
             String sub = validateHeaderAndGetSub(bearerToken);
             setAuthentication(sub);
