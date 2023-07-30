@@ -19,10 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.tradin.common.exception.ExceptionMessage.NOT_FOUND_OPEN_POSITION_EXCEPTION;
 import static com.tradin.common.exception.ExceptionMessage.NOT_FOUND_STRATEGY_EXCEPTION;
@@ -78,7 +75,7 @@ public class HistoryService {
             throw new TradinException(NOT_FOUND_STRATEGY_EXCEPTION);
         }
 
-        return new ArrayList<>(historySet);
+        return new ArrayList<>(Objects.requireNonNull(historySet));
     }
 
 
@@ -94,7 +91,7 @@ public class HistoryService {
 
     private BackTestResponseDto calculateHistoryDaos(List<HistoryDao> historyDaos, BackTestDto request) {
         List<HistoryDao> histories = new ArrayList<>();
-        double compoundProfitRate = 1;
+        double compoundProfitRate = 0;
         double winCount = 0;
         int totalTradeCount = 0;
         double simpleProfitRate = 0;
@@ -106,9 +103,10 @@ public class HistoryService {
                     isCorrespondTradingType(history, request.getTradingType())) {
 
                 totalTradeCount++;
-                compoundProfitRate = compoundProfitRate * (1 + history.getProfitRate());
+                compoundProfitRate = (((1 + compoundProfitRate / 100.0) * (1 + history.getProfitRate() / 100.0)) - 1) * 100;
                 history.setCompoundProfitRate(compoundProfitRate);
                 histories.add(history);
+
 
                 double profitRate = history.getProfitRate();
                 if (profitRate > 0) {
