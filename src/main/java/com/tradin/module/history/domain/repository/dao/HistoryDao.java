@@ -18,7 +18,10 @@ public class HistoryDao {
 
     @JsonCreator
     @QueryProjection
-    public HistoryDao(@JsonProperty("id") Long id, @JsonProperty("entryPosition") Position entryPosition, @JsonProperty("exitPosition") Position exitPosition, @JsonProperty("profitRate") double profitRate) {
+    public HistoryDao(@JsonProperty("id") Long id,
+                      @JsonProperty("entryPosition") Position entryPosition,
+                      @JsonProperty("exitPosition") Position exitPosition,
+                      @JsonProperty("profitRate") double profitRate) {
         this.id = id;
         this.entryPosition = entryPosition;
         this.exitPosition = exitPosition;

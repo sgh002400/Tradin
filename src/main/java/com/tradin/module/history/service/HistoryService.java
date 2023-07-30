@@ -51,10 +51,8 @@ public class HistoryService {
     }
 
     public BackTestResponseDto backTest(BackTestDto request) {
-        System.out.println("여기2");
         List<HistoryDao> historyDaos = getHistories(request.getId(), request.getStartDate(), request.getEndDate());
 
-        System.out.println("여기3");
         return calculateHistoryDaos(historyDaos, request);
     }
 
@@ -72,13 +70,11 @@ public class HistoryService {
         Set<HistoryDao> historySet = ops.rangeByScore(cacheKey, startScore, endScore);
 
         if (historySet != null && historySet.isEmpty()) {
-            System.out.println("cache miss");
             addHistory(cacheKey, strategyId);
             historySet = ops.rangeByScore(cacheKey, startScore, endScore);
         }
 
         if (historySet != null && historySet.isEmpty()) {
-            System.out.println("null");
             throw new TradinException(NOT_FOUND_STRATEGY_EXCEPTION);
         }
 
@@ -134,7 +130,6 @@ public class HistoryService {
 
         StrategyInfoDto strategyInfoDto = StrategyInfoDto.of(request.getId(), request.getName(), compoundProfitRate, winRate, profitFactor, totalTradeCount, averageProfitRate);
 
-        System.out.println("여기4");
         return BackTestResponseDto.of(strategyInfoDto, histories);
     }
 
