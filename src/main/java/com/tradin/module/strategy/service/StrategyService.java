@@ -141,8 +141,7 @@ public class StrategyService {
     }
 
     private List<StrategyInfoDao> findFutureStrategyInfoDaos() {
-        return strategyRepository.findFutureStrategiesInfoDao()
-                .orElse(Collections.emptyList());
+        return strategyRepository.findFutureStrategiesInfoDao();
     }
 
 //    private List<SubscriptionStrategyInfoDao> findSubscriptionStrategyInfoDaos() {
@@ -151,8 +150,7 @@ public class StrategyService {
 //    }
 
     private List<StrategyInfoDao> findSpotStrategyInfoDaos() {
-        return strategyRepository.findSpotStrategiesInfoDao()
-                .orElse(Collections.emptyList());
+        return strategyRepository.findSpotStrategiesInfoDao();
     }
 
     private List<SubscriptionStrategyInfoDao> findSubscriptionStrategyInfoDaos() {

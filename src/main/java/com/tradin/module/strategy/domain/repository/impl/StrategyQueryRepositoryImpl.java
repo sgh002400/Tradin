@@ -21,17 +21,17 @@ public class StrategyQueryRepositoryImpl implements StrategyQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<List<StrategyInfoDao>> findFutureStrategiesInfoDao() {
+    public List<StrategyInfoDao> findFutureStrategiesInfoDao() {
         return getStrategyInfoDaos(FUTURE);
     }
 
     @Override
-    public Optional<List<StrategyInfoDao>> findSpotStrategiesInfoDao() {
+    public List<StrategyInfoDao> findSpotStrategiesInfoDao() {
         return getStrategyInfoDaos(SPOT);
     }
 
-    private Optional<List<StrategyInfoDao>> getStrategyInfoDaos(StrategyType strategyType) {
-        List<StrategyInfoDao> strategyInfoDaos = jpaQueryFactory
+    private List<StrategyInfoDao> getStrategyInfoDaos(StrategyType strategyType) {
+        return jpaQueryFactory
                 .select(
                         new QStrategyInfoDao(
                                 strategy.id,
@@ -56,8 +56,6 @@ public class StrategyQueryRepositoryImpl implements StrategyQueryRepository {
                 .where(strategy.type.strategyType.eq(strategyType))
                 .orderBy(strategy.id.asc())
                 .fetch();
-
-        return strategyInfoDaos.isEmpty() ? Optional.empty() : Optional.of(strategyInfoDaos);
     }
 
     @Override

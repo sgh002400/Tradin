@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StrategyQueryRepository {
-    Optional<List<StrategyInfoDao>> findFutureStrategiesInfoDao();
+    List<StrategyInfoDao> findFutureStrategiesInfoDao();
 
     Optional<List<SubscriptionStrategyInfoDao>> findSubscriptionStrategiesInfoDao();
 
-    Optional<List<StrategyInfoDao>> findSpotStrategiesInfoDao();
+    List<StrategyInfoDao> findSpotStrategiesInfoDao();
 }
