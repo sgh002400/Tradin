@@ -23,6 +23,7 @@ public class HistoryController {
     @DisableAuthInSwagger
     @GetMapping("")
     public BackTestResponseDto backTest(@Valid @ModelAttribute BackTestRequestDto request) {
+        System.out.println("여기1");
         return historyService.backTest(request.toServiceDto());
     }
 }

@@ -10,18 +10,22 @@ import com.tradin.module.history.service.dto.StrategyInfoDto;
 import com.tradin.module.strategy.domain.Position;
 import com.tradin.module.strategy.domain.Strategy;
 import com.tradin.module.strategy.domain.TradingType;
-import com.tradin.module.strategy.service.dto.HistoryCache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static com.tradin.common.exception.ExceptionMessage.NOT_FOUND_OPEN_POSITION_EXCEPTION;
+import static com.tradin.common.exception.ExceptionMessage.NOT_FOUND_STRATEGY_EXCEPTION;
 import static com.tradin.module.strategy.domain.TradingType.BOTH;
 
 @Service
@@ -29,7 +33,7 @@ import static com.tradin.module.strategy.domain.TradingType.BOTH;
 @RequiredArgsConstructor
 public class HistoryService {
     private final HistoryRepository historyRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, HistoryDao> historyRedisTemplate;
 
     public void closeOngoingHistory(Strategy strategy, Position exitPosition) {
         History ongoingHistory = findLastHistoryByStrategyId(strategy.getId());
@@ -47,23 +51,52 @@ public class HistoryService {
     }
 
     public BackTestResponseDto backTest(BackTestDto request) {
-        String cacheKey = "strategyId:" + request.getId();
+        System.out.println("여기2");
+        List<HistoryDao> historyDaos = getHistories(request.getId(), request.getStartDate(), request.getEndDate());
 
-        //캐시에 매매 내역들 있는지 확인
-        HistoryCache historyCache = (HistoryCache) redisTemplate.opsForValue().get(cacheKey);
-
-        //없다면 매매 내역 전체 캐싱
-        if (historyCache == null) {
-            List<HistoryDao> histories = findHistoryDaoByStrategyId(request.getId());
-            historyCache = HistoryCache.of(histories);
-            redisTemplate.opsForValue().set(cacheKey, historyCache);
-        }
-
-        //매매 내역들을 조건에 맞게 계산 후 응답
-        return calculateHistoryCache(historyCache, request);
+        System.out.println("여기3");
+        return calculateHistoryDaos(historyDaos, request);
     }
 
-    private BackTestResponseDto calculateHistoryCache(HistoryCache historyCache, BackTestDto request) {
+    public List<HistoryDao> getHistories(Long strategyId, LocalDate startDate, LocalDate endDate) {
+        String cacheKey = "strategyId:" + strategyId;
+
+        ZSetOperations<String, HistoryDao> ops = historyRedisTemplate.opsForZSet();
+
+        LocalDateTime startTime = startDate.atStartOfDay().minusHours(9);
+        LocalDateTime endTime = endDate.atStartOfDay().minusHours(9).minusDays(1);
+
+        long startScore = startTime.toEpochSecond(ZoneOffset.UTC);
+        long endScore = endTime.toEpochSecond(ZoneOffset.UTC);
+
+        Set<HistoryDao> historySet = ops.rangeByScore(cacheKey, startScore, endScore);
+
+        if (historySet != null && historySet.isEmpty()) {
+            System.out.println("cache miss");
+            addHistory(cacheKey, strategyId);
+            historySet = ops.rangeByScore(cacheKey, startScore, endScore);
+        }
+
+        if (historySet != null && historySet.isEmpty()) {
+            System.out.println("null");
+            throw new TradinException(NOT_FOUND_STRATEGY_EXCEPTION);
+        }
+
+        return new ArrayList<>(historySet);
+    }
+
+
+    public void addHistory(String cacheKey, Long strategyId) {
+        List<HistoryDao> historyDaos = findHistoryDaoByStrategyId(strategyId);
+        ZSetOperations<String, HistoryDao> ops = historyRedisTemplate.opsForZSet();
+
+        for (HistoryDao historyDao : historyDaos) {
+            ops.add(cacheKey, historyDao, historyDao.getEntryPosition().getTime().toEpochSecond(ZoneOffset.UTC));
+        }
+    }
+
+
+    private BackTestResponseDto calculateHistoryDaos(List<HistoryDao> historyDaos, BackTestDto request) {
         List<HistoryDao> histories = new ArrayList<>();
         double compoundProfitRate = 1;
         double winCount = 0;
@@ -72,7 +105,7 @@ public class HistoryService {
         double winProfitRate = 0;
         double loseProfitRate = 0;
 
-        for (HistoryDao history : historyCache.getHistories()) {
+        for (HistoryDao history : historyDaos) {
             if (isInPeriod(history, request.getStartDate(), request.getEndDate()) &&
                     isCorrespondTradingType(history, request.getTradingType())) {
 
@@ -101,6 +134,7 @@ public class HistoryService {
 
         StrategyInfoDto strategyInfoDto = StrategyInfoDto.of(request.getId(), request.getName(), compoundProfitRate, winRate, profitFactor, totalTradeCount, averageProfitRate);
 
+        System.out.println("여기4");
         return BackTestResponseDto.of(strategyInfoDto, histories);
     }
 
@@ -118,9 +152,9 @@ public class HistoryService {
     }
 
 
-    private boolean isInPeriod(HistoryDao history, LocalDateTime startDate, LocalDateTime endDate) {
-        return history.getEntryPosition().getTime().isAfter(startDate) &&
-                history.getExitPosition().getTime().isBefore(endDate);
+    private boolean isInPeriod(HistoryDao history, LocalDate startDate, LocalDate endDate) {
+        return history.getEntryPosition().getTime().isAfter(startDate.atStartOfDay()) &&
+                history.getExitPosition().getTime().isBefore(endDate.atStartOfDay());
     }
 
     private boolean isCorrespondTradingType(HistoryDao historyDao, TradingType tradingType) {

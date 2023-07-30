@@ -1,5 +1,7 @@
 package com.tradin.module.history.domain.repository.dao;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.querydsl.core.annotations.QueryProjection;
 import com.tradin.module.strategy.domain.Position;
 import lombok.Getter;
@@ -14,8 +16,9 @@ public class HistoryDao {
     private final double profitRate;
     private double compoundProfitRate;
 
+    @JsonCreator
     @QueryProjection
-    public HistoryDao(Long id, Position entryPosition, Position exitPosition, double profitRate) {
+    public HistoryDao(@JsonProperty("id") Long id, @JsonProperty("entryPosition") Position entryPosition, @JsonProperty("exitPosition") Position exitPosition, @JsonProperty("profitRate") double profitRate) {
         this.id = id;
         this.entryPosition = entryPosition;
         this.exitPosition = exitPosition;
