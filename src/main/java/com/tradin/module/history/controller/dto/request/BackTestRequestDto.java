@@ -24,7 +24,6 @@ public class BackTestRequestDto {
     @NotBlank(message = "StrategyName must not be blank")
     private String name;
 
-    //TODO - LocalDate로 변경하기
     @NotNull(message = "StartDate must not be null")
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
