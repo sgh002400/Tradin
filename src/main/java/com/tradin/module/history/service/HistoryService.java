@@ -133,7 +133,7 @@ public class HistoryService {
 
 
     private double calculateWinRate(double winCount, int totalTradeCount) {
-        return totalTradeCount == 0 ? 0 : winCount / totalTradeCount;
+        return totalTradeCount == 0 ? 0 : winCount / totalTradeCount * 100;
     }
 
     private double calculateAverageProfitRate(double simpleProfitRate, int totalTradeCount) {
