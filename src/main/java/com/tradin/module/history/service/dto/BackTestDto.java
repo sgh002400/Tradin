@@ -4,19 +4,18 @@ import com.tradin.module.strategy.domain.TradingType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @Getter
 public class BackTestDto {
     private Long id;
     private String name;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private TradingType tradingType;
 
-    public static BackTestDto of(Long id, String name, LocalDateTime startDate, LocalDateTime endDate,
-                                 TradingType tradingType) {
+    public static BackTestDto of(Long id, String name, LocalDate startDate, LocalDate endDate, TradingType tradingType) {
         return new BackTestDto(id, name, startDate, endDate, tradingType);
     }
 }

@@ -83,6 +83,9 @@ dependencies {
     //flyway
     implementation group: 'org.flywaydb', name: 'flyway-core', version: '8.4.1'
 
+    // LocalDateTime
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
