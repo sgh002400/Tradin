@@ -94,11 +94,11 @@ public class HistoryService {
     private BackTestResponseDto calculateHistoryDaos(List<HistoryDao> historyDaos, BackTestDto request) {
         List<HistoryDao> histories = new ArrayList<>();
         double compoundProfitRate = 0;
-        double winCount = 0;
+        int winCount = 0;
         int totalTradeCount = 0;
-        double simpleProfitRate = 0;
-        double winProfitRate = 0;
-        double loseProfitRate = 0;
+        double simpleTotalProfitRate = 0;
+        double simpleWinProfitRate = 0;
+        double simpleLoseProfitRate = 0;
 
         for (HistoryDao history : historyDaos) {
             if (isInPeriod(history, request.getStartDate(), request.getEndDate()) &&
@@ -112,21 +112,21 @@ public class HistoryService {
 
                 double profitRate = history.getProfitRate();
                 if (profitRate > 0) {
-                    winProfitRate += profitRate;
+                    simpleWinProfitRate += profitRate;
                     winCount++;
                 } else if (profitRate < 0) {
-                    loseProfitRate += Math.abs(profitRate);
+                    simpleLoseProfitRate += Math.abs(profitRate);
                 }
 
-                simpleProfitRate += profitRate;
+                simpleTotalProfitRate += profitRate;
             }
         }
 
         Collections.reverse(histories);
 
         double winRate = calculateWinRate(winCount, totalTradeCount);
-        double averageProfitRate = calculateAverageProfitRate(simpleProfitRate, totalTradeCount);
-        double profitFactor = calculateProfitFactor(winProfitRate, loseProfitRate);
+        double averageProfitRate = calculateAverageProfitRate(simpleTotalProfitRate, totalTradeCount);
+        double profitFactor = calculateProfitFactor(simpleWinProfitRate, simpleLoseProfitRate);
 
         StrategyInfoDto strategyInfoDto = StrategyInfoDto.of(request.getId(), request.getName(), compoundProfitRate, winRate, profitFactor, totalTradeCount, averageProfitRate);
 
@@ -142,8 +142,8 @@ public class HistoryService {
         return totalTradeCount == 0 ? 0 : simpleProfitRate / totalTradeCount;
     }
 
-    private double calculateProfitFactor(double winProfitRate, double loseProfitRate) {
-        return loseProfitRate == 0 ? 0 : winProfitRate / loseProfitRate;
+    private double calculateProfitFactor(double simpleWinProfitRate, double simpleLoseProfitRate) {
+        return simpleLoseProfitRate == 0 ? 0 : simpleWinProfitRate / simpleLoseProfitRate;
     }
 
 
