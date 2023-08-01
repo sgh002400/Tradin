@@ -20,7 +20,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static com.tradin.common.exception.ExceptionMessage.NOT_FOUND_OPEN_POSITION_EXCEPTION;
 import static com.tradin.common.exception.ExceptionMessage.NOT_FOUND_STRATEGY_EXCEPTION;
@@ -86,7 +85,6 @@ public class HistoryService {
 
         for (HistoryDao historyDao : historyDaos) {
             ops.add(cacheKey, historyDao, historyDao.getEntryPosition().getTime().toEpochSecond(ZoneOffset.UTC));
-            historyRedisTemplate.expire(cacheKey, 1, TimeUnit.HOURS);
         }
     }
 
