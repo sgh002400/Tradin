@@ -12,10 +12,10 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Getter
 public class WebHookRequestDto {
-    @NotBlank
+    @NotBlank(message = "name must not be blank")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "position must not be blank")
     private Position position;
 
     public WebHookDto toServiceDto() {

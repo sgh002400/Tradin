@@ -46,8 +46,9 @@ public class StrategyService {
         String strategyName = strategy.getName();
         TradingType strategyCurrentPosition = strategy.getCurrentPosition().getTradingType();
 
-
-//        autoTrading(strategyName, strategyCurrentPosition);
+//        if (request.getStrategyType() == StrategyType.FUTURE) {
+////        autoTrading(strategyName, strategyCurrentPosition);
+//        }
         closeOngoingHistory(strategy, request.getPosition());
         createNewHistory(strategy, request.getPosition());
         evictHistoryCache(strategy.getId());

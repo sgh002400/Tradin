@@ -23,7 +23,9 @@ import java.util.*;
 
 import static com.tradin.common.exception.ExceptionMessage.NOT_FOUND_OPEN_POSITION_EXCEPTION;
 import static com.tradin.common.exception.ExceptionMessage.NOT_FOUND_STRATEGY_EXCEPTION;
+import static com.tradin.module.strategy.domain.StrategyType.SPOT;
 import static com.tradin.module.strategy.domain.TradingType.BOTH;
+import static com.tradin.module.strategy.domain.TradingType.SHORT;
 
 @Service
 @Transactional
@@ -39,6 +41,12 @@ public class HistoryService {
     }
 
     public void createNewHistory(Strategy strategy, Position position) {
+        if (strategy.getType().getStrategyType() == SPOT) {
+            if (position.getTradingType() == SHORT) {
+                return;
+            }
+        }
+
         History newHistory = History.of(position, strategy);
         historyRepository.save(newHistory);
     }
