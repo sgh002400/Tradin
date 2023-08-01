@@ -50,6 +50,7 @@ public class StrategyService {
 //        autoTrading(strategyName, strategyCurrentPosition);
         closeOngoingHistory(strategy, request.getPosition());
         createNewHistory(strategy, request.getPosition());
+        evictHistoryCache(strategy.getId());
         updateStrategyMetaData(strategy, request.getPosition());
     }
 
@@ -129,6 +130,10 @@ public class StrategyService {
 
     private void createNewHistory(Strategy strategy, Position position) {
         historyService.createNewHistory(strategy, position);
+    }
+
+    private void evictHistoryCache(Long strategyId) {
+        historyService.evictHistoryCache(strategyId);
     }
 
     private void updateStrategyMetaData(Strategy strategy, Position position) {

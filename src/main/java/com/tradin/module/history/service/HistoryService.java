@@ -43,6 +43,11 @@ public class HistoryService {
         historyRepository.save(newHistory);
     }
 
+    public void evictHistoryCache(Long strategyId) {
+        String cacheKey = "strategyId:" + strategyId;
+        historyRedisTemplate.delete(cacheKey);
+    }
+
     public List<HistoryDao> findHistoryDaoByStrategyId(Long id) {
         return historyRepository.findHistoryDaoByStrategyId(id);
     }
