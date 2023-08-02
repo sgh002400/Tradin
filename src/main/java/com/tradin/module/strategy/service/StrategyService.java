@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.tradin.common.exception.ExceptionMessage.NOT_SUBSCRIBED_STRATEGY_EXCEPTION;
+import static com.tradin.module.strategy.domain.TradingType.LONG;
 
 @Service
 @Transactional
@@ -41,17 +42,33 @@ public class StrategyService {
     private final StrategyRepository strategyRepository;
     private final AESUtils aesUtils;
 
-    public void handleWebHook(WebHookDto request) {
+    public void handleFutureWebHook(WebHookDto request) {
         Strategy strategy = findByName(request.getName());
         String strategyName = strategy.getName();
         TradingType strategyCurrentPosition = strategy.getCurrentPosition().getTradingType();
 
-
-//        autoTrading(strategyName, strategyCurrentPosition);
+//      autoTrading(strategyName, strategyCurrentPosition);
         closeOngoingHistory(strategy, request.getPosition());
         createNewHistory(strategy, request.getPosition());
         evictHistoryCache(strategy.getId());
         updateStrategyMetaData(strategy, request.getPosition());
+    }
+
+    public void handleSpotWebHook(WebHookDto request) {
+        Strategy strategy = findByName(request.getName());
+
+        if (webHookTradingType(request) == LONG) {
+            createNewHistory(strategy, request.getPosition());
+            return;
+        }
+
+        closeOngoingHistory(strategy, request.getPosition());
+        evictHistoryCache(strategy.getId());
+        updateStrategyMetaData(strategy, request.getPosition());
+    }
+
+    private static TradingType webHookTradingType(WebHookDto request) {
+        return request.getPosition().getTradingType();
     }
 
     public FindSubscriptionStrategiesInfoResponseDto findSubscriptionStrategiesInfo() {
@@ -104,7 +121,7 @@ public class StrategyService {
     }
 
     private String getSideFromUserCurrentPosition(Users savedUser) {
-        return savedUser.getCurrentPositionType().equals(TradingType.LONG) ? "SELL" : "BUY";
+        return savedUser.getCurrentPositionType().equals(LONG) ? "SELL" : "BUY";
     }
 
     private void closePosition(String apiKey, String secretKey, String side) {

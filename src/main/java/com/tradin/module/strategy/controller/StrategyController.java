@@ -24,27 +24,37 @@ public class StrategyController {
 
     @KafkaListener(topics = "tradin", groupId = "trading-strategy-executors")
     public void test(@RequestBody WebHookRequestDto request) {
-        strategyService.handleWebHook(request.toServiceDto());
+        strategyService.handleFutureWebHook(request.toServiceDto());
     }
 
     @KafkaListener(topics = "future-short-term-v1", groupId = "trading-strategy-executors")
     public void handleFutureShortTermV1WebHook(@RequestBody WebHookRequestDto request) {
-        strategyService.handleWebHook(request.toServiceDto());
+        strategyService.handleFutureWebHook(request.toServiceDto());
+    }
+
+    @KafkaListener(topics = "future-mid-term-v1", groupId = "trading-strategy-executors")
+    public void handleFutureMidTermV1WebHook(@RequestBody WebHookRequestDto request) {
+        strategyService.handleFutureWebHook(request.toServiceDto());
     }
 
     @KafkaListener(topics = "future-long-term-v1", groupId = "trading-strategy-executors")
     public void handleFutureLongTermV1WebHook(@RequestBody WebHookRequestDto request) {
-        strategyService.handleWebHook(request.toServiceDto());
+        strategyService.handleFutureWebHook(request.toServiceDto());
     }
 
     @KafkaListener(topics = "spot-short-term-v1", groupId = "trading-strategy-executors")
     public void handleSpotShortTermV1WebHook(@RequestBody WebHookRequestDto request) {
-        strategyService.handleWebHook(request.toServiceDto());
+        strategyService.handleSpotWebHook(request.toServiceDto());
+    }
+
+    @KafkaListener(topics = "spot-mid-term-v1", groupId = "trading-strategy-executors")
+    public void handleSpotMidTermV1WebHook(@RequestBody WebHookRequestDto request) {
+        strategyService.handleSpotWebHook(request.toServiceDto());
     }
 
     @KafkaListener(topics = "spot-long-term-v1", groupId = "trading-strategy-executors")
     public void handleSpotLongTermV1WebHook(@RequestBody WebHookRequestDto request) {
-        strategyService.handleWebHook(request.toServiceDto());
+        strategyService.handleSpotWebHook(request.toServiceDto());
     }
 
     @Operation(summary = "선물 전략 전체 조회")
