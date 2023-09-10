@@ -35,7 +35,7 @@ spring:
 
 logging:
   level:
-    com.tradin.module.feign.client: DEBUG
+    com.tradin.module.feign.client: TRACE
     org:
       hibernate:
         type:
