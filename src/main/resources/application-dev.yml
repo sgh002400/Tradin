@@ -35,12 +35,14 @@ spring:
 
 logging:
   level:
-    com.tradin.module.feign.client: TRACE
+    com.tradin.module.feign.client: DEBUG
     org:
       hibernate:
         type:
           descriptor:
-            sql: info
+            sql: DEBUG
+      springframework: DEBUG
+      apache.kafka: DEBUG
 
 springdoc:
   api-docs:
